@@ -25,7 +25,7 @@ type PostAuditSnapshot = Pick<
 
 function slugConflictException() {
   return new ConflictException({
-    code: "CONFLICT",
+    code: "platform.conflict",
     message: "Slug này đã được dùng.",
     detail: {
       properties: { slug: { errors: ["Slug này đã được dùng."] } },

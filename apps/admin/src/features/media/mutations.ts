@@ -28,7 +28,7 @@ export function useUploadMediaAsset() {
     onSuccess: () => {
       toast.success("Upload thành công.");
       void qc.invalidateQueries({ queryKey: mediaKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: (err: Error) => {
       toast.error(err.message);
@@ -44,7 +44,7 @@ export function useDeleteMediaAsset() {
     onSuccess: () => {
       toast.success("Đã xoá media asset.");
       void qc.invalidateQueries({ queryKey: mediaKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });

@@ -145,7 +145,7 @@ export class VowMemberService {
       await this.audit.appendInTransaction(
         tx,
         { actorId: userId, actorType: "user" },
-        "merit_transfer.create",
+        "merit.transfer",
         "vow",
         input.vowPublicId,
         {

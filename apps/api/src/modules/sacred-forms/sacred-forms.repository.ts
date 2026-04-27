@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
   TemplateQuery,
   CreateTemplateInput,
@@ -8,6 +9,8 @@ import type {
   DisposalPolarityInput,
   ProbationQuery,
 } from "./sacred-forms.schemas.js";
+
+type TransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">;
 
 @Injectable()
 export class SacredFormsRepository {
@@ -36,8 +39,9 @@ export class SacredFormsRepository {
     return this.prisma.sacredFormTemplate.findUnique({ where: { publicId } });
   }
 
-  async createTemplate(input: CreateTemplateInput, publicId: string) {
-    return this.prisma.sacredFormTemplate.create({
+  async createTemplate(input: CreateTemplateInput, publicId: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.sacredFormTemplate.create({
       data: {
         publicId,
         formType: input.formType as never,
@@ -50,8 +54,9 @@ export class SacredFormsRepository {
     });
   }
 
-  async toggleTemplateActive(id: string, isActive: boolean) {
-    return this.prisma.sacredFormTemplate.update({ where: { id }, data: { isActive } });
+  async toggleTemplateActive(id: string, isActive: boolean, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.sacredFormTemplate.update({ where: { id }, data: { isActive } });
   }
 
   // ─── Applicants ──────────────────────────────────────────────────────────
@@ -95,8 +100,15 @@ export class SacredFormsRepository {
     });
   }
 
-  async createApplicant(templateId: string, userId: string, formData: Record<string, unknown> | undefined, publicId: string) {
-    return this.prisma.formApplicant.create({
+  async createApplicant(
+    templateId: string,
+    userId: string,
+    formData: Record<string, unknown> | undefined,
+    publicId: string,
+    tx?: TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.formApplicant.create({
       data: {
         publicId,
         templateId,
@@ -111,15 +123,24 @@ export class SacredFormsRepository {
     id: string,
     status: string,
     extra?: { reviewNotes?: string; probationEndsAt?: Date; approvedAt?: Date; rejectedAt?: Date },
+    tx?: TransactionClient,
   ) {
-    return this.prisma.formApplicant.update({
+    const db = tx ?? this.prisma;
+    return db.formApplicant.update({
       where: { id },
       data: { status: status as never, ...extra },
     });
   }
 
-  async appendApplicantAudit(applicantId: string, actor: string, action: string, details?: string) {
-    return this.prisma.sacredFormAuditLog.create({
+  async appendApplicantAudit(
+    applicantId: string,
+    actor: string,
+    action: string,
+    details?: string,
+    tx?: TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.sacredFormAuditLog.create({
       data: { applicantId, actor, action, details },
     });
   }
@@ -151,8 +172,9 @@ export class SacredFormsRepository {
 
   // ─── Disposal Polarity ────────────────────────────────────────────────────
 
-  async createDisposalPolarity(input: DisposalPolarityInput) {
-    return this.prisma.disposalPolarityRecord.create({
+  async createDisposalPolarity(input: DisposalPolarityInput, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.disposalPolarityRecord.create({
       data: {
         formType: input.formType,
         polarity: input.polarity,
@@ -170,8 +192,9 @@ export class SacredFormsRepository {
 
   // ─── Approve / Reject ─────────────────────────────────────────────────────
 
-  async approveApplicant(id: string, reviewNotes?: string) {
-    return this.prisma.formApplicant.update({
+  async approveApplicant(id: string, reviewNotes?: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.formApplicant.update({
       where: { id },
       data: {
         status: "APPROVED" as never,
@@ -181,8 +204,9 @@ export class SacredFormsRepository {
     });
   }
 
-  async rejectApplicant(id: string, rejectionReason: string) {
-    return this.prisma.formApplicant.update({
+  async rejectApplicant(id: string, rejectionReason: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.formApplicant.update({
       where: { id },
       data: {
         status: "REJECTED" as never,
@@ -194,26 +218,31 @@ export class SacredFormsRepository {
 
   // ─── Burn + Probation ─────────────────────────────────────────────────────
 
-  async completeApplicant(id: string) {
-    return this.prisma.formApplicant.update({
+  async completeApplicant(id: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.formApplicant.update({
       where: { id },
       data: { status: "COMPLETED" as never },
     });
   }
 
-  async createNameChangeProbation(data: {
-    publicId: string;
-    formApplicantId: string;
-    userId: string;
-    oldDharmaName?: string;
-    newDharmaName?: string;
-    probationDurationDays: number;
-  }) {
+  async createNameChangeProbation(
+    data: {
+      publicId: string;
+      formApplicantId: string;
+      userId: string;
+      oldDharmaName?: string;
+      newDharmaName?: string;
+      probationDurationDays: number;
+    },
+    tx?: TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
     const start = new Date();
     const end = new Date(start);
     end.setDate(end.getDate() + data.probationDurationDays);
 
-    return this.prisma.nameChangeProbation.create({
+    return db.nameChangeProbation.create({
       data: {
         publicId: data.publicId,
         formApplicantId: data.formApplicantId,

@@ -41,7 +41,7 @@ const TABS: WorkspaceTab[] = [
   {
     path: "/noi-dung/niem-kinh/kinh-bai-tap-hang-ngay",
     label: "Kinh bài tập hàng ngày",
-    description: "Catalog kinh văn tự tu, quy tắc thời gian/thời tiết, phác đồ tu học và luồng 7 bước.",
+    description: "Catalog bài kinh, bài chú, quy tắc thời gian/thời tiết, phác đồ tu học và luồng 7 bước.",
   },
   {
     path: "/noi-dung/niem-kinh/don-tu-tam-linh",

@@ -276,7 +276,7 @@ export class AltarValidationService {
         error: "water_temperature_forbidden",
         message:
           "Nước Đại Bi đang sôi sùng sục — tuyệt đối không được dùng. Phải để nguội hoàn toàn trước khi dâng lên bàn thờ. Đun sôi làm mất đi năng lượng thanh tịnh của nước thiêng liêng.",
-        code: "WATER_BOILING",
+        code: "altar.water_boiling",
       });
     }
 
@@ -285,7 +285,7 @@ export class AltarValidationService {
         error: "water_temperature_forbidden",
         message:
           "Nước Đại Bi đang quá nóng — cần để nguội hoàn toàn. Chỉ dùng ở nhiệt độ bình thường để bảo vệ năng lượng tẩy rửa tâm linh.",
-        code: "WATER_TOO_HOT",
+        code: "altar.water_too_hot",
       });
     }
 
@@ -320,7 +320,7 @@ export class AltarValidationService {
         error: "protocol_acknowledgment_required",
         message:
           "Bạn phải xác nhận đã đọc và hiểu giao thức xử lý pháp khí hư hỏng trước khi gửi báo cáo.",
-        code: "PROTOCOL_ACKNOWLEDGMENT_REQUIRED",
+        code: "altar.protocol_acknowledgment_required",
       });
     }
 
@@ -328,7 +328,7 @@ export class AltarValidationService {
       throw new UnprocessableEntityException({
         error: "damage_items_required",
         message: "Bạn phải chỉ định ít nhất một pháp khí bị hư hỏng.",
-        code: "DAMAGE_ITEMS_REQUIRED",
+        code: "altar.damage_items_required",
       });
     }
 
@@ -431,7 +431,7 @@ export class AltarValidationService {
           "Bàn thờ của bạn chứa vật phẩm cấm kỵ. Tuyệt đối không đặt hình rồng, hổ, linh thú hung dữ, " +
           "hoặc ảnh người phàm (ảnh gia đình, ảnh cưới) gần bàn thờ. " +
           "Những hình ảnh này thu hút linh tính/ngạ quỷ.",
-        code: "FORBIDDEN_ALTAR_ITEM_DETECTED",
+        code: "altar.forbidden_item_detected",
         items: detectedKeywords,
       });
     }
@@ -510,7 +510,7 @@ export class AltarValidationService {
         error: "retirement_pledge_required",
         message:
           "Bạn phải cam kết bọc vải đỏ/giấy đỏ và cất đi pháp khí cũ. Tuyệt đối không dùng cho sinh hoạt cá nhân.",
-        code: "RETIREMENT_PLEDGE_REQUIRED",
+        code: "altar.retirement_pledge_required",
       });
     }
 
@@ -519,7 +519,7 @@ export class AltarValidationService {
         error: "retirement_pledge_required",
         message:
           "Bạn phải cam kết không dùng pháp khí cũ cho sinh hoạt cá nhân sau khi retire.",
-        code: "PERSONAL_USE_PLEDGE_REQUIRED",
+        code: "altar.personal_use_pledge_required",
       });
     }
 
@@ -566,7 +566,7 @@ export class AltarValidationService {
         "Phật cụ đã được ấn định cho Bồ Tát thì VĨNH VIỄN không được đổi chủ. " +
         "Luật PMTL: Pháp khí đã tách riêng cho vị Bồ Tát nào thì không bao giờ được đổi sang vị khác. " +
         "Nếu cần thêm, hãy tạo pháp khí MỚI cho Bồ Tát mới.",
-      code: "HARDWARE_REASSIGNMENT_FORBIDDEN",
+      code: "altar.hardware_reassignment_forbidden",
     });
   }
 
@@ -669,7 +669,7 @@ export class AltarValidationService {
         message:
           "Trước khi đốt Đại Hương (Gỗ Đàn Hương), bắt buộc phải thắp đèn dầu VÀ nhang bình thường trước. " +
           `Trạng thái hiện tại: Đèn dầu=${dto.isOilLampLit ? "✓" : "✗"} | Nhang=${dto.isIncenseLit ? "✓" : "✗"}.`,
-        code: "GRAND_INCENSE_PREREQUISITES_NOT_MET",
+        code: "altar.grand_incense_prerequisites_not_met",
         required: { isOilLampLit: true, isIncenseLit: true },
         provided: dto,
       });
@@ -751,7 +751,7 @@ export class AltarValidationService {
         message:
           "NGỪNG! Tuyệt đối cấm thổi bằng miệng khi dập tắt gỗ Đàn Hương. " +
           "Hãy dùng tay PHẨY/QUẠT. Hơi thở làm ô uế Pháp Bảo và mất công đức.",
-        code: "MOUTH_BLOWING_FORBIDDEN",
+        code: "altar.mouth_blowing_forbidden",
       });
     }
 

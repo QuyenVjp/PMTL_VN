@@ -172,7 +172,7 @@ export class CharityFirewallInterceptor implements NestInterceptor {
             "Hành vi kêu gọi tịnh tài vào tài khoản cá nhân bị nghiêm cấm. " +
             "Trợ ấn Kinh sách chỉ được thực hiện qua tài khoản từ thiện chính thức " +
             "của đài Đông Phương (BSB 112 879 - Account 432 033 033 hoặc 432 919 934).",
-          code: "UNAUTHORIZED_CHARITY_ACCOUNT",
+          code: "charity.firewall.blocked",
           allowedAccounts,
         });
       }

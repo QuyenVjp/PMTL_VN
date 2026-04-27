@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import type { CreateLifeReleaseInput, LifeReleaseQuery, ProxyReleaseInput } from "./life-liberation.schemas.js";
+
+type TransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">;
 
 @Injectable()
 export class LifeLiberationRepository {
@@ -39,8 +42,9 @@ export class LifeLiberationRepository {
     });
   }
 
-  async create(input: CreateLifeReleaseInput, userId: string, publicId: string) {
-    return this.prisma.lifeReleaseRecord.create({
+  async create(input: CreateLifeReleaseInput, userId: string, publicId: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.lifeReleaseRecord.create({
       data: {
         publicId,
         userId,
@@ -65,8 +69,9 @@ export class LifeLiberationRepository {
     });
   }
 
-  async updateStatus(id: string, status: string) {
-    return this.prisma.lifeReleaseRecord.update({
+  async updateStatus(id: string, status: string, tx?: TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.lifeReleaseRecord.update({
       where: { id },
       data: { status: status as never },
     });
@@ -76,8 +81,10 @@ export class LifeLiberationRepository {
     recordId: string,
     sponsorId: string,
     input: ProxyReleaseInput,
+    tx?: TransactionClient,
   ) {
-    return this.prisma.proxyLifeRelease.create({
+    const db = tx ?? this.prisma;
+    return db.proxyLifeRelease.create({
       data: {
         recordId,
         sponsorId,

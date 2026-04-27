@@ -55,7 +55,7 @@ export function useCreateWisdomEntry() {
     onSuccess: () => {
       toast.success("Đã tạo bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -83,7 +83,7 @@ export function usePublishWisdomEntry() {
     onSuccess: () => {
       toast.success("Đã xuất bản bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -97,7 +97,7 @@ export function useDeleteWisdomEntry() {
     onSuccess: () => {
       toast.success("Đã xoá bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });

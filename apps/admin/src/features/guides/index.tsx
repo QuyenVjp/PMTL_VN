@@ -6,8 +6,6 @@ import {
   BookOpenIcon,
   CalendarDaysIcon,
   ClipboardListIcon,
-  FlameIcon,
-  HeartHandshakeIcon,
   ListChecksIcon,
   MapIcon,
   SearchIcon,
@@ -66,10 +64,30 @@ export function GuidesPage({
 
 export function DailyPracticePage() {
   const iaGroups = [
-    { title: "Bắt đầu", route: "/kinh-bai-tap/bat-dau", icon: SparklesIcon, note: "Định nghĩa công khóa, baseline cho người mới, khác gì với Ngôi Nhà Nhỏ và Kinh văn tự tu." },
-    { title: "Các bước", route: "/kinh-bai-tap/cac-buoc", icon: ListChecksIcon, note: "Step sequence 1-7, phần chú nhỏ, tên đầy đủ các bài kinh/chú cần đọc." },
-    { title: "Lưu ý", route: "/kinh-bai-tap/luu-y", icon: ShieldAlertIcon, note: "Giờ giấc, địa điểm, cách bù, gián đoạn, posture và hygiene rules." },
-    { title: "Theo tình huống", route: "/kinh-bai-tap/theo-tinh-huong", icon: MapIcon, note: "Scenario presets cho người mới, công việc, học hành, cao tuổi, bệnh nặng." },
+    {
+      title: "Bắt đầu cho người mới",
+      route: "/kinh-bai-tap/bat-dau",
+      icon: SparklesIcon,
+      note: "Giải thích Kinh bài tập là gì, công khóa cơ bản gồm những gì, và khác gì với Ngôi Nhà Nhỏ, Kinh văn tự tu.",
+    },
+    {
+      title: "Trình tự niệm",
+      route: "/kinh-bai-tap/cac-buoc/cho-nguoi-moi",
+      icon: ListChecksIcon,
+      note: "Sắp đúng thứ tự các bước niệm, tên đầy đủ từng bài, và phần nào là bài chính, phần nào là bài bổ trợ.",
+    },
+    {
+      title: "Lưu ý quan trọng",
+      route: "/kinh-bai-tap/luu-y",
+      icon: ShieldAlertIcon,
+      note: "Nhắc rõ giờ giấc, nơi niệm, cách xử lý khi bị gián đoạn, và những điều không nên làm khi hành trì.",
+    },
+    {
+      title: "Theo từng trường hợp",
+      route: "/kinh-bai-tap/theo-tinh-huong",
+      icon: MapIcon,
+      note: "Gợi ý nội dung cho người mới, người cao tuổi, người bận rộn, người bệnh nặng và các trường hợp thường gặp.",
+    },
   ];
 
   const intro = (
@@ -80,10 +98,11 @@ export function DailyPracticePage() {
             <div>
               <CardTitle>Kiến trúc Kinh bài tập hằng ngày</CardTitle>
               <CardDescription>
-                Đây là daily commitment surface: hướng dẫn, preset, FAQ và download. Không phải nơi sửa streak hoặc practice profile của member.
+                Đây là khu vực biên tập nội dung công khóa hằng ngày. Mục tiêu là giúp người quản trị nhìn rõ từng nhóm bài,
+                sửa đúng chỗ, và không lẫn sang các surface khác.
               </CardDescription>
             </div>
-            <Badge variant="outline">Content owner</Badge>
+            <Badge variant="outline">Kho nội dung chính</Badge>
           </div>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -106,9 +125,10 @@ export function DailyPracticePage() {
       <div className="grid gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Boundary bắt buộc</CardTitle>
+            <CardTitle>Phân biệt rõ để khỏi sửa nhầm</CardTitle>
             <CardDescription>
-              Kinh bài tập không ôm luôn Kinh văn tự tu, Ngôi Nhà Nhỏ, lịch advisory hay tracker cá nhân.
+              Kinh bài tập chỉ quản lý nội dung công khóa hằng ngày. Không gộp chung với Kinh văn tự tu, Ngôi Nhà Nhỏ,
+              lịch nhắc riêng, hay sổ theo dõi cá nhân của thành viên.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -129,13 +149,13 @@ export function DailyPracticePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Các owner liên quan</CardTitle>
+            <CardTitle>Các phần liên quan</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 text-sm leading-5">
-            <div className="flex gap-2"><BookOpenIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Content giữ ritual truth, presets, source notes và downloads.</span></div>
-            <div className="flex gap-2"><ClipboardListIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Engagement giữ practice sheet, logs, counters và private streak.</span></div>
-            <div className="flex gap-2"><CalendarDaysIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Calendar chỉ compose advisory theo ngày đặc biệt, không sửa nội dung nghi thức.</span></div>
-            <div className="flex gap-2"><BellRingIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Notification chỉ delivery reminder khi có cấu hình downstream.</span></div>
+            <div className="flex gap-2"><BookOpenIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Kho nội dung này giữ bài hướng dẫn, lưu ý, hỏi đáp và tài liệu đi kèm của Kinh bài tập.</span></div>
+            <div className="flex gap-2"><ClipboardListIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Phần tu tập cá nhân giữ sổ hành trì, tiến độ, nhật ký và chuỗi duy trì của từng thành viên.</span></div>
+            <div className="flex gap-2"><CalendarDaysIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Lịch chỉ dùng để nhắc ngày đặc biệt và bối cảnh theo ngày, không sửa nội dung công khóa.</span></div>
+            <div className="flex gap-2"><BellRingIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span>Thông báo chỉ làm nhiệm vụ nhắc nhớ sau khi nội dung và lịch đã được cấu hình ở nơi phù hợp.</span></div>
           </CardContent>
         </Card>
       </div>
@@ -145,7 +165,7 @@ export function DailyPracticePage() {
   return (
     <GuidesPage
       title="Kinh bài tập"
-      description="Quản lý hướng dẫn, baseline, scenario presets, FAQ và download cho công khóa hằng ngày."
+      description="Quản lý các bài hướng dẫn cốt lõi cho công khóa hằng ngày. Dùng ngôn ngữ rõ ràng, đúng nhóm nội dung, dễ đọc với người lớn tuổi."
       defaultCategory="DAILY_PRACTICE"
       createHref="/noi-dung/kinh-bai-tap/tao-moi"
       detailBasePath="/noi-dung/kinh-bai-tap"
@@ -155,88 +175,42 @@ export function DailyPracticePage() {
 }
 
 export function LittleHousePage() {
-  const iaGroups = [
-    { title: "Bắt đầu", route: "/ngoi-nha-nho/bat-dau", icon: SparklesIcon, note: "Khái niệm, hiệu dụng, Phật cụ, cấu trúc 27/49/84/87." },
-    { title: "Trì tụng", route: "/ngoi-nha-nho/tri-tung", icon: BookOpenIcon, note: "Lưu ý trước khi niệm, trình tự, Kính Tặng/Tặng, chấm đỏ." },
-    { title: "Đốt & hậu xử lý", route: "/ngoi-nha-nho/dot-va-hau-xu-ly", icon: FlameIcon, note: "Quy trình đốt, bảo quản, xử lý tro, hủy tờ sai/bẩn." },
-    { title: "Tra cứu", route: "/ngoi-nha-nho/tra-cuu", icon: SearchIcon, note: "Số lượng theo tình huống, FAQ, in ấn và tài liệu liên quan." },
-    { title: "Thực hành", route: "/ngoi-nha-nho/thuc-hanh", icon: ListChecksIcon, note: "Checklist và cầu nối sang tracker cá nhân." },
-  ];
-
   const intro = (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <CardTitle>Kiến trúc nội dung Ngôi Nhà Nhỏ</CardTitle>
-              <CardDescription>
-                Design gom 13 nhóm nguồn thành 5 nhóm IA để admin quản theo mental model, không còn một danh sách phẳng khó hiểu.
-              </CardDescription>
-            </div>
-            <Badge variant="outline">Content owner</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          {iaGroups.map((group) => {
-            const Icon = group.icon;
-            return (
-              <div key={group.title} className="rounded-lg border bg-muted/20 p-4">
-                <div className="mb-3 flex size-9 items-center justify-center rounded-md bg-background shadow-xs">
-                  <Icon className="size-4 text-muted-foreground" />
-                </div>
-                <p className="font-medium">{group.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{group.route}</p>
-                <p className="mt-3 text-sm leading-5 text-muted-foreground">{group.note}</p>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vận hành riêng</CardTitle>
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <CardTitle>Lane nội dung Ngôi Nhà Nhỏ</CardTitle>
             <CardDescription>
-              Nội dung hướng dẫn và hồ sơ sớ không cùng owner. Hai lối này tách riêng để tránh sửa nhầm business state trong content editor.
+              Danh sách dưới đây chỉ dành cho guide, FAQ và tài liệu của Ngôi Nhà Nhỏ. Không sửa hồ sơ sớ hay hàng đợi gian lận từ màn này.
             </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button asChild variant="outline" className="w-full justify-between">
-              <Link to="/so/danh-sach">
-                Hồ sơ sớ
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-between">
-              <Link to="/so/gian-lan">
-                Hàng đợi gian lận
-                <ShieldAlertIcon className="size-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Boundary với Kinh văn tự tu</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-5 text-muted-foreground">
-            <p>
-              Flow hủy tờ sai/bẩn là source-of-truth ở Ngôi Nhà Nhỏ. Kinh văn tự tu chỉ link chéo với boundary note,
-              không duplicate wording riêng.
-            </p>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/noi-dung/kinh-van-tu-tu">
-                Mở Kinh văn tự tu
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+          <Badge variant="outline">Content owner</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <SparklesIcon className="size-3.5" />
+          Bắt đầu
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <BookOpenIcon className="size-3.5" />
+          Trì tụng
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <ShieldAlertIcon className="size-3.5" />
+          Đốt và hậu xử lý
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <SearchIcon className="size-3.5" />
+          Tra cứu và hỏi đáp
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <ListChecksIcon className="size-3.5" />
+          Thực hành
+        </span>
+      </CardContent>
+    </Card>
   );
 
   return (
@@ -252,86 +226,42 @@ export function LittleHousePage() {
 }
 
 export function LifeReleasePage() {
-  const iaGroups = [
-    { title: "Nghi thức cơ bản", route: "/huong-dan/phong-sanh/nghi-thuc-co-ban", icon: ListChecksIcon, note: "Step sequence từ chuẩn bị, cung thỉnh, khấn chính, tụng kinh/chú đến thả nhẹ nhàng." },
-    { title: "Cho bản thân", route: "/huong-dan/phong-sanh/cho-ban-than", icon: SparklesIcon, note: "Variant phóng sanh cho chính mình, giữ placeholder và wording đúng nguồn." },
-    { title: "Cho người khác", route: "/huong-dan/phong-sanh/cho-nguoi-khac", icon: HeartHandshakeIcon, note: "Variant hồi hướng/nguyện lực cho người khác, bắt buộc có sourceReference." },
-    { title: "Lưu ý & chuẩn bị", route: "/huong-dan/phong-sanh/luu-y-va-chuan-bi", icon: ShieldAlertIcon, note: "Warning, checklist, ethical guidelines và xử lý loài vật tử vong ngoài ý muốn." },
-    { title: "Hỏi đáp", route: "/huong-dan/phong-sanh/hoi-dap", icon: SearchIcon, note: "FAQ và tài liệu tải xuống đi qua content/download owner." },
-  ];
-
   const intro = (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <CardTitle>Kiến trúc Phóng sanh</CardTitle>
-              <CardDescription>
-                Phóng sanh là ritual guide surface cộng với journal workflow. Màn này quản nội dung nghi thức, không thay journal của member.
-              </CardDescription>
-            </div>
-            <Badge variant="outline">Content owner</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          {iaGroups.map((group) => {
-            const Icon = group.icon;
-            return (
-              <div key={group.title} className="rounded-lg border bg-muted/20 p-4">
-                <div className="mb-3 flex size-9 items-center justify-center rounded-md bg-background shadow-xs">
-                  <Icon className="size-4 text-muted-foreground" />
-                </div>
-                <p className="font-medium">{group.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{group.route}</p>
-                <p className="mt-3 text-sm leading-5 text-muted-foreground">{group.note}</p>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vận hành riêng</CardTitle>
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <CardTitle>Lane nội dung Phóng sanh</CardTitle>
             <CardDescription>
-              Journal, assisted entry và thống kê theo loài nằm ở lane vận hành/vows-merit, không chôn trong bài hướng dẫn.
+              Màn này chỉ quản nghi thức, biến thể, FAQ và tài liệu của Phóng sanh. Hồ sơ phóng sinh và thống kê loài là lane vận hành riêng.
             </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button asChild variant="outline" className="w-full justify-between">
-              <Link to="/phong-sinh/ho-so">
-                Hồ sơ phóng sinh
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-between">
-              <Link to="/phong-sinh/thong-ke">
-                Thống kê theo loài
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-between">
-              <Link to="/ho-tro/phat-nguyen/nhap-ho">
-                Nhập hộ phát nguyện
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Validation nội dung nhạy cảm</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-5 text-muted-foreground">
-            <p>Script wording, biến thể cho người khác, ethical warning và species-specific note phải có nguồn và review note trước khi publish.</p>
-            <p>Journal chỉ nhận `guideContextRef` / `ritualVariantRef`; không giữ full ritual script.</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+          <Badge variant="outline">Content owner</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <ListChecksIcon className="size-3.5" />
+          Nghi thức cơ bản
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <SparklesIcon className="size-3.5" />
+          Cho bản thân
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <BookOpenIcon className="size-3.5" />
+          Cho người khác
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <ShieldAlertIcon className="size-3.5" />
+          Lưu ý và chuẩn bị
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+          <SearchIcon className="size-3.5" />
+          Hỏi đáp và tải xuống
+        </span>
+      </CardContent>
+    </Card>
   );
 
   return (

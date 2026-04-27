@@ -75,6 +75,10 @@ export const auditActionSchema = z.enum([
   "member.practice_reminder.update",
   "member.event_reminder.update",
 
+  // Search actions
+  "search.reindex.batch",
+  "search.sync.failure",
+
   // Volunteer/contact actions
   "admin.volunteer.create",
   "admin.volunteer.update",
@@ -115,7 +119,7 @@ export const auditActionSchema = z.enum([
   "vow.progress",
   "vow.fulfill",
   "vow.milestone",
-  "merit_transfer.create",
+  "merit.transfer",
   "admin.life_release.create",
   "member.altar_item.create",
   "admin.altar_item.condition",

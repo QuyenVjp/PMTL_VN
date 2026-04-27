@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   Req,
+  UseGuards,
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
@@ -14,6 +15,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import type { Request } from "express";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { VowsMeritService } from "./vows-merit.service.js";
@@ -61,6 +63,7 @@ import {
 
 @ApiTags("admin-vows")
 @Controller("admin/vows")
+@UseGuards(RolesGuard)
 @Roles("ADMIN", "SUPER_ADMIN")
 export class AdminVowsController {
   constructor(private readonly vowsMeritService: VowsMeritService) {}

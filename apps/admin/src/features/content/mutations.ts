@@ -41,7 +41,7 @@ export function useCreatePost() {
     onSuccess: () => {
       toast.success("Đã tạo bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -56,7 +56,7 @@ export function useUpdatePost() {
       toast.success("Đã cập nhật bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
       void qc.invalidateQueries({ queryKey: postKeys.detail(publicId) });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -70,7 +70,7 @@ export function usePublishPost() {
     onSuccess: () => {
       toast.success("Đã xuất bản bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -85,7 +85,7 @@ export function useUnpublishPost() {
       toast.success("Đã gỡ xuất bản bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
       void qc.invalidateQueries({ queryKey: postKeys.detail(publicId) });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -98,7 +98,7 @@ export function useDeletePost() {
     onSuccess: () => {
       toast.success("Đã xoá bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });

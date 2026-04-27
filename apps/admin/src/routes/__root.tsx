@@ -213,37 +213,6 @@ const VolunteerDetailPage = lazy(() =>
   import("@/features/volunteers/volunteer-detail-page").then((mod) => ({ default: mod.VolunteerDetailPage })),
 );
 
-// Guide detail/create wrappers — same component, different back-nav per category
-const DailyPracticeGuideCreatePage = lazy(() =>
-  import("@/features/guides/guide-create-page").then((mod) => ({
-    default: () => <mod.GuideCreatePage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh bài tập" defaultCategory="DAILY_PRACTICE" />,
-  })),
-);
-const DailyPracticeGuideDetailPage = lazy(() =>
-  import("@/features/guides/guide-detail-page").then((mod) => ({
-    default: () => <mod.GuideDetailPage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh bài tập" />,
-  })),
-);
-const LittleHouseGuideCreatePage = lazy(() =>
-  import("@/features/guides/guide-create-page").then((mod) => ({
-    default: () => <mod.GuideCreatePage backHref="/noi-dung/ngoi-nha-nho" backLabel="Ngôi Nhà Nhỏ" defaultCategory="LITTLE_HOUSE" />,
-  })),
-);
-const LittleHouseGuideDetailPage = lazy(() =>
-  import("@/features/guides/guide-detail-page").then((mod) => ({
-    default: () => <mod.GuideDetailPage backHref="/noi-dung/ngoi-nha-nho" backLabel="Ngôi Nhà Nhỏ" />,
-  })),
-);
-const LifeReleaseGuideCreatePage = lazy(() =>
-  import("@/features/guides/guide-create-page").then((mod) => ({
-    default: () => <mod.GuideCreatePage backHref="/noi-dung/phong-sanh" backLabel="Phóng Sanh" defaultCategory="LIFE_RELEASE" />,
-  })),
-);
-const LifeReleaseGuideDetailPage = lazy(() =>
-  import("@/features/guides/guide-detail-page").then((mod) => ({
-    default: () => <mod.GuideDetailPage backHref="/noi-dung/phong-sanh" backLabel="Phóng Sanh" />,
-  })),
-);
 const SutraDownloadCreatePage = lazy(() =>
   import("@/features/downloads/download-create-page").then((mod) => ({
     default: () => <mod.DownloadCreatePage backHref="/noi-dung/kinh-sach" backLabel="Kinh sách" defaultCategory="REFERENCE" />,
@@ -394,12 +363,18 @@ const dailyPracticeRoute = createRoute({
 const dailyPracticeCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-bai-tap/tao-moi",
-  component: withSuspense(DailyPracticeGuideCreatePage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/kinh-bai-tap" });
+  },
 });
 const dailyPracticeDetailRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-bai-tap/$publicId",
-  component: withSuspense(DailyPracticeGuideDetailPage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/kinh-bai-tap" });
+  },
 });
 
 const littleHouseRoute = createRoute({
@@ -410,12 +385,18 @@ const littleHouseRoute = createRoute({
 const littleHouseCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/ngoi-nha-nho/tao-moi",
-  component: withSuspense(LittleHouseGuideCreatePage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/ngoi-nha-nho" });
+  },
 });
 const littleHouseDetailRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/ngoi-nha-nho/$publicId",
-  component: withSuspense(LittleHouseGuideDetailPage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/ngoi-nha-nho" });
+  },
 });
 
 const lifeReleaseRoute = createRoute({
@@ -426,12 +407,18 @@ const lifeReleaseRoute = createRoute({
 const lifeReleaseCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/phong-sanh/tao-moi",
-  component: withSuspense(LifeReleaseGuideCreatePage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/phong-sanh" });
+  },
 });
 const lifeReleaseDetailRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/phong-sanh/$publicId",
-  component: withSuspense(LifeReleaseGuideDetailPage),
+  beforeLoad: () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/noi-dung/phong-sanh" });
+  },
 });
 
 const mediaLibraryRoute = createRoute({

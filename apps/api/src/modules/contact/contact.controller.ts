@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UsePipes, HttpCode, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UsePipes, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
+import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { ContactService } from "./contact.service.js";
@@ -28,6 +30,7 @@ export class ContactController {
 
   @Post()
   @Public()
+  @RateLimit("contact.submit")
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(ZodValidate(submitContactSchema))
   @ApiOperation({ summary: "Gửi liên hệ / phản hồi" })
@@ -37,6 +40,7 @@ export class ContactController {
   }
 
   @Get()
+  @UseGuards(RolesGuard)
   @Roles("ADMIN", "SUPER_ADMIN")
   @UsePipes(ZodValidate(contactQuerySchema))
   @ApiOperation({ summary: "Danh sách liên hệ (admin)" })
@@ -62,6 +66,7 @@ export class ContactController {
   }
 
   @Get(":publicId")
+  @UseGuards(RolesGuard)
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Chi tiết liên hệ (admin)" })
   @ApiResponse({ status: 200, description: "Chi tiết liên hệ" })
@@ -72,6 +77,7 @@ export class ContactController {
 
 @ApiTags("admin-volunteers")
 @Controller("admin/volunteers")
+@UseGuards(RolesGuard)
 @Roles("ADMIN", "SUPER_ADMIN")
 export class AdminVolunteerController {
   constructor(private readonly contactService: ContactService) {}
@@ -134,11 +140,14 @@ export class AdminVolunteerController {
 
 @ApiTags("admin-contact-info")
 @Controller("admin/contact-info")
-@Roles("ADMIN", "SUPER_ADMIN")
+@UseGuards(RolesGuard)
 export class AdminContactInfoController {
   constructor(private readonly contactService: ContactService) {}
 
+  // Read is ADMIN-accessible; write requires SUPER_ADMIN per design contract.
+  // Contract: design/03-domains/contact/CONTRACTS.md → "super-admin required to update contactInfo".
   @Get()
+  @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Thông tin liên hệ" })
   @ApiResponse({ status: 200, description: "Thông tin liên hệ" })
   get() {
@@ -146,7 +155,8 @@ export class AdminContactInfoController {
   }
 
   @Patch()
-  @ApiOperation({ summary: "Cập nhật thông tin liên hệ" })
+  @Roles("SUPER_ADMIN")
+  @ApiOperation({ summary: "Cập nhật thông tin liên hệ (chỉ super-admin)" })
   @ApiResponse({ status: 200, description: "Đã cập nhật thông tin liên hệ" })
   update(
     @CurrentUser() user: AuthenticatedUser,

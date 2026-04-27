@@ -39,7 +39,7 @@ export function useCreateGuide() {
     onSuccess: () => {
       toast.success("Đã tạo hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -54,7 +54,7 @@ export function useUpdateGuide() {
       toast.success("Đã cập nhật hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
       void qc.invalidateQueries({ queryKey: guideKeys.detail(publicId) });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -67,7 +67,7 @@ export function usePublishGuide() {
     onSuccess: () => {
       toast.success("Đã xuất bản hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -80,7 +80,7 @@ export function useDeleteGuide() {
     onSuccess: () => {
       toast.success("Đã xoá hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });

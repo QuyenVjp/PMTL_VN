@@ -50,7 +50,7 @@ export class CsrfGuard implements CanActivate {
 
     if (!headerToken || headerToken !== cookieToken) {
       throw new ForbiddenException({
-        code: "CSRF_TOKEN_MISMATCH",
+        code: "security.csrf_failed",
         message: "Yêu cầu không hợp lệ (CSRF token không khớp)",
       });
     }

@@ -45,6 +45,14 @@ export class MediaAssetsRepository {
     });
   }
 
+  async findManyByPublicIds(publicIds: string[]) {
+    if (publicIds.length === 0) return [];
+    return this.prisma.mediaAsset.findMany({
+      where: { publicId: { in: publicIds } },
+      select: { publicId: true, url: true, storageKey: true },
+    });
+  }
+
   async findById(id: string) {
     return this.prisma.mediaAsset.findUnique({
       where: { id },

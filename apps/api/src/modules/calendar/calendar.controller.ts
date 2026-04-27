@@ -128,7 +128,7 @@ export class CalendarController {
       new Intl.DateTimeFormat("en-US", { timeZone: query.tz }).format(date);
     } catch {
       throw new BadRequestException({
-        code: "INVALID_TIMEZONE",
+        code: "validation.invalid_params",
         message: `Timezone không hợp lệ: ${query.tz}`,
       });
     }

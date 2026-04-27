@@ -76,6 +76,9 @@ Rules:
 - `moderation.report_duplicate`
 - `moderation.decision_invalid`
 - `moderation.target_not_found`
+- `charity.firewall.blocked`
+- `disclaimer_not_acknowledged` *(legacy unnamespaced — pending migration to `community.disclaimer_not_acknowledged`)*
+- `prohibited_terms_detected` *(legacy unnamespaced — pending migration to `community.prohibited_terms_detected`)*
 
 ### Search / Calendar / Notification
 
@@ -93,6 +96,7 @@ Rules:
 - `calendar.month_invalid`
 - `calendar.aggregate_unavailable`
 - `calendar.advisory_unavailable`
+- `yin_time_deadzone_active` *(legacy unnamespaced — pending migration to `calendar.yin_time_deadzone_active`)*
 - `notification.subscription_invalid`
 - `notification.subscription_missing`
 - `notification.delivery_disabled`
@@ -146,6 +150,30 @@ Rules:
 - `vows.progress_conflict`
 - `vows.assisted_entry_forbidden`
 
+### Altar / Practice Safety
+
+- `altar.water_boiling`
+- `altar.water_too_hot`
+- `altar.protocol_acknowledgment_required`
+- `altar.damage_items_required`
+- `altar.forbidden_item_detected`
+- `altar.retirement_pledge_required`
+- `altar.personal_use_pledge_required`
+- `altar.hardware_reassignment_forbidden`
+- `altar.grand_incense_prerequisites_not_met`
+- `altar.mouth_blowing_forbidden`
+- `water_temperature_forbidden` *(legacy unnamespaced — overlaps `altar.water_boiling`/`altar.water_too_hot`; pending migration)*
+- `metal_container_forbidden` *(legacy unnamespaced — overlaps `altar.forbidden_item_detected`; pending migration)*
+- `incense_not_ready` *(legacy unnamespaced — overlaps `altar.grand_incense_prerequisites_not_met`; pending migration)*
+
+### Buddhist Events
+
+- `monetization_forbidden_for_dharma_events` *(legacy unnamespaced — pending migration to `events.monetization_forbidden`)*
+
+### Wisdom QA / Mental health gate
+
+- `invalid_mental_health_condition` *(legacy unnamespaced — pending migration to `wisdom.invalid_mental_health_condition` or `validation.constraint_failed`)*
+
 ### Admin operations
 
 - `admin.insufficient_role`
@@ -172,6 +200,28 @@ Rules:
 - `prisma.pool_timeout`
 - `prisma.query_invalid`
 - `prisma.migration_failed`
+
+### Sacred Forms (Đơn / Sớ)
+
+- `sacred_forms.invalid_burn_conditions` — đốt ngoài khung giờ hợp lệ (06:00-07:00, 08:00-09:00, 16:00-17:00)
+- `sacred_forms.weather_confirmation_required` — chưa xác nhận thời tiết tốt trước khi đốt
+- `sacred_forms.disposal_polarity_violation` — sai polarity: dharma_name_change phải `safe_incineration`; special_vow KHÔNG được `safe_incineration`
+- `sacred_forms.prerequisites_not_met` — điều kiện tiên quyết chưa đủ để tiến hành
+- `INVALID_BURN_CONDITIONS` *(legacy unnamespaced — đang dùng trong `sacred-forms.service.ts`; pending migration to `sacred_forms.invalid_burn_conditions`)*
+- `WEATHER_CONFIRMATION_REQUIRED` *(legacy unnamespaced — đang dùng trong `sacred-forms.service.ts`; pending migration to `sacred_forms.weather_confirmation_required`)*
+
+### Life Liberation (Phóng Sinh)
+
+- `life_liberation.predatory_habitat_verification_required` — loài ăn thịt yêu cầu xác nhận habitat (`habitatVerified=true`) trước khi ghi nhận
+- `life_liberation.unsafe_habitat_for_predatory_species` — môi trường sống không an toàn cho loài ăn thịt
+- `life_liberation.money_transfer_not_confirmed` — phóng sinh hộ bằng tiền riêng chưa có xác nhận khấn chuyển tiền tại bàn thờ
+- `PREDATORY_HABITAT_VERIFICATION_REQUIRED` *(legacy unnamespaced — nhúng trong error message `life-liberation.service.ts`; pending migration to `life_liberation.predatory_habitat_verification_required`)*
+- `MONEY_TRANSFER_NOT_CONFIRMED` *(legacy unnamespaced — nhúng trong error message `life-liberation.service.ts`; pending migration to `life_liberation.money_transfer_not_confirmed`)*
+
+### Little House / Sớ Lifecycle
+
+- `little_house.metadata_required_before_recitation` — metadata bắt buộc phải có trước khi chuyển sang trạng thái recited
+- `little_house.invalid_status_transition` — chuyển trạng thái không hợp lệ theo vòng đời: in_progress → recited → ready_to_burn → burnt → completed_audited
 
 ## Status mapping guideline
 

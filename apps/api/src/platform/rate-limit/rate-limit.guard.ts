@@ -38,7 +38,7 @@ export class RateLimitGuard implements CanActivate {
       const retryAfter = Math.ceil((result.resetAt.getTime() - Date.now()) / 1000);
       throw new HttpException(
         {
-          code: "RATE_LIMIT_EXCEEDED",
+          code: "rate_limit.exceeded",
           message: "Quá nhiều yêu cầu, vui lòng thử lại sau",
           retryAfter,
         },

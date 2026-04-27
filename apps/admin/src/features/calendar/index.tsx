@@ -727,8 +727,12 @@ function CalendarMonthView({ events }: { events: CalendarEventItem[] }) {
       const d = new Date(event.startAt);
       if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
         const day = d.getDate();
-        if (!map.has(day)) map.set(day, []);
-        map.get(day)!.push(event);
+        const bucket = map.get(day);
+        if (bucket) {
+          bucket.push(event);
+        } else {
+          map.set(day, [event]);
+        }
       }
     }
     return map;

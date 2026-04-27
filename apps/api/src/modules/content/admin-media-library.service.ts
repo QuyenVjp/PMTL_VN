@@ -78,24 +78,30 @@ export class AdminMediaLibraryService {
       this.prisma.mediaCollection.count({ where }),
     ]);
 
-    const data = await Promise.all(collections.map(async (c) => ({
-        publicId:       c.publicId,
-        title:          c.title,
-        slug:           c.slug,
-        collectionType: c.collectionType,
-        description:    c.description,
-        sourceNote:     c.sourceNote,
-        featured:       c.featured,
-        sortOrder:      c.sortOrder,
-        status:         c.status,
-        publishedAt:    c.publishedAt,
-        itemCount:      c._count.items,
-        coverImageUrl:  await this.storageService.resolveAssetUrl(c.coverMedia?.publicId) ?? c.coverMedia?.url ?? null,
-        coverMediaPublicId: c.coverMedia?.publicId ?? null,
-        createdByName:  c.createdBy.displayName,
-        createdAt:      c.createdAt,
-        updatedAt:      c.updatedAt,
-      })));
+    // Batch-resolve cover image URLs — one DB query instead of N separate lookups.
+    const coverPublicIds = collections
+      .map(c => c.coverMedia?.publicId)
+      .filter((id): id is string => id != null);
+    const coverUrlMap = await this.storageService.resolveAssetUrlsBatch(coverPublicIds);
+
+    const data = collections.map(c => ({
+      publicId:       c.publicId,
+      title:          c.title,
+      slug:           c.slug,
+      collectionType: c.collectionType,
+      description:    c.description,
+      sourceNote:     c.sourceNote,
+      featured:       c.featured,
+      sortOrder:      c.sortOrder,
+      status:         c.status,
+      publishedAt:    c.publishedAt,
+      itemCount:      c._count.items,
+      coverImageUrl:  (c.coverMedia?.publicId != null ? coverUrlMap.get(c.coverMedia.publicId) : null) ?? c.coverMedia?.url ?? null,
+      coverMediaPublicId: c.coverMedia?.publicId ?? null,
+      createdByName:  c.createdBy.displayName,
+      createdAt:      c.createdAt,
+      updatedAt:      c.updatedAt,
+    }));
 
     return {
       data,
@@ -279,24 +285,30 @@ export class AdminMediaLibraryService {
       },
     });
 
-    const data = await Promise.all(items.map(async (item) => ({
-        publicId:           item.publicId,
-        itemType:           item.itemType,
-        externalUrl:        item.externalUrl,
-        title:              item.title,
-        caption:            item.caption,
-        ownerModule:        item.ownerModule,
-        ownerPublicRef:     item.ownerPublicRef,
-        sortOrder:          item.sortOrder,
-        createdAt:          item.createdAt,
-        mediaAssetPublicId: item.mediaAsset?.publicId ?? null,
-        mediaAssetUrl:      await this.storageService.resolveAssetUrl(item.mediaAsset?.publicId) ?? item.mediaAsset?.url ?? null,
-        mediaAssetFilename: item.mediaAsset?.filename ?? null,
-        mediaAssetMimeType: item.mediaAsset?.mimeType ?? null,
-        mediaAssetWidth:    item.mediaAsset?.width ?? null,
-        mediaAssetHeight:   item.mediaAsset?.height ?? null,
-        mediaAssetSize:     item.mediaAsset?.size ?? null,
-      })));
+    // Batch-resolve media asset URLs — one DB query instead of N separate lookups.
+    const assetPublicIds = items
+      .map(i => i.mediaAsset?.publicId)
+      .filter((id): id is string => id != null);
+    const assetUrlMap = await this.storageService.resolveAssetUrlsBatch(assetPublicIds);
+
+    const data = items.map(item => ({
+      publicId:           item.publicId,
+      itemType:           item.itemType,
+      externalUrl:        item.externalUrl,
+      title:              item.title,
+      caption:            item.caption,
+      ownerModule:        item.ownerModule,
+      ownerPublicRef:     item.ownerPublicRef,
+      sortOrder:          item.sortOrder,
+      createdAt:          item.createdAt,
+      mediaAssetPublicId: item.mediaAsset?.publicId ?? null,
+      mediaAssetUrl:      (item.mediaAsset?.publicId != null ? assetUrlMap.get(item.mediaAsset.publicId) : null) ?? item.mediaAsset?.url ?? null,
+      mediaAssetFilename: item.mediaAsset?.filename ?? null,
+      mediaAssetMimeType: item.mediaAsset?.mimeType ?? null,
+      mediaAssetWidth:    item.mediaAsset?.width ?? null,
+      mediaAssetHeight:   item.mediaAsset?.height ?? null,
+      mediaAssetSize:     item.mediaAsset?.size ?? null,
+    }));
 
     return {
       data,

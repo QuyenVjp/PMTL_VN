@@ -184,8 +184,11 @@ Ví dụ:
 - `search.sync.failure`
 - `event.publish`
 - `vow.create`
+- `vow.progress`
 - `vow.pause`
 - `vow.fulfill`
+- `vow.milestone`
+- `merit.transfer`
 - `life-release.log`
 - `wisdom.entry.publish`
 - `qa.entry.publish`

@@ -2,6 +2,37 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import type { CreateSessionInput } from "./sessions.schemas.js";
 
+/**
+ * Fields exposed on session records returned to callers.
+ * Deliberately excludes `refreshToken` (sensitive secret).
+ */
+const SESSION_SELECT = {
+  id: true,
+  userId: true,
+  userAgent: true,
+  ipAddress: true,
+  createdAt: true,
+  updatedAt: true,
+  expiresAt: true,
+  revokedAt: true,
+} as const;
+
+/**
+ * Mirrors AUTH_USER_SELECT in identity.service.ts.
+ * Provides only the fields needed for token generation and auth responses.
+ * Deliberately excludes `passwordHash`, `resetToken`, and all other sensitive columns.
+ */
+const SESSION_USER_SELECT = {
+  id: true,
+  publicId: true,
+  email: true,
+  displayName: true,
+  role: true,
+  avatarUrl: true,
+  status: true,
+  emailVerifiedAt: true,
+} as const;
+
 @Injectable()
 export class SessionsRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -21,13 +52,17 @@ export class SessionsRepository {
   async findByRefreshToken(refreshToken: string) {
     return this.prisma.session.findUnique({
       where: { refreshToken },
-      include: { user: true },
+      select: {
+        ...SESSION_SELECT,
+        user: { select: SESSION_USER_SELECT },
+      },
     });
   }
 
   async findById(id: string) {
     return this.prisma.session.findUnique({
       where: { id },
+      select: SESSION_SELECT,
     });
   }
 
@@ -39,6 +74,7 @@ export class SessionsRepository {
         expiresAt: { gt: new Date() },
       },
       orderBy: { createdAt: "desc" },
+      select: SESSION_SELECT,
     });
   }
 

@@ -40,7 +40,7 @@ export function useCreateDownload() {
     onSuccess: () => {
       toast.success("Đã tạo tài liệu.");
       void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -55,7 +55,7 @@ export function useUpdateDownload() {
       toast.success("Đã cập nhật tài liệu.");
       void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
       void qc.invalidateQueries({ queryKey: downloadKeys.detail(publicId) });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -69,7 +69,7 @@ export function useDeleteDownload() {
     onSuccess: () => {
       toast.success("Đã xoá tài liệu.");
       void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -83,7 +83,7 @@ export function usePublishDownload() {
     onSuccess: () => {
       toast.success("Đã xuất bản tài liệu.");
       void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });
@@ -98,7 +98,7 @@ export function useUnpublishDownload() {
       toast.success("Đã gỡ xuất bản tài liệu.");
       void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
       void qc.invalidateQueries({ queryKey: downloadKeys.detail(publicId) });
-      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
     },
     onError: handleApiError,
   });

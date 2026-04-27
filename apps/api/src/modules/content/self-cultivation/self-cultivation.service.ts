@@ -27,7 +27,7 @@ const RUNTIME_FILE_PATH = join(__dirname, "..", "..", "..", "..", "data", "runti
 
 function slugConflictException() {
   return new ConflictException({
-    code: "CONFLICT",
+    code: "platform.conflict",
     message: "Slug này đã được dùng.",
     detail: {
       properties: { slug: { errors: ["Slug này đã được dùng."] } },

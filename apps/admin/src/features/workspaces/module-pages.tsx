@@ -10,7 +10,8 @@ import { useReindexMutation } from "@/features/system/mutations.js";
 
 // ── Re-exports from feature modules ─────────────────────────────────
 
-export { GuidesPage, DailyPracticePage, LittleHousePage, LifeReleasePage } from "@/features/guides/index.js";
+export { GuidesPage, LittleHousePage, LifeReleasePage } from "@/features/guides/index.js";
+export { DailyRecitationWorkspace as DailyPracticePage } from "@/features/daily-recitation/index.js";
 export { DownloadsPage } from "@/features/downloads/index.js";
 export { PostsPage } from "@/features/content/posts-page.js";
 export { MediaAssetsPage, ImageAssetsPage, VideoAssetsPage, DocumentAssetsPage } from "@/features/media/index.js";

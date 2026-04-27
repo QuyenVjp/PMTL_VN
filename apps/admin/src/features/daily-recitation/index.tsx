@@ -1,6 +1,6 @@
 /**
  * Daily Recitation Admin Workspace
- * Quản lý Kinh Văn Tự Tu — Bài Tập Hàng Ngày
+ * Quản lý Kinh bài tập hằng ngày
  *
  * Design source: design/03-domains/wisdom-qa/USE_CASES/daily-recitation-system.md
  */
@@ -39,7 +39,7 @@ type TimeRestriction = "none" | "no-after-22" | "no-22-to-5" | "anytime";
 interface SutraItem {
   id: string;
   name: string;
-  nameVi: string;
+  subtitle?: string;
   group: SutraGroup;
   purpose: string;
   dosageNormal: string;
@@ -84,7 +84,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "chu-dai-bi",
     name: "Chú Đại Bi",
-    nameVi: "Great Compassion Mantra",
+    subtitle: "Bài nền tảng hộ thân và tăng công lực",
     group: "foundation",
     purpose: "Tăng công lực, chữa bệnh, cầu nguyện thành tựu",
     dosageNormal: "3–7 biến",
@@ -100,7 +100,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "tam-kinh",
     name: "Tâm Kinh",
-    nameVi: "Heart Sutra",
+    subtitle: "Bài nền tảng khai mở trí tuệ",
     group: "foundation",
     purpose: "Mở trí tuệ, bình ổn cảm xúc, hóa giải phiền não",
     dosageNormal: "3–7 biến",
@@ -117,7 +117,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "le-phat-dai-sam-hoi-van",
     name: "Lễ Phật Đại Sám Hối Văn",
-    nameVi: "88 Buddhas Great Repentance",
+    subtitle: "Bài nền tảng để sám hối và tiêu nghiệp",
     group: "foundation",
     purpose: "Sám hối lỗi lầm quá khứ/hiện tại, tiêu trừ nghiệp chướng",
     dosageNormal: "1–3 biến",
@@ -135,7 +135,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "vang-sinh-chu",
     name: "Vãng Sinh Chú",
-    nameVi: "Rebirth Mantra",
+    subtitle: "Bài hỗ trợ hồi hướng theo trường hợp phù hợp",
     group: "short-mantra",
     purpose: "Cầu vãng sinh, siêu độ côn trùng / động vật nhỏ đã giết/ăn",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -149,7 +149,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "giai-ket-chu",
     name: "Giải Kết Chú",
-    nameVi: "Mantra to Untie Karmic Knots",
+    subtitle: "Bài hỗ trợ hóa giải mâu thuẫn",
     group: "short-mantra",
     purpose: "Hóa giải mâu thuẫn gia đình, đồng nghiệp",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -162,7 +162,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "tieu-tai-cat-tuong",
     name: "Tiêu Tai Cát Tường Thần Chú",
-    nameVi: "Auspicious Mantra for Removing Disasters",
+    subtitle: "Bài hỗ trợ tiêu tai, cầu bình an",
     group: "short-mantra",
     purpose: "Hóa giải rắc rối đột xuất, kiện tụng, xui xẻo",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -175,7 +175,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "chuan-de-than-chu",
     name: "Chuẩn Đề Thần Chú",
-    nameVi: "Cundi Mantra",
+    subtitle: "Bài hỗ trợ cầu học tập, công việc",
     group: "short-mantra",
     purpose: "Cầu thành công công việc, thi cử, hôn nhân",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -188,7 +188,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "cong-duc-bao-son",
     name: "Công Đức Bảo Sơn Thần Chú",
-    nameVi: "Merit Mountain Mantra",
+    subtitle: "Bài hỗ trợ chuyển thiện hạnh thành công đức",
     group: "short-mantra",
     purpose: "Chuyển hóa việc thiện thành công đức (có thể đọc cho thai nhi)",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -201,7 +201,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "that-phat-diet-toi",
     name: "Thất Phật Diệt Tội Chân Ngôn",
-    nameVi: "Seven Buddhas Mantra for Eradicating Sins",
+    subtitle: "Bài dùng ở bước thanh lọc cuối thời khóa",
     group: "short-mantra",
     purpose: "Tiêu trừ nghiệp chướng nhỏ mới phát sinh (dùng trong bước Bổ Khuyết)",
     dosageNormal: "3 biến (bước Thanh Lọc) / 21–49 biến",
@@ -214,7 +214,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "thanh-vo-luong-tho",
     name: "Thánh Vô Lượng Thọ Quyết Định Quang Minh Vương Đà La Ni",
-    nameVi: "Mantra of the King of Definitive Light of Immeasurable Life",
+    subtitle: "Bài hỗ trợ cầu sức khỏe và tuổi thọ",
     group: "short-mantra",
     purpose: "Kéo dài tuổi thọ",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -227,7 +227,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "nhu-y-bao-luan",
     name: "Như Ý Bảo Luân Vương Đà La Ni",
-    nameVi: "Cintamani Dharani",
+    subtitle: "Bài hỗ trợ cầu thành tựu và bình an",
     group: "short-mantra",
     purpose: "Cầu thành công, nhận ánh sáng Phật",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -240,7 +240,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "dai-cat-tuong-thien-nu",
     name: "Đại Cát Tường Thiên Nữ Chú",
-    nameVi: "Great Auspicious Goddess Mantra",
+    subtitle: "Bài hỗ trợ cầu may mắn và thuận duyên",
     group: "short-mantra",
     purpose: "Cầu thoát nghèo, may mắn tình cảm",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -253,7 +253,7 @@ const SUTRAS: SutraItem[] = [
   {
     id: "quan-am-linh-cam",
     name: "Quán Âm Linh Cảm Chân Ngôn",
-    nameVi: "Guanyin Spiritual Response Mantra",
+    subtitle: "Bài hỗ trợ cầu linh ứng nhanh",
     group: "short-mantra",
     purpose: "Cầu nguyện linh ứng nhanh",
     dosageNormal: "21, 27 hoặc 49 biến",
@@ -336,7 +336,7 @@ const BUSINESS_RULES: BusinessRule[] = [
     icon: InfoIcon,
     description: "Nút Tạm Dừng bắt buộc. Câu phục hồi: \"Ông Lai Mu Suo He\".",
     detail:
-      "Khi có người gọi: nhấn Pause → đọc \"Ông Lai Mu Suo He\" 1 lần. Khi quay lại: đọc 1 lần nữa rồi niệm tiếp. Thần chú ngắn: nhắc niệm lại từ đầu.",
+      "Khi có người gọi: nhấn Tạm dừng → đọc \"Ông Lai Mu Suo He\" 1 lần. Khi quay lại: đọc 1 lần nữa rồi niệm tiếp. Thần chú ngắn: nhắc niệm lại từ đầu.",
   },
   {
     id: "rule-wish-limit",
@@ -473,7 +473,7 @@ function SutraCard({ sutra }: { sutra: SutraItem }) {
               )}
               <CardTitle className="text-base">{sutra.name}</CardTitle>
             </div>
-            <CardDescription className="text-xs">{sutra.nameVi}</CardDescription>
+            {sutra.subtitle ? <CardDescription className="text-xs">{sutra.subtitle}</CardDescription> : null}
           </div>
           <TimeRestrictionBadge restriction={sutra.timeRestriction} weather={sutra.weatherRestriction} />
         </div>
@@ -646,49 +646,33 @@ export function DailyRecitationWorkspace() {
 
   return (
     <div className="space-y-5">
-      {/* Page header */}
-      <section className="rounded-2xl border bg-card px-6 py-5 shadow-sm">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium text-primary">Nội dung / Niệm kinh / Kinh Bài Tập Hàng Ngày</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-              Kinh Bài Tập Hàng Ngày
-            </h1>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Quản lý toàn bộ catalog kinh văn tự tu: Kinh lớn nền tảng, Thập Tiểu Chú, quy tắc thời gian & thời tiết,
-              phác đồ tu học theo đối tượng, và luồng 7 bước hàng ngày.
+      <section className="rounded-xl border bg-card px-4 py-4 shadow-sm">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Kinh bài tập hằng ngày</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Danh mục bài kinh, bài chú và quy tắc cốt lõi cho công khóa hằng ngày.
             </p>
           </div>
 
-          <div className="rounded-xl border bg-destructive/5 px-4 py-3 text-sm">
-            <div className="flex items-center gap-2">
-              <AlertTriangleIcon className="h-4 w-4 text-destructive" />
-              <p className="font-semibold text-destructive">Nguyên tắc cốt lõi</p>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Số biến bài tập <strong>KHÔNG</strong> tính gộp vào Tiểu Phương Tử.<br />
-              Đây là hai counter riêng biệt hoàn toàn.
-            </p>
+          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+              <BookOpenIcon className="h-3.5 w-3.5" />
+              {foundationSutras.length} bài nền tảng
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+              <SparklesIcon className="h-3.5 w-3.5" />
+              {shortMantras.length} bài hỗ trợ
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+              <ShieldAlertIcon className="h-3.5 w-3.5" />
+              {BUSINESS_RULES.length} quy tắc
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5">
+              <UsersIcon className="h-3.5 w-3.5" />
+              {PRESETS.length} phác đồ
+            </span>
           </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <BookOpenIcon className="h-4 w-4" />
-            <strong className="text-foreground">{foundationSutras.length}</strong> Kinh lớn nền tảng
-          </span>
-          <span className="flex items-center gap-1.5">
-            <SparklesIcon className="h-4 w-4" />
-            <strong className="text-foreground">{shortMantras.length}</strong> Thập Tiểu Chú
-          </span>
-          <span className="flex items-center gap-1.5">
-            <ShieldAlertIcon className="h-4 w-4" />
-            <strong className="text-foreground">{BUSINESS_RULES.length}</strong> Business rules
-          </span>
-          <span className="flex items-center gap-1.5">
-            <UsersIcon className="h-4 w-4" />
-            <strong className="text-foreground">{PRESETS.length}</strong> Phác đồ
-          </span>
         </div>
       </section>
 
@@ -696,7 +680,7 @@ export function DailyRecitationWorkspace() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="h-auto flex-wrap gap-1 p-1">
           <TabsTrigger value="sutra-list" className="gap-2">
-            <BookOpenIcon className="h-4 w-4" /> Kinh văn
+            <BookOpenIcon className="h-4 w-4" /> Bài kinh và chú
           </TabsTrigger>
           <TabsTrigger value="workflow" className="gap-2">
             <ListChecksIcon className="h-4 w-4" /> Luồng 7 bước
@@ -714,11 +698,11 @@ export function DailyRecitationWorkspace() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <BookOpenIcon className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Kinh Lớn Nền Tảng</h2>
-              <Badge variant="outline">{foundationSutras.length} kinh</Badge>
+            <h2 className="text-lg font-semibold">Ba bài nền tảng</h2>
+              <Badge variant="outline">{foundationSutras.length} bài</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Bắt buộc có trong mọi thời khóa hàng ngày. <strong>Chú Đại Bi phải đọc đầu tiên.</strong>
+              Đây là các bài cốt lõi của công khóa hằng ngày. <strong>Chú Đại Bi phải đọc đầu tiên.</strong>
             </p>
             <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
               {foundationSutras.map((s) => (
@@ -732,11 +716,11 @@ export function DailyRecitationWorkspace() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <SparklesIcon className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Thập Tiểu Chú</h2>
-              <Badge variant="outline">{shortMantras.length} chú</Badge>
+              <h2 className="text-lg font-semibold">Bài chú hỗ trợ</h2>
+              <Badge variant="outline">{shortMantras.length} bài</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Thường set mặc định 21, 27 hoặc 49 biến. Chọn theo nhu cầu cầu nguyện cụ thể.
+              Đây là nhóm bài chú bổ trợ theo từng nhu cầu cụ thể. Mốc gợi ý thường dùng là 21, 27 hoặc 49 biến.
             </p>
             <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
               {shortMantras.map((s) => (

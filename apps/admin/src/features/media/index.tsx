@@ -30,6 +30,12 @@ import { createSelectColumn } from "@/lib/table/select-column";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { useDeleteMediaAsset, useUpdateMediaAsset, useUploadMediaAsset } from "@/features/media/mutations";
 import { resolveMediaSrc } from "@/lib/media-src";
+import {
+  MEDIA_ASSET_STATUS_OPTIONS,
+  formatFileSize,
+  mediaAssetStatusBadgeClass as statusBadgeClass,
+  mediaAssetStatusLabel as statusLabel,
+} from "@/components/workspace/workspace-helpers";
 
 // ── Context ──────────────────────────────────────────────────────────
 
@@ -64,39 +70,6 @@ function useMedia() {
   const context = useContext(MediaContext);
   if (!context) throw new Error("useMedia must be used within MediaProvider");
   return context;
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────
-
-const statusOptions = [
-  { label: "Sẵn sàng", value: "READY" },
-  { label: "Đang tải", value: "UPLOADING" },
-  { label: "Mồ côi", value: "ORPHANED" },
-  { label: "Đã xoá", value: "DELETED" },
-];
-
-function statusBadgeClass(s: string): string {
-  if (s === "READY")
-    return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
-  if (s === "UPLOADING")
-    return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
-  if (s === "ORPHANED")
-    return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
-  return "";
-}
-
-function statusLabel(s: string): string {
-  if (s === "READY") return "Sẵn sàng";
-  if (s === "UPLOADING") return "Đang tải";
-  if (s === "ORPHANED") return "Mồ côi";
-  if (s === "DELETED") return "Đã xoá";
-  return s;
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 // ── Row actions ───────────────────────────────────────────────────────
@@ -280,7 +253,7 @@ function MediaAssetsTable() {
         searchPlaceholder="Lọc theo tên file..."
         searchKey="filename"
         viewButtonLabel="Xem"
-        filters={[{ columnId: "status", title: "Trạng thái", options: statusOptions }]}
+        filters={[{ columnId: "status", title: "Trạng thái", options: MEDIA_ASSET_STATUS_OPTIONS.filter((o) => o.value !== "") }]}
       />
 
       <WorkspaceDataTable

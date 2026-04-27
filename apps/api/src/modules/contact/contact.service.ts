@@ -253,9 +253,19 @@ export class ContactService {
       return cached;
     }
 
+    // Public route: expose only safe display fields — phone must NOT be returned.
+    // Contract: design/03-domains/contact/CONTRACTS.md → public response shape.
     const data = await this.prisma.volunteer.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
+      select: {
+        publicId:    true,
+        displayName: true,
+        role:        true,
+        avatarUrl:   true,
+        zaloLink:    true,
+        bio:         true,
+      },
     });
 
     await this.cache.setJson(cacheKey, data, 300);

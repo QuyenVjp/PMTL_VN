@@ -18,6 +18,7 @@ ENV_FILE = ROOT / "infra" / "docker" / ".env.dev"
 SKILLS_DIR = ROOT / ".agents" / "skills"
 TAXONOMY_PATH = ROOT / "docs" / "architecture" / "skills-taxonomy.md"
 MULTI_CLI_ROUTER_PATH = ROOT / "infra" / "tools" / "multi_cli_router.py"
+GLOBAL_SKILL_ROUTER_PATH = Path.home() / "plugins" / "skill-router" / "scripts" / "skill_router.py"
 
 SMOKE_DOCKER_ENV = {
     # Repo no longer ships a CMS service; point to a host-run backend if available.
@@ -545,6 +546,67 @@ def multi_cli_router(task: str, provider: str | None, compare: bool, route_only:
     return 0 if ok else 1
 
 
+def meta_router(task: str, cwd: str | None, fmt: str) -> int:
+    if not GLOBAL_SKILL_ROUTER_PATH.exists():
+        emit_json(
+            {
+                "ok": False,
+                "error": f"Missing global skill-router at {GLOBAL_SKILL_ROUTER_PATH}",
+            }
+        )
+        return 1
+
+    command = [
+        sys.executable,
+        str(GLOBAL_SKILL_ROUTER_PATH),
+        "route",
+        "--task",
+        task,
+        "--format",
+        "json",
+        "--cwd",
+        cwd or str(ROOT),
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    ok = completed.returncode == 0
+    try:
+        payload = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        payload = {
+            "ok": False,
+            "command": command,
+            "stdout": completed.stdout.strip(),
+            "stderr": completed.stderr.strip(),
+        }
+        ok = False
+
+    if fmt == "markdown" and ok:
+        route = payload["route"]
+        payload = {
+            "ok": payload["ok"],
+            "repo": payload["repo"],
+            "lane": route["primary_lane"],
+            "skills": route["skills"],
+            "mcps": route["mcps"],
+            "tools": route["tools"],
+            "knowledge": route["knowledge"],
+            "commands": route["commands"],
+            "blocked": route["blocked"],
+            "read_only": route["read_only"],
+            "reasons": route["reasons"],
+        }
+
+    emit_json(payload)
+    return 0 if ok else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="action", required=True)
@@ -593,6 +655,12 @@ def build_parser() -> argparse.ArgumentParser:
     router_parser.set_defaults(
         handler=lambda args: multi_cli_router(args.task, args.provider, args.compare, args.route_only, args.speed)
     )
+
+    meta_router_parser = subparsers.add_parser("meta-router")
+    meta_router_parser.add_argument("--task", required=True)
+    meta_router_parser.add_argument("--cwd")
+    meta_router_parser.add_argument("--format", choices=["json", "markdown"], default="json")
+    meta_router_parser.set_defaults(handler=lambda args: meta_router(args.task, args.cwd, args.format))
 
     return parser
 

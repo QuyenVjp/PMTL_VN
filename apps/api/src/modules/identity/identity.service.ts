@@ -21,7 +21,7 @@ import type {
   ResetPasswordInput,
 } from "./identity.schemas.js";
 import type { JwtAccessPayload } from "../../common/auth/auth-request.types.js";
-import type { UserRole } from "../../generated/prisma/client.js";
+import { Prisma, type UserRole } from "../../generated/prisma/client.js";
 
 export interface AuthSessionStateDto {
   user: {
@@ -196,27 +196,29 @@ export class IdentityService {
   }
 
   async bootstrapFirstAdmin(input: BootstrapAdminInput, metadata: { userAgent?: string; ipAddress?: string }) {
-    const status = await this.getBootstrapStatus();
-    if (!status.needsBootstrap) {
-      throw new ConflictException("Hệ thống đã có tài khoản quản trị");
-    }
-
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: input.email.toLowerCase() },
-      select: { id: true },
-    });
-    if (existingUser) {
-      throw new ConflictException("Email đã được sử dụng");
-    }
-
     const passwordHash = await argon2.hash(input.password);
     const publicId = nanoid(21);
+    const email = input.email.toLowerCase();
 
     const user = await this.prisma.$transaction(async (tx) => {
+      const [userCount, adminCount, existingUser] = await Promise.all([
+        tx.user.count(),
+        tx.user.count({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } } }),
+        tx.user.findUnique({ where: { email }, select: { id: true } }),
+      ]);
+
+      if (userCount > 0 || adminCount > 0) {
+        throw new ConflictException("Hệ thống đã có tài khoản quản trị");
+      }
+
+      if (existingUser) {
+        throw new ConflictException("Email đã được sử dụng");
+      }
+
       const created = await tx.user.create({
         data: {
           publicId,
-          email: input.email.toLowerCase(),
+          email,
           passwordHash,
           displayName: input.displayName,
           role: "SUPER_ADMIN",
@@ -235,7 +237,7 @@ export class IdentityService {
       );
 
       return created;
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     const { session, refreshToken } = await this.sessions.createSession(
       user.id,

@@ -1079,16 +1079,31 @@ async function seedPosts(usersByEmail: Map<string, { id: string; publicId: strin
       throw new Error(`Không tìm thấy tác giả seed: ${spec.authorEmail}`);
     }
 
-    await prisma.post.upsert({
-      where: { slug: spec.slug },
-      update: {
-        title: spec.title,
-        status: spec.status,
-        content: spec.content,
-        authorId: author.id,
-        publishedAt: spec.status === ContentStatus.PUBLISHED ? new Date() : null,
+    const existing = await prisma.post.findFirst({
+      where: {
+        OR: [{ publicId: spec.publicId }, { slug: spec.slug }],
       },
-      create: {
+      select: { publicId: true },
+    });
+
+    if (existing) {
+      await prisma.post.update({
+        where: { publicId: existing.publicId },
+        data: {
+          publicId: spec.publicId,
+          slug: spec.slug,
+          title: spec.title,
+          status: spec.status,
+          content: spec.content,
+          authorId: author.id,
+          publishedAt: spec.status === ContentStatus.PUBLISHED ? new Date() : null,
+        },
+      });
+      continue;
+    }
+
+    await prisma.post.create({
+      data: {
         publicId: spec.publicId,
         slug: spec.slug,
         title: spec.title,
@@ -1627,8 +1642,11 @@ async function seedBeginnerGuides(usersByEmail: Map<string, { id: string; public
   const guides = [
     { title: "Hướng dẫn bắt đầu tu tập tại nhà", slug: "huong-dan-bat-dau-tu-tap-tai-nha", category: GuideCategory.BEGINNER, excerpt: "Hướng dẫn từng bước cho người mới bắt đầu hành trì Phật pháp tại nhà.", status: ContentStatus.PUBLISHED },
     { title: "Cách set up bàn thờ Phật đơn giản", slug: "cach-setup-ban-tho-phat-don-gian", category: GuideCategory.BEGINNER, excerpt: "Hướng dẫn bày trí bàn thờ Phật phù hợp với không gian nhỏ.", status: ContentStatus.PUBLISHED },
-    { title: "Hướng dẫn niệm Đại Bi Chú hằng ngày", slug: "huong-dan-niem-dai-bi-chu-hang-ngay", category: GuideCategory.DAILY_PRACTICE, excerpt: "Phương pháp trì tụng Đại Bi Chú đúng cách, bao gồm số biến và cách hồi hướng.", status: ContentStatus.PUBLISHED },
-    { title: "Kinh Bát Nhã Ba La Mật Đa Tâm Kinh - Giải nghĩa", slug: "kinh-bat-nha-giai-nghia", category: GuideCategory.DAILY_PRACTICE, excerpt: "Giải thích ý nghĩa sâu xa của Tâm Kinh Bát Nhã cho người tu tập.", status: ContentStatus.DRAFT },
+    { title: "Kinh bài tập: Bắt đầu cho người mới", slug: "kinh-bai-tap-bat-dau-cho-nguoi-moi", category: GuideCategory.DAILY_PRACTICE, excerpt: "Giải thích Kinh bài tập là gì, bộ công khóa cơ bản cho người mới, và cách phân biệt với Ngôi Nhà Nhỏ, Kinh văn tự tu.", status: ContentStatus.PUBLISHED },
+    { title: "Kinh bài tập: Các bước niệm cho người mới", slug: "kinh-bai-tap-cac-buoc-cho-nguoi-moi", category: GuideCategory.DAILY_PRACTICE, excerpt: "Sắp theo đúng trình tự các bước niệm cơ bản, từ phần mở đầu tới các bài chính và phần kết.", status: ContentStatus.PUBLISHED },
+    { title: "Kinh bài tập: Cách niệm đúng và những điều cần tránh", slug: "kinh-bai-tap-cach-niem-dung", category: GuideCategory.DAILY_PRACTICE, excerpt: "Nhắc rõ cách đọc tên bài, cách chia buổi niệm, xử lý khi gián đoạn, và những điều cần tránh trong lúc hành trì.", status: ContentStatus.PUBLISHED },
+    { title: "Kinh bài tập: Câu hỏi thường gặp", slug: "kinh-bai-tap-cau-hoi-thuong-gap", category: GuideCategory.DAILY_PRACTICE, excerpt: "Tổng hợp các câu hỏi người mới hay gặp về giờ giấc, số biến, cách bù bài và các lưu ý thực hành.", status: ContentStatus.DRAFT },
+    { title: "Kinh bài tập: Theo từng trường hợp", slug: "kinh-bai-tap-theo-tung-truong-hop", category: GuideCategory.DAILY_PRACTICE, excerpt: "Gợi ý bài niệm và lưu ý theo từng hoàn cảnh như người mới, người cao tuổi, người bệnh nặng hoặc người bận rộn.", status: ContentStatus.PUBLISHED },
     { title: "Hướng dẫn thực hành Ngôi Nhà Nhỏ", slug: "huong-dan-thuc-hanh-ngoi-nha-nho", category: GuideCategory.LITTLE_HOUSE, excerpt: "Hướng dẫn chi tiết cách thực hành Ngôi Nhà Nhỏ theo đúng phương pháp.", status: ContentStatus.PUBLISHED },
     { title: "Cách đốt Ngôi Nhà Nhỏ đúng cách", slug: "cach-dot-ngoi-nha-nho-dung-cach", category: GuideCategory.LITTLE_HOUSE, excerpt: "Các bước chuẩn bị và đốt Ngôi Nhà Nhỏ an toàn và đúng nghi thức.", status: ContentStatus.PUBLISHED },
     { title: "Hướng dẫn phóng sanh đúng pháp", slug: "huong-dan-phong-sanh-dung-phap", category: GuideCategory.LIFE_RELEASE, excerpt: "Những điều cần biết khi phóng sanh: chọn vật, chọn địa điểm, và nghi thức.", status: ContentStatus.PUBLISHED },
@@ -1671,12 +1689,12 @@ async function seedDownloads(usersByEmail: Map<string, { id: string; publicId: s
   const users = Array.from(usersByEmail.values());
 
   const downloads = [
-    { title: "Kinh Đại Bi Chú (PDF)", category: DownloadCategory.GUIDE, fileUrl: "/files/dai-bi-chu.pdf", fileType: "application/pdf", fileSize: 245000, status: ContentStatus.PUBLISHED },
+    { title: "Hướng dẫn Kinh bài tập cho người mới (PDF)", category: DownloadCategory.GUIDE, fileUrl: "/files/huong-dan-kinh-bai-tap-nguoi-moi.pdf", fileType: "application/pdf", fileSize: 245000, status: ContentStatus.PUBLISHED },
     { title: "Bản in Ngôi Nhà Nhỏ (A4)", category: DownloadCategory.TEMPLATE, fileUrl: "/files/ngoi-nha-nho-a4.pdf", fileType: "application/pdf", fileSize: 180000, status: ContentStatus.PUBLISHED },
     { title: "Hướng dẫn phóng sanh (PDF)", category: DownloadCategory.GUIDE, fileUrl: "/files/huong-dan-phong-sanh.pdf", fileType: "application/pdf", fileSize: 320000, status: ContentStatus.PUBLISHED },
     { title: "Lịch âm 2026 - Ngày tốt tu tập", category: DownloadCategory.REFERENCE, fileUrl: "/files/lich-am-2026.pdf", fileType: "application/pdf", fileSize: 150000, status: ContentStatus.PUBLISHED },
-    { title: "FAQ - Câu hỏi thường gặp về niệm kinh", category: DownloadCategory.FAQ, fileUrl: "/files/faq-niem-kinh.pdf", fileType: "application/pdf", fileSize: 95000, status: ContentStatus.DRAFT },
-    { title: "Template theo dõi công phu hằng ngày", category: DownloadCategory.TEMPLATE, fileUrl: "/files/template-cong-phu.xlsx", fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileSize: 42000, status: ContentStatus.PUBLISHED },
+    { title: "Kinh bài tập - Câu hỏi thường gặp (PDF)", category: DownloadCategory.FAQ, fileUrl: "/files/kinh-bai-tap-cau-hoi-thuong-gap.pdf", fileType: "application/pdf", fileSize: 95000, status: ContentStatus.DRAFT },
+    { title: "Checklist công khóa hằng ngày", category: DownloadCategory.TEMPLATE, fileUrl: "/files/checklist-cong-khoa-hang-ngay.pdf", fileType: "application/pdf", fileSize: 42000, status: ContentStatus.PUBLISHED },
   ];
 
   for (let i = 0; i < downloads.length; i++) {

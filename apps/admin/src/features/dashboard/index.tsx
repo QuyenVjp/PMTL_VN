@@ -59,25 +59,12 @@ import {
 import { cn } from "@/lib/utils";
 import { dashboardStatsOptions, dashboardKeys } from "./queries.js";
 import { healthExtendedOptions } from "@/features/system/health-queries.js";
+import {
+  contentStatusBadgeClass as contentStatusClass,
+  contentStatusLabel as statusLabel,
+} from "@/components/workspace/workspace-helpers";
 
 // ── Helpers ───────────────────────────────────────────────────────────
-
-function contentStatusClass(status: string): string {
-  if (status === "PUBLISHED")
-    return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
-  if (status === "DRAFT")
-    return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
-  if (status === "ARCHIVED")
-    return "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-400";
-  return "";
-}
-
-function statusLabel(status: string): string {
-  if (status === "PUBLISHED") return "Đã xuất bản";
-  if (status === "DRAFT") return "Nháp";
-  if (status === "ARCHIVED") return "Đã ẩn";
-  return status;
-}
 
 function statusShortLabel(status: string): string {
   if (status === "PUBLISHED") return "Xuất bản";

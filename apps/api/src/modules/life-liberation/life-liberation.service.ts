@@ -81,16 +81,25 @@ export class LifeLiberationService {
     }
 
     const hasPredatory = predatoryAnimals.length > 0;
-    const record = await this.repo.create(input, userId, nanoid(21));
-
-    await this.audit.append(auditCtx, "member.life_release.create", "life_release_record", record.publicId, {
-      recordType: input.recordType,
-      totalAnimals: input.animals.reduce((s, a) => s + a.quantity, 0),
-      hasPredatory,
-      riskLevel: hasPredatory ? "HIGH" : "NORMAL",
-      habitatVerified: input.habitatVerified,
-      habitatSafe: input.habitatSafe ?? null,
-      species: predatoryAnimals.map((a) => a.species),
+    const record = await this.prisma.$transaction(async (tx) => {
+      const created = await this.repo.create(input, userId, nanoid(21), tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "member.life_release.create",
+        "life_release_record",
+        created.publicId,
+        {
+          recordType: input.recordType,
+          totalAnimals: input.animals.reduce((s, a) => s + a.quantity, 0),
+          hasPredatory,
+          riskLevel: hasPredatory ? "HIGH" : "NORMAL",
+          habitatVerified: input.habitatVerified,
+          habitatSafe: input.habitatSafe ?? null,
+          species: predatoryAnimals.map((a) => a.species),
+        },
+      );
+      return created;
     });
 
     return mapRecordToDetail(record);
@@ -105,10 +114,17 @@ export class LifeLiberationService {
     const record = await this.repo.findByPublicId(publicId);
     if (!record) throw new NotFoundException("Hồ sơ phóng sinh không tồn tại");
     if (record.status === "CANCELLED") throw new BadRequestException("Hồ sơ đã bị hủy");
-    const updated = await this.repo.updateStatus(record.id, input.status);
-    await this.audit.append(auditCtx, "admin.life_release.status", "life_release_record", publicId, {
-      from: record.status,
-      to: input.status,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await this.repo.updateStatus(record.id, input.status, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.life_release.status",
+        "life_release_record",
+        publicId,
+        { from: record.status, to: input.status },
+      );
+      return next;
     });
     return mapRecordToItem(updated);
   }
@@ -119,9 +135,17 @@ export class LifeLiberationService {
     if (record.recordType !== "PROXY") {
       throw new BadRequestException("Chỉ hồ sơ PROXY mới được thêm người thụ hưởng");
     }
-    const proxy = await this.repo.addProxyRelease(record.id, sponsorId, input);
-    await this.audit.append(auditCtx, "member.life_release.proxy_add", "proxy_life_release", proxy.id, {
-      beneficiary: input.beneficiary,
+    const proxy = await this.prisma.$transaction(async (tx) => {
+      const created = await this.repo.addProxyRelease(record.id, sponsorId, input, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "member.life_release.proxy_add",
+        "proxy_life_release",
+        created.id,
+        { beneficiary: input.beneficiary },
+      );
+      return created;
     });
     return proxy;
   }

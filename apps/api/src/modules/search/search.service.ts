@@ -3,10 +3,12 @@ import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { CircuitBreakerService } from "../../common/resilience/circuit-breaker.service.js";
+import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import type CircuitBreaker from "opossum";
 import type { SearchQuery } from "./search.schemas.js";
 
 type SearchIndex = "posts" | "events" | "guides" | "downloads" | "community" | "wisdom" | "qa" | "sutras";
+const REINDEX_BATCH_SIZE = 500;
 
 export type SearchDoc = {
   id: string;
@@ -36,6 +38,7 @@ export class SearchService {
     private readonly configService: ConfigService,
     private readonly cache: CacheService,
     private readonly circuitBreaker: CircuitBreakerService,
+    private readonly audit: AuditService,
   ) {
     // Circuit breaker wraps the raw Meilisearch HTTP call.
     // Opens at 50% failure rate; falls back to SQL search automatically.
@@ -108,7 +111,7 @@ export class SearchService {
     return fallbackResult;
   }
 
-  async reindex(indexName: string) {
+  async reindex(indexName: string, auditContext?: AuditContext) {
     const targetIndexes =
       indexName === "all"
         ? this.searchableIndexes
@@ -124,11 +127,38 @@ export class SearchService {
 
     const reindexed: SearchIndex[] = [];
     for (const index of targetIndexes) {
-      const docs = await this.loadDocumentsForIndex(index);
-      await this.ensureMeiliIndex(index);
-      await this.meiliRequest("DELETE", `/indexes/${this.indexUid(index)}/documents`);
-      if (docs.length > 0) {
-        await this.meiliRequest("POST", `/indexes/${this.indexUid(index)}/documents`, docs);
+      const uid = this.indexUid(index);
+      let batchNumber = 0;
+      let totalDocuments = 0;
+
+      try {
+        await this.ensureMeiliIndex(index);
+        await this.meiliRequest("DELETE", `/indexes/${uid}/documents`);
+
+        for await (const docs of this.loadDocumentBatchesForIndex(index)) {
+          batchNumber += 1;
+          totalDocuments += docs.length;
+          await this.meiliRequest("POST", `/indexes/${uid}/documents`, docs);
+
+          if (auditContext) {
+            await this.audit.append(auditContext, "search.reindex.batch", "search_index", uid, {
+              index,
+              batchNumber,
+              documentCount: docs.length,
+              totalDocuments,
+            });
+          }
+        }
+      } catch (error) {
+        if (auditContext) {
+          await this.audit.append(auditContext, "search.sync.failure", "search_index", uid, {
+            index,
+            batchNumber,
+            totalDocuments,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+        throw error;
       }
       reindexed.push(index);
     }
@@ -520,117 +550,181 @@ export class SearchService {
     }
   }
 
-  private async loadDocumentsForIndex(index: SearchIndex): Promise<SearchHit[]> {
+  private async *loadDocumentBatchesForIndex(index: SearchIndex): AsyncGenerator<SearchHit[]> {
     if (index === "posts") {
-      const rows = await this.prisma.post.findMany({
-        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
-        select: { publicId: true, title: true, slug: true, publishedAt: true },
-      });
-      return rows.map((r) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: "",
-        href: `/bai-viet/${r.slug}`,
-        publishedAt: r.publishedAt?.toISOString() ?? null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.post.findMany({
+          where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+          select: { publicId: true, title: true, slug: true, publishedAt: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: "",
+          href: `/bai-viet/${r.slug}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "events") {
-      const rows = await this.prisma.calendarEvent.findMany({
-        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
-        select: { publicId: true, title: true, description: true, publishedAt: true },
-      });
-      return rows.map((r) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: r.description ?? "",
-        href: `/lich-su-kien/${r.publicId}`,
-        publishedAt: r.publishedAt?.toISOString() ?? null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.calendarEvent.findMany({
+          where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+          select: { publicId: true, title: true, description: true, publishedAt: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: r.description ?? "",
+          href: `/lich-su-kien/${r.publicId}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "guides") {
-      const rows = await this.prisma.beginnerGuide.findMany({
-        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
-        select: { publicId: true, title: true, slug: true, publishedAt: true },
-      });
-      return rows.map((r) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: "",
-        href: `/huong-dan/${r.slug}`,
-        publishedAt: r.publishedAt?.toISOString() ?? null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.beginnerGuide.findMany({
+          where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+          select: { publicId: true, title: true, slug: true, publishedAt: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: "",
+          href: `/huong-dan/${r.slug}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "downloads") {
-      const rows = await this.prisma.download.findMany({
-        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
-        select: { publicId: true, title: true, description: true, publishedAt: true },
-      });
-      return rows.map((r) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: r.description ?? "",
-        href: `/tai-lieu#${r.publicId}`,
-        publishedAt: r.publishedAt?.toISOString() ?? null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.download.findMany({
+          where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+          select: { publicId: true, title: true, description: true, publishedAt: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: r.description ?? "",
+          href: `/tai-lieu#${r.publicId}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "wisdom") {
-      const rows = await this.prisma.wisdomEntry.findMany({
-        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
-        select: { publicId: true, title: true, translatedText: true, publishedAt: true, entryType: true },
-      });
-      return rows.map((r) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: (r.translatedText ?? "").slice(0, 220),
-        href: `/bach-thoai/${r.publicId}`,
-        publishedAt: r.publishedAt?.toISOString() ?? null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.wisdomEntry.findMany({
+          where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+          select: { publicId: true, title: true, translatedText: true, publishedAt: true, entryType: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: (r.translatedText ?? "").slice(0, 220),
+          href: `/bach-thoai/${r.publicId}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "qa") {
-      const rows = await this.prisma.wisdomQuestion.findMany({
-        where: { status: { in: ["ANSWERED", "CLOSED"] } },
-        select: { publicId: true, title: true, body: true, createdAt: true },
-      });
-      return rows.map((r: { publicId: string; title: string; body: string; createdAt: Date }) => ({
-        id: r.publicId,
-        index,
-        title: r.title,
-        excerpt: r.body.slice(0, 220),
-        href: `/hoi-dap/${r.publicId}`,
-        publishedAt: r.createdAt.toISOString(),
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.wisdomQuestion.findMany({
+          where: { status: { in: ["ANSWERED", "CLOSED"] } },
+          select: { publicId: true, title: true, body: true, createdAt: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r: { publicId: string; title: string; body: string; createdAt: Date }) => ({
+          id: r.publicId,
+          index,
+          title: r.title,
+          excerpt: r.body.slice(0, 220),
+          href: `/hoi-dap/${r.publicId}`,
+          publishedAt: r.createdAt.toISOString(),
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     if (index === "sutras") {
-      const rows = await this.prisma.sutraMetadata.findMany({
-        select: { publicId: true, titleVi: true, sutraKey: true },
-      });
-      return rows.map((r: { publicId: string; titleVi: string; sutraKey: string }) => ({
-        id: r.publicId,
-        index,
-        title: r.titleVi,
-        excerpt: "",
-        href: `/kinh-sach/${r.sutraKey}`,
-        publishedAt: null,
-      }));
+      let cursor: string | undefined;
+      while (true) {
+        const rows = await this.prisma.sutraMetadata.findMany({
+          select: { publicId: true, titleVi: true, sutraKey: true },
+          orderBy: { publicId: "asc" },
+          take: REINDEX_BATCH_SIZE,
+          ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+        });
+        if (rows.length === 0) return;
+        yield rows.map((r: { publicId: string; titleVi: string; sutraKey: string }) => ({
+          id: r.publicId,
+          index,
+          title: r.titleVi,
+          excerpt: "",
+          href: `/kinh-sach/${r.sutraKey}`,
+          publishedAt: null,
+        }));
+        cursor = rows[rows.length - 1]?.publicId;
+      }
     }
     // community fallback
-    const rows = await this.prisma.communityPost.findMany({
-      where: { status: "APPROVED", isHidden: false },
-      select: { publicId: true, content: true, createdAt: true },
-    });
-    return rows.map((r) => ({
-      id: r.publicId,
-      index,
-      title: `Bài chia sẻ #${r.publicId.slice(-6)}`,
-      excerpt: r.content.slice(0, 220),
-      href: `/cong-dong/${r.publicId}`,
-      publishedAt: r.createdAt.toISOString(),
-    }));
+    let cursor: string | undefined;
+    while (true) {
+      const rows = await this.prisma.communityPost.findMany({
+        where: { status: "APPROVED", isHidden: false },
+        select: { publicId: true, content: true, createdAt: true },
+        orderBy: { publicId: "asc" },
+        take: REINDEX_BATCH_SIZE,
+        ...(cursor ? { cursor: { publicId: cursor }, skip: 1 } : {}),
+      });
+      if (rows.length === 0) return;
+      yield rows.map((r) => ({
+        id: r.publicId,
+        index,
+        title: `Bài chia sẻ #${r.publicId.slice(-6)}`,
+        excerpt: r.content.slice(0, 220),
+        href: `/cong-dong/${r.publicId}`,
+        publishedAt: r.createdAt.toISOString(),
+      }));
+      cursor = rows[rows.length - 1]?.publicId;
+    }
   }
 
   private safeString(value: unknown): string {

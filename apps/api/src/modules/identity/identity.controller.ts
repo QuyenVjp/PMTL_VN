@@ -86,7 +86,7 @@ export class IdentityController {
 
   @Get("bootstrap-status")
   @Public()
-  @RateLimit("auth.login")
+  @RateLimit("auth.bootstrap_status")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Kiểm tra trạng thái khởi tạo admin đầu tiên" })
   @ApiResponse({ status: 200, description: "Trạng thái bootstrap" })
@@ -96,7 +96,7 @@ export class IdentityController {
 
   @Post("bootstrap-admin")
   @Public()
-  @RateLimit("auth.login")
+  @RateLimit("auth.bootstrap_admin")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Tạo tài khoản quản trị đầu tiên khi hệ thống chưa có dữ liệu" })
   @ApiResponse({ status: 201, description: "Tạo tài khoản quản trị đầu tiên thành công" })
@@ -194,6 +194,7 @@ export class IdentityController {
 
   @Post("verify-email")
   @Public()
+  @RateLimit("auth.verify_email")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Xác minh email bằng token" })
   @ApiResponse({ status: 200, description: "Email đã được xác minh" })
@@ -306,7 +307,7 @@ export class IdentityController {
     const domain = this.resolveCookieDomain();
     const baseOptions = {
       secure: this.configService.cookieSecure,
-      sameSite: "lax" as const,
+      sameSite: "strict" as const,
       path: "/",
       ...(domain ? { domain } : {}),
     };
@@ -336,7 +337,7 @@ export class IdentityController {
     const domain = this.resolveCookieDomain();
     const baseOptions = {
       secure: this.configService.cookieSecure,
-      sameSite: "lax" as const,
+      sameSite: "strict" as const,
       path: "/",
       ...(domain ? { domain } : {}),
     };

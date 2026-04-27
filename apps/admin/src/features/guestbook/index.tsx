@@ -255,13 +255,13 @@ function GuestbookDialogs() {
     setCurrentRow(null);
   };
 
+  if (!currentRow) return null;
+
   const mutate = (status: "APPROVED" | "REJECTED") =>
     updateStatus.mutate(
-      { publicId: currentRow!.publicId, status },
+      { publicId: currentRow.publicId, status },
       { onSuccess: handleClose },
     );
-
-  if (!currentRow) return null;
 
   return (
     <>

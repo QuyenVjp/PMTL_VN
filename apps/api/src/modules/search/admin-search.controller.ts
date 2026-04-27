@@ -31,16 +31,19 @@ export class AdminSearchController {
   @ApiOperation({ summary: "Trigger reindex toàn bộ hoặc theo phạm vi (admin)" })
   async reindexFull(
     @Body(ZodValidate(adminReindexSchema)) input: AdminReindexInput,
-    @AuditContext() _auditCtx: AuditCtxType,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
     const target = input.scope === "source" && input.source ? input.source : "all";
-    return this.searchService.reindex(target);
+    return this.searchService.reindex(target, auditCtx);
   }
 
   @Post("reindex/:source")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Trigger reindex một nguồn cụ thể (admin)" })
-  async reindexBySource(@Param("source", ZodValidate(adminReindexSourceSchema)) source: AdminReindexSourceInput) {
-    return this.searchService.reindex(source);
+  async reindexBySource(
+    @Param("source", ZodValidate(adminReindexSourceSchema)) source: AdminReindexSourceInput,
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.searchService.reindex(source, auditCtx);
   }
 }

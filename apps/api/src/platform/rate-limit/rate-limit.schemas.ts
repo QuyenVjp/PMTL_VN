@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const rateLimitEndpointSchema = z.enum([
   "auth.login",
+  "auth.bootstrap_status",
+  "auth.bootstrap_admin",
   "auth.refresh",
   "auth.forgot_password",
   "auth.reset_password",
@@ -10,6 +12,7 @@ export const rateLimitEndpointSchema = z.enum([
   "upload.media",
   "content.create",
   "content.update",
+  "contact.submit",
   "community.post",
   "community.comment",
   "moderation.report",
@@ -30,6 +33,8 @@ export type RateLimitConfig = z.infer<typeof rateLimitConfigSchema>;
 // Phase 1 rate limit values from CODING_READINESS.md
 export const RATE_LIMIT_CONFIGS: Record<RateLimitEndpoint, RateLimitConfig> = {
   "auth.login": { endpoint: "auth.login", windowSeconds: 900, maxRequests: 5 },
+  "auth.bootstrap_status": { endpoint: "auth.bootstrap_status", windowSeconds: 60, maxRequests: 20 },
+  "auth.bootstrap_admin": { endpoint: "auth.bootstrap_admin", windowSeconds: 3600, maxRequests: 3 },
   "auth.refresh": { endpoint: "auth.refresh", windowSeconds: 60, maxRequests: 10 },
   "auth.forgot_password": { endpoint: "auth.forgot_password", windowSeconds: 3600, maxRequests: 3 },
   "auth.reset_password": { endpoint: "auth.reset_password", windowSeconds: 3600, maxRequests: 5 },
@@ -38,6 +43,7 @@ export const RATE_LIMIT_CONFIGS: Record<RateLimitEndpoint, RateLimitConfig> = {
   "upload.media": { endpoint: "upload.media", windowSeconds: 3600, maxRequests: 50 },
   "content.create": { endpoint: "content.create", windowSeconds: 3600, maxRequests: 20 },
   "content.update": { endpoint: "content.update", windowSeconds: 60, maxRequests: 30 },
+  "contact.submit": { endpoint: "contact.submit", windowSeconds: 60, maxRequests: 5 },
   "community.post": { endpoint: "community.post", windowSeconds: 3600, maxRequests: 10 },
   "community.comment": { endpoint: "community.comment", windowSeconds: 300, maxRequests: 20 },
   "moderation.report": { endpoint: "moderation.report", windowSeconds: 3600, maxRequests: 10 },

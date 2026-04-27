@@ -151,6 +151,44 @@ export class StorageService {
     return asset.url;
   }
 
+  /**
+   * Batch variant of resolveAssetUrl — eliminates N+1 DB queries when resolving
+   * URLs for a list of assets (e.g. collection cover images, item thumbnails).
+   * One DB query for all publicIds, then parallel fs-existence checks for local adapter.
+   * Returns a Map<publicId, url | null>.
+   */
+  async resolveAssetUrlsBatch(publicIds: string[]): Promise<Map<string, string | null>> {
+    if (publicIds.length === 0) return new Map();
+
+    const assets = await this.mediaRepo.findManyByPublicIds(publicIds);
+    const result = new Map<string, string | null>();
+
+    if (this.configService.storageAdapter === "local") {
+      await Promise.all(
+        assets.map(async (asset) => {
+          const exists = await this.adapter.exists(asset.storageKey);
+          if (!exists) {
+            this.logger.warn(`Media binary missing for asset ${asset.publicId} (${asset.storageKey})`);
+            result.set(asset.publicId, StorageService.MISSING_IMAGE_DATA_URI);
+          } else {
+            result.set(asset.publicId, asset.url);
+          }
+        }),
+      );
+    } else {
+      for (const asset of assets) {
+        result.set(asset.publicId, asset.url);
+      }
+    }
+
+    // publicIds not found in DB → null
+    for (const id of publicIds) {
+      if (!result.has(id)) result.set(id, null);
+    }
+
+    return result;
+  }
+
   async resolveAssetUrlById(id: string | null | undefined): Promise<string | null> {
     if (!id) return null;
     const asset = await this.mediaRepo.findById(id);

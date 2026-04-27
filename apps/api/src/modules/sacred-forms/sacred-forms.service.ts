@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import type { NameChangeProbation } from "../../generated/prisma/client.js";
 import { SacredFormsRepository } from "./sacred-forms.repository.js";
@@ -34,6 +35,7 @@ function isValidBurnTime(date: Date): boolean {
 @Injectable()
 export class SacredFormsService {
   constructor(
+    private readonly prisma: PrismaService,
     private readonly repo: SacredFormsRepository,
     private readonly audit: AuditService,
   ) {}
@@ -52,9 +54,17 @@ export class SacredFormsService {
   }
 
   async createTemplate(input: CreateTemplateInput, adminId: string, auditCtx: AuditContext) {
-    const t = await this.repo.createTemplate(input, nanoid(21));
-    await this.audit.append(auditCtx, "admin.sacred_form_template.create", "sacred_form_template", t.publicId, {
-      formType: input.formType,
+    const t = await this.prisma.$transaction(async (tx) => {
+      const created = await this.repo.createTemplate(input, nanoid(21), tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form_template.create",
+        "sacred_form_template",
+        created.publicId,
+        { formType: input.formType },
+      );
+      return created;
     });
     return mapTemplateToItem(t);
   }
@@ -62,9 +72,17 @@ export class SacredFormsService {
   async toggleTemplate(publicId: string, isActive: boolean, adminId: string, auditCtx: AuditContext) {
     const t = await this.repo.findTemplateByPublicId(publicId);
     if (!t) throw new NotFoundException("Mẫu đơn không tồn tại");
-    const updated = await this.repo.toggleTemplateActive(t.id, isActive);
-    await this.audit.append(auditCtx, "admin.sacred_form_template.toggle", "sacred_form_template", publicId, {
-      isActive,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await this.repo.toggleTemplateActive(t.id, isActive, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form_template.toggle",
+        "sacred_form_template",
+        publicId,
+        { isActive },
+      );
+      return next;
     });
     return mapTemplateToItem(updated);
   }
@@ -90,10 +108,18 @@ export class SacredFormsService {
     const existing = await this.repo.findApplicantByUserAndTemplate(userId, template.id);
     if (existing) throw new BadRequestException("Bạn đã có đơn đăng ký đang xử lý cho mẫu này");
 
-    const applicant = await this.repo.createApplicant(template.id, userId, input.formData, nanoid(21));
-    await this.repo.appendApplicantAudit(applicant.id, userId, "APPLICATION_SUBMITTED");
-    await this.audit.append(auditCtx, "member.sacred_form.submit", "form_applicant", applicant.publicId, {
-      formType: template.formType,
+    const applicant = await this.prisma.$transaction(async (tx) => {
+      const created = await this.repo.createApplicant(template.id, userId, input.formData, nanoid(21), tx);
+      await this.repo.appendApplicantAudit(created.id, userId, "APPLICATION_SUBMITTED", undefined, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "member.sacred_form.submit",
+        "form_applicant",
+        created.publicId,
+        { formType: template.formType },
+      );
+      return created;
     });
     return mapApplicantToItem(applicant);
   }
@@ -129,10 +155,18 @@ export class SacredFormsService {
         break;
     }
 
-    const updated = await this.repo.updateApplicantStatus(applicant.id, status!, extra);
-    await this.repo.appendApplicantAudit(applicant.id, adminId, `APPLICATION_${input.decision}D`, input.reviewNotes);
-    await this.audit.append(auditCtx, "admin.sacred_form.review", "form_applicant", publicId, {
-      decision: input.decision,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await this.repo.updateApplicantStatus(applicant.id, status!, extra, tx);
+      await this.repo.appendApplicantAudit(applicant.id, adminId, `APPLICATION_${input.decision}D`, input.reviewNotes, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form.review",
+        "form_applicant",
+        publicId,
+        { decision: input.decision },
+      );
+      return next;
     });
     return mapApplicantToItem(updated);
   }
@@ -153,10 +187,17 @@ export class SacredFormsService {
   }
 
   async createDisposalPolarity(input: DisposalPolarityInput, adminId: string, auditCtx: AuditContext) {
-    const record = await this.repo.createDisposalPolarity(input);
-    await this.audit.append(auditCtx, "admin.disposal_polarity.create", "disposal_polarity_record", record.id, {
-      formType: input.formType,
-      polarity: input.polarity,
+    const record = await this.prisma.$transaction(async (tx) => {
+      const created = await this.repo.createDisposalPolarity(input, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.disposal_polarity.create",
+        "disposal_polarity_record",
+        created.id,
+        { formType: input.formType, polarity: input.polarity },
+      );
+      return created;
     });
     return record;
   }
@@ -170,10 +211,18 @@ export class SacredFormsService {
       throw new BadRequestException("Chỉ có thể duyệt đơn đang ở trạng thái chờ hoặc đang xem xét");
     }
 
-    const updated = await this.repo.approveApplicant(applicant.id, input.reviewNotes);
-    await this.repo.appendApplicantAudit(applicant.id, adminId, "APPLICATION_APPROVED", input.reviewNotes);
-    await this.audit.append(auditCtx, "admin.sacred_form.approve", "form_applicant", publicId, {
-      reviewNotes: input.reviewNotes,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await this.repo.approveApplicant(applicant.id, input.reviewNotes, tx);
+      await this.repo.appendApplicantAudit(applicant.id, adminId, "APPLICATION_APPROVED", input.reviewNotes, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form.approve",
+        "form_applicant",
+        publicId,
+        { reviewNotes: input.reviewNotes },
+      );
+      return next;
     });
     return mapApplicantToItem(updated);
   }
@@ -187,10 +236,18 @@ export class SacredFormsService {
       throw new BadRequestException("Chỉ có thể từ chối đơn đang ở trạng thái chờ hoặc đang xem xét");
     }
 
-    const updated = await this.repo.rejectApplicant(applicant.id, input.rejectionReason);
-    await this.repo.appendApplicantAudit(applicant.id, adminId, "APPLICATION_REJECTED", input.rejectionReason);
-    await this.audit.append(auditCtx, "admin.sacred_form.reject", "form_applicant", publicId, {
-      rejectionReason: input.rejectionReason,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await this.repo.rejectApplicant(applicant.id, input.rejectionReason, tx);
+      await this.repo.appendApplicantAudit(applicant.id, adminId, "APPLICATION_REJECTED", input.rejectionReason, tx);
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form.reject",
+        "form_applicant",
+        publicId,
+        { rejectionReason: input.rejectionReason },
+      );
+      return next;
     });
     return mapApplicantToItem(updated);
   }
@@ -227,38 +284,53 @@ export class SacredFormsService {
       throw new ConflictException("Đơn đăng ký này đã có probation tồn tại");
     }
 
-    // Complete the applicant
-    const updated = await this.repo.completeApplicant(applicant.id);
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Complete the applicant
+      const updated = await this.repo.completeApplicant(applicant.id, tx);
 
-    // Create 100-day probation
-    const probation = await this.repo.createNameChangeProbation({
-      publicId: nanoid(21),
-      formApplicantId: applicant.id,
-      userId: applicant.userId,
-      oldDharmaName: input.oldDharmaName,
-      newDharmaName: input.newDharmaName,
-      probationDurationDays: 100,
-    });
+      // Create 100-day probation
+      const probation = await this.repo.createNameChangeProbation(
+        {
+          publicId: nanoid(21),
+          formApplicantId: applicant.id,
+          userId: applicant.userId,
+          oldDharmaName: input.oldDharmaName,
+          newDharmaName: input.newDharmaName,
+          probationDurationDays: 100,
+        },
+        tx,
+      );
 
-    await this.repo.appendApplicantAudit(
-      applicant.id,
-      adminId,
-      "APPLICATION_BURNED",
-      `Probation bắt đầu ${probation.probationStartDate.toISOString()}, kết thúc ${probation.probationEndDate.toISOString()}`,
-    );
-    await this.audit.append(auditCtx, "admin.sacred_form.burn", "form_applicant", publicId, {
-      probationPublicId: probation.publicId,
-      probationEndDate: probation.probationEndDate.toISOString(),
+      await this.repo.appendApplicantAudit(
+        applicant.id,
+        adminId,
+        "APPLICATION_BURNED",
+        `Probation bắt đầu ${probation.probationStartDate.toISOString()}, kết thúc ${probation.probationEndDate.toISOString()}`,
+        tx,
+      );
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.sacred_form.burn",
+        "form_applicant",
+        publicId,
+        {
+          probationPublicId: probation.publicId,
+          probationEndDate: probation.probationEndDate.toISOString(),
+        },
+      );
+
+      return { updated, probation };
     });
 
     return {
-      applicant: mapApplicantToItem(updated),
+      applicant: mapApplicantToItem(result.updated),
       probation: {
-        publicId: probation.publicId,
-        probationStartDate: probation.probationStartDate.toISOString(),
-        probationEndDate: probation.probationEndDate.toISOString(),
-        probationDurationDays: probation.probationDurationDays,
-        isActive: probation.isActive,
+        publicId: result.probation.publicId,
+        probationStartDate: result.probation.probationStartDate.toISOString(),
+        probationEndDate: result.probation.probationEndDate.toISOString(),
+        probationDurationDays: result.probation.probationDurationDays,
+        isActive: result.probation.isActive,
       },
     };
   }

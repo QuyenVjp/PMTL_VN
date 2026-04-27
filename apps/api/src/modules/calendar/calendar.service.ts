@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import pino from "pino";
 import { CacheService } from "../../common/cache/cache.service.js";
@@ -196,6 +196,19 @@ export class CalendarService {
   async adminPublishEvent(publicId: string, actorId?: string) {
     const existing = await this.repo.findAdminByPublicId(publicId);
     if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    // Contract: organizational events must have ≥1 agenda item before publish.
+    // design/03-domains/calendar/CONTRACTS.md → "type = organizational phải có ít nhất một agenda item"
+    if (existing.eventType === "organizational") {
+      const agendaCount = await this.prisma.eventAgendaItem.count({
+        where: { eventId: existing.id },
+      });
+      if (agendaCount === 0) {
+        throw new BadRequestException(
+          "Sự kiện organizational phải có ít nhất một agenda item trước khi phát hành.",
+        );
+      }
+    }
 
     const updated = await this.repo.publishEvent(publicId);
 
