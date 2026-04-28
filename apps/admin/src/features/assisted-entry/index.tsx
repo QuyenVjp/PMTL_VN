@@ -7,10 +7,10 @@ import {
   getCoreRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
-import { ClipboardListIcon, HistoryIcon, RefreshCcwIcon, SearchIcon, UserCheckIcon } from "lucide-react";
+import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 
 import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
-import { WorkspaceDataTable, WorkspaceScopeCards } from "@/components/workspace";
+import { WorkspaceDataTable } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -758,29 +758,6 @@ export function AssistedEntryPage() {
           Hỗ trợ nhập hộ lời nguyện, tra cứu thành viên và kiểm tra lịch sử.
         </p>
       </div>
-
-      <WorkspaceScopeCards
-        items={[
-          {
-            title: "Actor / owner rõ ràng",
-            description: "Admin là người nhập hộ, thành viên là chủ lời nguyện hoặc nhật ký. API phải giữ đủ actorUserId và ownerUserId.",
-            badge: "Assisted entry",
-            icon: UserCheckIcon,
-          },
-          {
-            title: "Không thay content",
-            description: "Trang này chỉ ghi state phát nguyện/phóng sanh, không sửa hướng dẫn Kinh bài tập hay Phóng Sanh.",
-            badge: "Vows-merit",
-            icon: ClipboardListIcon,
-          },
-          {
-            title: "Lịch sử là audit surface",
-            description: "Mọi phiếu nhập hộ phải quay lại được lịch sử để kiểm tra người nhập, thành viên và lý do.",
-            badge: "Audit required",
-            icon: HistoryIcon,
-          },
-        ]}
-      />
 
       <Tabs defaultValue="history">
         <TabsList>

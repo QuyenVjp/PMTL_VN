@@ -6,6 +6,7 @@ import {
   ImageIcon,
   FolderIcon,
   FolderPlusIcon,
+  Maximize2Icon,
   XIcon,
   FileTextIcon,
   VideoIcon,
@@ -15,6 +16,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
+import { ImagePreviewDialog, PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -123,10 +125,10 @@ function ImageGridItem({
   active: boolean;
   onToggle: () => void;
 }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+
   return (
-    <button
-      type="button"
-      onClick={onToggle}
+    <div
       className={cn(
         "group relative overflow-hidden rounded-lg border-2 transition-all",
         active
@@ -134,21 +136,46 @@ function ImageGridItem({
           : "border-transparent hover:border-border",
       )}
     >
-      <div className="aspect-square bg-muted">
-        <MediaImagePreview
-          asset={asset}
-          className="size-full object-cover"
-        />
-      </div>
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-1.5 pb-1.5 pt-6 opacity-0 transition-opacity group-hover:opacity-100">
-        <p className="truncate text-[10px] leading-tight text-white">{asset.filename}</p>
-      </div>
-      {active ? (
-        <span className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
-          <CheckIcon className="size-3" />
-        </span>
-      ) : null}
-    </button>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="block w-full text-left"
+        aria-label={active ? `Bỏ chọn ${asset.filename}` : `Chọn ${asset.filename}`}
+      >
+        <div className="aspect-square bg-muted">
+          <MediaImagePreview
+            asset={asset}
+            className="size-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-1.5 pb-1.5 pt-6 opacity-0 transition-opacity group-hover:opacity-100">
+          <p className="truncate text-[10px] leading-tight text-white">{asset.filename}</p>
+        </div>
+        {active ? (
+          <span className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
+            <CheckIcon className="size-3" />
+          </span>
+        ) : null}
+      </button>
+      <button
+        type="button"
+        className="absolute left-1.5 top-1.5 flex size-7 items-center justify-center rounded bg-background/90 text-foreground opacity-0 shadow-sm transition-opacity hover:bg-background group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        onClick={(event) => {
+          event.stopPropagation();
+          setPreviewOpen(true);
+        }}
+        aria-label={`Xem preview ${asset.filename}`}
+      >
+        <Maximize2Icon className="size-3.5" />
+      </button>
+      <ImagePreviewDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        src={asset.url}
+        alt={asset.filename}
+        title={asset.filename}
+      />
+    </div>
   );
 }
 
@@ -675,9 +702,11 @@ export function MediaPickerModal({
                   {selectedAsset ? (
                     <>
                       {activeTab === "image" ? (
-                        <MediaImagePreview
-                          asset={selectedAsset}
-                          className="size-10 shrink-0 rounded-md border object-cover"
+                        <PreviewableImage
+                          src={selectedAsset.url}
+                          alt={selectedAsset.filename}
+                          title={selectedAsset.filename}
+                          className="size-10 shrink-0"
                         />
                       ) : activeTab === "video" ? (
                         <div className="flex size-10 shrink-0 items-center justify-center rounded-md border bg-muted">
@@ -817,9 +846,7 @@ export function MediaPickerField({
         defaultTab={defaultTab}
       />
 
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
+      <div
         className={cn(
           "flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors hover:border-primary/50 hover:bg-muted/40",
           value || currentImageUrl ? "border-border" : "border-dashed",
@@ -827,11 +854,11 @@ export function MediaPickerField({
       >
         {displayUrl ? (
           fieldTab.key === "image" ? (
-            <img
+            <PreviewableImage
               src={displayUrl}
-              alt="Preview"
-              className="size-12 shrink-0 rounded-md border object-cover"
-              loading="lazy"
+              alt={selectedAsset?.filename ?? "Preview ảnh"}
+              title={selectedAsset?.filename ?? fieldCopy.currentTitle}
+              className="size-12 shrink-0"
             />
           ) : (
             <div className="flex size-12 shrink-0 items-center justify-center rounded-md border bg-muted">
@@ -843,7 +870,7 @@ export function MediaPickerField({
             {fieldCopy.emptyIcon}
           </div>
         )}
-        <div className="min-w-0 flex-1">
+        <button type="button" onClick={() => setOpen(true)} className="min-w-0 flex-1 text-left">
           {selectedAsset ? (
             <>
               <p className="text-sm font-medium text-foreground">{fieldCopy.selectedTitle}</p>
@@ -857,9 +884,11 @@ export function MediaPickerField({
           ) : (
             <p className="text-muted-foreground">{placeholder}</p>
           )}
-        </div>
-        <span className="shrink-0 text-xs text-primary font-medium">Thay đổi →</span>
-      </button>
+        </button>
+        <Button type="button" variant="ghost" size="sm" className="shrink-0" onClick={() => setOpen(true)}>
+          Thay đổi
+        </Button>
+      </div>
     </>
   );
 }

@@ -16,13 +16,13 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, EyeIcon, StarIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WorkspaceConfirmDialog, WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { postListOptions, type PostListItem } from "@/features/content/queries";
 import { usePublishPost, useDeletePost } from "@/features/content/mutations";
-import { resolveMediaSrc } from "@/lib/media-src";
 
 const statusOptions = [
   { label: "Đã xuất bản", value: "PUBLISHED" },
@@ -174,11 +174,11 @@ export function PostsTable() {
           <div className="flex items-center gap-2 max-w-[320px]">
             <div className="size-9 shrink-0 overflow-hidden rounded border bg-muted">
               {row.original.featuredImageUrl ? (
-                <img
-                  src={resolveMediaSrc(row.original.featuredImageUrl) ?? undefined}
+                <PreviewableImage
+                  src={row.original.featuredImageUrl}
                   alt={row.original.title}
-                  className="size-full object-cover"
-                  loading="lazy"
+                  title={row.original.title}
+                  className="size-full rounded-none border-0"
                 />
               ) : null}
             </div>

@@ -184,6 +184,21 @@ export class LifeReleaseContentService {
     return updated;
   }
 
+  async adminDeleteGuide(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.guides.findIndex((guide) => guide.publicId === publicId);
+    if (index === -1) throw new NotFoundException("Guide Phóng sanh không tồn tại");
+
+    const [deleted] = overview.guides.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Phóng sanh";
+    await this.saveOverview(lifeReleaseOverviewSchema.parse(overview));
+    await this.auditService.append(auditContext, "admin.life_release.guide.delete", "life_release_guide", publicId, {
+      title: deleted.title,
+    });
+    return { publicId };
+  }
+
   async adminCreateVariant(input: CreateLifeReleaseVariantInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const variant: LifeReleaseVariantDto = {
@@ -233,6 +248,21 @@ export class LifeReleaseContentService {
     return updated;
   }
 
+  async adminDeleteVariant(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.ritualVariants.findIndex((variant) => variant.publicId === publicId);
+    if (index === -1) throw new NotFoundException("Variant Phóng sanh không tồn tại");
+
+    const [deleted] = overview.ritualVariants.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Phóng sanh";
+    await this.saveOverview(lifeReleaseOverviewSchema.parse(overview));
+    await this.auditService.append(auditContext, "admin.life_release.variant.delete", "life_release_variant", publicId, {
+      name: deleted.name,
+    });
+    return { publicId };
+  }
+
   async adminCreateFaq(input: CreateLifeReleaseFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: LifeReleaseFaqDto = {
@@ -274,6 +304,21 @@ export class LifeReleaseContentService {
       updatedFields: Object.keys(input),
     });
     return updated;
+  }
+
+  async adminDeleteFaq(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.faq.findIndex((faq) => faq.publicId === publicId);
+    if (index === -1) throw new NotFoundException("FAQ Phóng sanh không tồn tại");
+
+    const [deleted] = overview.faq.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Phóng sanh";
+    await this.saveOverview(lifeReleaseOverviewSchema.parse(overview));
+    await this.auditService.append(auditContext, "admin.life_release.faq.delete", "life_release_faq", publicId, {
+      question: deleted.question,
+    });
+    return { publicId };
   }
 
   async adminPublish(input: PublishLifeReleaseInput, auditContext: AuditContext) {

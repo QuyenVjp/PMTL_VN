@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpenCheckIcon, GripVerticalIcon, PlusIcon, RouteIcon, SaveIcon, ShieldCheckIcon, Trash2Icon } from "lucide-react";
+import { GripVerticalIcon, PlusIcon, SaveIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WorkspaceScopeCards } from "@/components/workspace";
 
 import { practiceHomeGuideDetailOptions, type RuleItem, type VietnamHomePracticeGuide } from "./queries";
 import { useUpdatePracticeHomeGuide, type UpdatePracticeHomeGuideInput } from "./mutations";
@@ -422,29 +421,6 @@ export function PracticeHomePracticeGuidePage() {
           Đây là lane practice-support riêng cho bối cảnh tu học tại gia ở Việt Nam; không còn bind nhầm vào route Kinh văn tự tu.
         </p>
       </div>
-
-      <WorkspaceScopeCards
-        items={[
-          {
-            title: "Practice-support owner",
-            description: "Surface này quản lý quy tắc ăn chay và ghi chú tu học tại gia, không phải kho Kinh văn tự tu.",
-            badge: "Practice support",
-            icon: ShieldCheckIcon,
-          },
-          {
-            title: "Route tách biệt",
-            description: "Không bind lại `/noi-dung/kinh-van-tu-tu`; Kinh văn tự tu có owner `self-cultivation` riêng.",
-            badge: "Không trộn route",
-            icon: RouteIcon,
-          },
-          {
-            title: "Structured editor",
-            description: "Mỗi rule cần mã, nhãn, mô tả và mức độ để API validate trước khi public surface dùng.",
-            badge: "Structured content",
-            icon: BookOpenCheckIcon,
-          },
-        ]}
-      />
 
       <PracticeHomeGuideEditor data={envelope.data} />
     </div>

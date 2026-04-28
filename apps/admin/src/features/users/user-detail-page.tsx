@@ -5,7 +5,8 @@ import { LockIcon, UnlockIcon } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +26,6 @@ import {
 } from "@/components/workspace";
 import { FieldError } from "@/components/ui/field-error";
 
-import { resolveMediaSrc } from "@/lib/media-src";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
 import { readRouteParam } from "@/lib/router-utils";
@@ -281,15 +281,21 @@ export function UserDetailPage() {
           <div className="space-y-5">
             {/* Avatar — read-only display */}
             <div className="flex items-center gap-4">
-              <Avatar className="size-16 rounded-2xl">
-                <AvatarImage
-                  src={resolveMediaSrc(user.avatarUrl) ?? undefined}
+              {user.avatarUrl ? (
+                <PreviewableImage
+                  src={user.avatarUrl}
                   alt={user.displayName}
+                  title={user.displayName}
+                  className="size-16 shrink-0 rounded-2xl"
+                  imageClassName="rounded-2xl"
                 />
-                <AvatarFallback className="rounded-2xl text-lg">
-                  {initials(user.displayName)}
-                </AvatarFallback>
-              </Avatar>
+              ) : (
+                <Avatar className="size-16 rounded-2xl">
+                  <AvatarFallback className="rounded-2xl text-lg">
+                    {initials(user.displayName)}
+                  </AvatarFallback>
+                </Avatar>
+              )}
               <div className="min-w-0">
                 <p className="text-sm font-medium">{user.displayName}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>

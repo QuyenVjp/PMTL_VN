@@ -16,9 +16,10 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { WorkspaceDataTable } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DownloadsRowActions } from "@/features/downloads/data-table-row-actions";
 import { downloadListOptions, type DownloadItem } from "@/features/downloads/queries";
@@ -119,6 +120,7 @@ export function DownloadsTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     defaultCategory ? [{ id: "category", value: [defaultCategory] }] : [],
   );
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const columns = useMemo<ColumnDef<DownloadItem>[]>(
     () => [
@@ -135,11 +137,11 @@ export function DownloadsTable({
                   : undefined;
                 const src = resolveMediaSrc(row.original.thumbnailUrl ?? mediaUrl);
                 return src ? (
-                <img
-                  src={src ?? undefined}
+                <PreviewableImage
+                  src={src}
                   alt={row.original.title}
-                  className="size-full object-cover"
-                  loading="lazy"
+                  title={row.original.title}
+                  className="size-full rounded-none border-0"
                 />
                 ) : null;
               })()}
@@ -238,55 +240,68 @@ export function DownloadsTable({
     table.resetRowSelection();
   };
 
-  const handleBulkDelete = async () => {
+  const handleBulkDeleteConfirm = async () => {
     if (!selectedRows.length) return;
-    if (!confirm(`Xác nhận xóa ${selectedRows.length} ${entityLabel}?`)) return;
     await Promise.all(selectedRows.map((d) => deleteDownload.mutateAsync(d.publicId)));
     table.resetRowSelection();
+    setBulkDeleteOpen(false);
   };
 
   return (
-    <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
-      <DataTableToolbar
-        table={table}
-        searchPlaceholder={searchPlaceholder}
-        searchKey="title"
-        viewButtonLabel="Xem"
-        filters={[
-          { columnId: "category", title: "Danh mục", options: categoryOptions },
-          { columnId: "status", title: "Trạng thái", options: statusOptions },
-        ]}
-      />
+    <>
+      <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
+        <DataTableToolbar
+          table={table}
+          searchPlaceholder={searchPlaceholder}
+          searchKey="title"
+          viewButtonLabel="Xem"
+          filters={[
+            { columnId: "category", title: "Danh mục", options: categoryOptions },
+            { columnId: "status", title: "Trạng thái", options: statusOptions },
+          ]}
+        />
 
-      <WorkspaceDataTable
-        table={table}
-        columns={columns}
-        isLoading={isLoading}
-        emptyMessage={emptyMessage}
-        onRowClick={(row) => {
-          navigateTo(`${detailBasePath}/${row.publicId}`);
-        }}
+        <WorkspaceDataTable
+          table={table}
+          columns={columns}
+          isLoading={isLoading}
+          emptyMessage={emptyMessage}
+          onRowClick={(row) => {
+            navigateTo(`${detailBasePath}/${row.publicId}`);
+          }}
+        />
+        <DataTableBulkActions table={table} entityName={entityLabel}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={publishDownload.isPending}
+            onClick={() => void handleBulkPublish()}
+          >
+            <CheckCircleIcon className="mr-1.5 size-3.5" />
+            Xuất bản đã chọn
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={deleteDownload.isPending}
+            onClick={() => setBulkDeleteOpen(true)}
+          >
+            <Trash2Icon className="mr-1.5 size-3.5" />
+            Xóa đã chọn
+          </Button>
+        </DataTableBulkActions>
+      </div>
+      <WorkspaceConfirmDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Xóa ${entityLabel} đã chọn?`}
+        description={`Xác nhận xóa ${selectedRows.length} ${entityLabel}. Hành động này không thể hoàn tác.`}
+        confirmLabel="Xóa đã chọn"
+        cancelLabel="Hủy"
+        variant="destructive"
+        isPending={deleteDownload.isPending}
+        onConfirm={() => void handleBulkDeleteConfirm()}
       />
-      <DataTableBulkActions table={table} entityName={entityLabel}>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={publishDownload.isPending}
-          onClick={() => void handleBulkPublish()}
-        >
-          <CheckCircleIcon className="mr-1.5 size-3.5" />
-          Xuất bản đã chọn
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={deleteDownload.isPending}
-          onClick={() => void handleBulkDelete()}
-        >
-          <Trash2Icon className="mr-1.5 size-3.5" />
-          Xóa đã chọn
-        </Button>
-      </DataTableBulkActions>
-    </div>
+    </>
   );
 }

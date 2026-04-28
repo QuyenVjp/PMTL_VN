@@ -72,6 +72,7 @@ import {
   WorkspaceRowActions,
 } from "@/components/workspace";
 import { MediaMultiPickerField, MediaPickerField } from "@/components/media/media-picker-modal";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { createSelectColumn } from "@/lib/table/select-column";
 
 import {
@@ -93,7 +94,6 @@ import {
   useRemoveCollectionItem,
 } from "./mutations.js";
 import { type MediaAssetListItem } from "@/features/media/queries.js";
-import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Context ────────────────────────────────────────────────────────────
 
@@ -248,11 +248,11 @@ function CollectionsTable() {
             <div className="flex items-center gap-3">
               <div className="size-10 shrink-0 overflow-hidden rounded border border-border bg-muted flex items-center justify-center">
                 {coverImageUrl ? (
-                  <img
-                    src={resolveMediaSrc(coverImageUrl) ?? undefined}
+                  <PreviewableImage
+                    src={coverImageUrl}
                     alt={title}
-                    className="size-full object-cover"
-                    loading="lazy"
+                    title={title}
+                    className="size-full rounded-none border-0"
                   />
                 ) : (
                   <Icon className="size-5 text-muted-foreground" />
@@ -544,7 +544,12 @@ function CollectionItemsPanel({ collection }: { collection: CollectionListItem }
               <div key={item.publicId} className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2">
                 <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
                   {item.mediaAssetUrl ? (
-                    <img src={resolveMediaSrc(item.mediaAssetUrl) ?? undefined} className="size-full object-cover" loading="lazy" alt="" />
+                    <PreviewableImage
+                      src={item.mediaAssetUrl}
+                      alt={item.mediaAssetFilename ?? "Media"}
+                      title={item.mediaAssetFilename ?? "Media"}
+                      className="size-full rounded-none border-0"
+                    />
                   ) : (
                     <VideoIcon className="size-4 text-muted-foreground" />
                   )}
@@ -755,7 +760,8 @@ export function MediaLibraryCreatePage() {
 }
 
 export function MediaLibraryDetailPage() {
-  const { publicId } = useParams({ strict: false }) as { publicId: string };
+  const params = useParams({ strict: false });
+  const publicId = params.publicId ?? "";
   const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(collectionDetailOptions(publicId));
   const collection = envelope?.data ?? null;

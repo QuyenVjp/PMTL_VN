@@ -16,7 +16,8 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { ShieldCheckIcon, UserXIcon, UserCheckIcon, LogOutIcon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WorkspaceDataTable } from "@/components/workspace";
@@ -24,7 +25,6 @@ import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
 import { useBlockUser, useUnblockUser, useRevokeAllSessions } from "@/features/users/mutations";
-import { resolveMediaSrc } from "@/lib/media-src";
 import {
   initials,
   roleLabel,
@@ -56,10 +56,19 @@ export function UsersTable() {
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tên" />,
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <Avatar className="size-9 rounded-xl">
-              <AvatarImage src={resolveMediaSrc(row.original.avatarUrl) ?? undefined} alt={row.original.displayName} />
-              <AvatarFallback className="rounded-xl">{initials(row.original.displayName)}</AvatarFallback>
-            </Avatar>
+            {row.original.avatarUrl ? (
+              <PreviewableImage
+                src={row.original.avatarUrl}
+                alt={row.original.displayName}
+                title={row.original.displayName}
+                className="size-9 shrink-0 rounded-xl"
+                imageClassName="rounded-xl"
+              />
+            ) : (
+              <Avatar className="size-9 rounded-xl">
+                <AvatarFallback className="rounded-xl">{initials(row.original.displayName)}</AvatarFallback>
+              </Avatar>
+            )}
             <div className="min-w-0">
               <div className="truncate font-medium">{row.original.displayName}</div>
               <div className="truncate text-sm text-muted-foreground">{row.original.email}</div>
@@ -217,4 +226,3 @@ export function UsersTable() {
     </div>
   );
 }
-

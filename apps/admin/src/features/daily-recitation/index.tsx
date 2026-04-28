@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { WorkspaceRouteSkeleton } from "@/components/workspace";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,9 +54,8 @@ function EmptyState({ text }: { text: string }) {
 }
 
 function GuideCard({ guide }: { guide: DailyPracticeGuide }) {
-  const [imageFailed, setImageFailed] = useState(false);
   const imageUrl = guide.scriptureImageUrl ? resolveMediaSrc(guide.scriptureImageUrl) : null;
-  const showImage = Boolean(imageUrl && !imageFailed);
+  const showImage = Boolean(imageUrl);
 
   return (
     <Card>
@@ -77,12 +77,11 @@ function GuideCard({ guide }: { guide: DailyPracticeGuide }) {
         </div>
         <div className="flex items-center gap-3 rounded-lg border px-3 py-2">
           {showImage ? (
-            <img
-              src={imageUrl ?? undefined}
+            <PreviewableImage
+              src={imageUrl}
               alt={`Ảnh/bản kinh ${guide.title}`}
-              className="size-16 shrink-0 rounded-md border object-cover"
-              loading="lazy"
-              onError={() => setImageFailed(true)}
+              title={`Ảnh/bản kinh ${guide.title}`}
+              className="size-16 shrink-0"
             />
           ) : (
             <div className="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed bg-muted">

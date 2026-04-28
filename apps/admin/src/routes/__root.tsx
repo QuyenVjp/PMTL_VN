@@ -53,8 +53,44 @@ const DailyPracticePage = lazy(() =>
 const LittleHousePage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.LittleHousePage })),
 );
+const LittleHouseGuideCreatePage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseGuideCreatePage })),
+);
+const LittleHouseGuideDetailPage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseGuideDetailPage })),
+);
+const LittleHouseCaseVariantCreatePage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseCaseVariantCreatePage })),
+);
+const LittleHouseCaseVariantDetailPage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseCaseVariantDetailPage })),
+);
+const LittleHouseFaqCreatePage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseFaqCreatePage })),
+);
+const LittleHouseFaqDetailPage = lazy(() =>
+  import("@/features/little-house-content/item-pages").then((mod) => ({ default: mod.LittleHouseFaqDetailPage })),
+);
 const LifeReleasePage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.LifeReleasePage })),
+);
+const LifeReleaseGuideCreatePage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseGuideCreatePage })),
+);
+const LifeReleaseGuideDetailPage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseGuideDetailPage })),
+);
+const LifeReleaseVariantCreatePage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseVariantCreatePage })),
+);
+const LifeReleaseVariantDetailPage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseVariantDetailPage })),
+);
+const LifeReleaseFaqCreatePage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseFaqCreatePage })),
+);
+const LifeReleaseFaqDetailPage = lazy(() =>
+  import("@/features/life-release-content/item-pages").then((mod) => ({ default: mod.LifeReleaseFaqDetailPage })),
 );
 const MediaLibraryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.MediaLibraryPage })),
@@ -455,20 +491,42 @@ const littleHouseRoute = createRoute({
   path: "/noi-dung/ngoi-nha-nho",
   component: withSuspense(LittleHousePage),
 });
-const littleHouseCreateRoute = createRoute({
+const littleHouseGuideCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/huong-dan/tao-moi",
+  component: withSuspense(LittleHouseGuideCreatePage),
+});
+const littleHouseGuideDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/huong-dan/$guidePublicId",
+  component: withSuspense(LittleHouseGuideDetailPage),
+});
+const littleHouseCaseVariantCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/bien-the/tao-moi",
+  component: withSuspense(LittleHouseCaseVariantCreatePage),
+});
+const littleHouseCaseVariantDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/bien-the/$variantPublicId",
+  component: withSuspense(LittleHouseCaseVariantDetailPage),
+});
+const littleHouseFaqCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/hoi-dap/tao-moi",
+  component: withSuspense(LittleHouseFaqCreatePage),
+});
+const littleHouseFaqDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/hoi-dap/$faqPublicId",
+  component: withSuspense(LittleHouseFaqDetailPage),
+});
+const littleHouseLegacyCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/ngoi-nha-nho/tao-moi",
   beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/ngoi-nha-nho" });
-  },
-});
-const littleHouseDetailRoute = createRoute({
-  getParentRoute: () => authenticatedRoute,
-  path: "/noi-dung/ngoi-nha-nho/$publicId",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/ngoi-nha-nho" });
+    throw redirect({ to: "/noi-dung/ngoi-nha-nho/huong-dan/tao-moi" });
   },
 });
 
@@ -477,20 +535,42 @@ const lifeReleaseRoute = createRoute({
   path: "/noi-dung/phong-sanh",
   component: withSuspense(LifeReleasePage),
 });
-const lifeReleaseCreateRoute = createRoute({
+const lifeReleaseGuideCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/huong-dan/tao-moi",
+  component: withSuspense(LifeReleaseGuideCreatePage),
+});
+const lifeReleaseGuideDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/huong-dan/$guidePublicId",
+  component: withSuspense(LifeReleaseGuideDetailPage),
+});
+const lifeReleaseVariantCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/bien-the/tao-moi",
+  component: withSuspense(LifeReleaseVariantCreatePage),
+});
+const lifeReleaseVariantDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/bien-the/$variantPublicId",
+  component: withSuspense(LifeReleaseVariantDetailPage),
+});
+const lifeReleaseFaqCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/hoi-dap/tao-moi",
+  component: withSuspense(LifeReleaseFaqCreatePage),
+});
+const lifeReleaseFaqDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/hoi-dap/$faqPublicId",
+  component: withSuspense(LifeReleaseFaqDetailPage),
+});
+const lifeReleaseLegacyCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/phong-sanh/tao-moi",
   beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/phong-sanh" });
-  },
-});
-const lifeReleaseDetailRoute = createRoute({
-  getParentRoute: () => authenticatedRoute,
-  path: "/noi-dung/phong-sanh/$publicId",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/phong-sanh" });
+    throw redirect({ to: "/noi-dung/phong-sanh/huong-dan/tao-moi" });
   },
 });
 
@@ -930,11 +1010,21 @@ export const routeTree = rootRoute.addChildren([
     dailyPracticeFaqDetailRoute,
     dailyPracticeDetailRoute,
     littleHouseRoute,
-    littleHouseCreateRoute,
-    littleHouseDetailRoute,
+    littleHouseGuideCreateRoute,
+    littleHouseGuideDetailRoute,
+    littleHouseCaseVariantCreateRoute,
+    littleHouseCaseVariantDetailRoute,
+    littleHouseFaqCreateRoute,
+    littleHouseFaqDetailRoute,
+    littleHouseLegacyCreateRoute,
     lifeReleaseRoute,
-    lifeReleaseCreateRoute,
-    lifeReleaseDetailRoute,
+    lifeReleaseGuideCreateRoute,
+    lifeReleaseGuideDetailRoute,
+    lifeReleaseVariantCreateRoute,
+    lifeReleaseVariantDetailRoute,
+    lifeReleaseFaqCreateRoute,
+    lifeReleaseFaqDetailRoute,
+    lifeReleaseLegacyCreateRoute,
     mediaLibraryRoute,
     mediaLibraryCreateRoute,
     mediaLibraryDetailRoute,

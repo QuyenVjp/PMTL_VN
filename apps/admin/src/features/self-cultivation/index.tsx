@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { ArrowRightIcon, CheckCircle2Icon, FileTextIcon, FlameIcon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
+import { CheckCircle2Icon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
 import { z } from "zod";
 import type { UseFormReturn } from "react-hook-form";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
@@ -39,12 +39,12 @@ import { selfCultivationOverviewOptions, type SelfCultivationGuide, type SelfCul
 import {
   useCreateSelfCultivationFaq,
   useCreateSelfCultivationGuide,
+  useDeleteSelfCultivationFaq,
+  useDeleteSelfCultivationGuide,
   usePublishSelfCultivation,
   useUpdateSelfCultivationFaq,
   useUpdateSelfCultivationGuide,
 } from "./mutations";
-import { TemplatesTab } from "./templates-tab.js";
-import { BurnFlowTab } from "./burn-flow-tab.js";
 
 const GROUP_LABELS: Record<SelfCultivationGuideGroup, string> = {
   BAT_DAU: "Tổng quan",
@@ -53,33 +53,6 @@ const GROUP_LABELS: Record<SelfCultivationGuideGroup, string> = {
   TRUONG_HOP_SU_DUNG: "Trường hợp sử dụng",
   TAI_XUONG: "Tải xuống",
 };
-
-const DOMAIN_BOUNDARIES = [
-  {
-    title: "Kinh văn tự tu",
-    description: "Khu nội dung chuẩn cho cách dùng, bảo quản, nguồn tham chiếu và bản in. Không giữ tiến độ cá nhân.",
-    owner: "Nội dung / Kinh văn tự tu",
-  },
-  {
-    title: "Ngôi Nhà Nhỏ",
-    description: "Kho nội dung riêng cho nghi thức, cách chấm đỏ, quy trình đốt, hủy tờ sai và các biến thể tình huống.",
-    owner: "Nội dung / Ngôi Nhà Nhỏ",
-    href: "/noi-dung/ngoi-nha-nho",
-  },
-  {
-    title: "Sớ / hồ sơ Ngôi Nhà Nhỏ",
-    description: "Hồ sơ vận hành, chấm đỏ, đốt và hàng đợi gian lận. Đây là khu vận hành, không phải nội dung hướng dẫn.",
-    owner: "Vận hành / Ngôi Nhà Nhỏ",
-    href: "/so/danh-sach",
-  },
-];
-
-const SELF_CULTIVATION_WORKFLOW = [
-  "Giữ cấu trúc nhóm rõ ràng: bắt đầu, cách dùng, bảo quản, trường hợp sử dụng, hỏi đáp, tải xuống.",
-  "Những phần gần với Ngôi Nhà Nhỏ chỉ được liên kết chéo bằng ghi chú ranh giới, không sao chép máy móc.",
-  "Biểu mẫu và PDF phải đi qua thư viện media hoặc kho tải xuống chính thức để giữ nguồn gốc rõ ràng.",
-  "Các lưu ý về đốt và rủi ro chỉ là tham chiếu vận hành; trạng thái thực hành thật thuộc khu nghiệp vụ riêng.",
-];
 
 function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
   return status === "PUBLISHED"
@@ -128,7 +101,7 @@ function GuideList({ items }: { items: SelfCultivationGuide[] }) {
                 <Badge variant="outline">{GROUP_LABELS[item.groupKey]}</Badge>
                 <Button asChild variant="outline" size="sm">
                   <Link to="/noi-dung/kinh-van-tu-tu/huong-dan/$guidePublicId" params={{ guidePublicId: item.publicId }}>
-                    Sửa
+                    Sửa và quản lý
                   </Link>
                 </Button>
               </div>
@@ -358,6 +331,8 @@ export function SelfCultivationGuideDetailPage() {
   const { data: overview, isLoading } = useQuery(selfCultivationOverviewOptions());
   const guide = overview?.guides.find((item) => item.publicId === publicId);
   const updateGuide = useUpdateSelfCultivationGuide();
+  const deleteGuide = useDeleteSelfCultivationGuide();
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const form = useAdminZodForm(createGuideSchema, { defaultValues: buildGuideDefaults(guide) });
   const values = form.watch();
   const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
@@ -421,17 +396,29 @@ export function SelfCultivationGuideDetailPage() {
   }
 
   return (
-    <AdminDetailPage
-      backHref="/noi-dung/kinh-van-tu-tu"
-      backLabel="Kinh văn tự tu"
-      title={guide.title}
-      onSave={() => void handleSave()}
-      isSaving={updateGuide.isPending}
-      saveDisabled={!values.title.trim() || !values.summary.trim() || !values.sourceReference.trim() || slugStatus === "taken"}
-      sidebar={<GuideSidebar guide={guide} values={values} />}
-    >
-      <GuideForm form={form} slug={slug} setSlug={setSlug} slugStatus={slugStatus} />
-    </AdminDetailPage>
+    <>
+      <AdminDetailPage
+        backHref="/noi-dung/kinh-van-tu-tu"
+        backLabel="Kinh văn tự tu"
+        title={guide.title}
+        onSave={() => void handleSave()}
+        isSaving={updateGuide.isPending}
+        saveDisabled={!values.title.trim() || !values.summary.trim() || !values.sourceReference.trim() || slugStatus === "taken"}
+        actions={[{ label: "Xoá bài hướng dẫn", variant: "destructive", onClick: () => setDeleteOpen(true) }]}
+        sidebar={<GuideSidebar guide={guide} values={values} />}
+      >
+        <GuideForm form={form} slug={slug} setSlug={setSlug} slugStatus={slugStatus} />
+      </AdminDetailPage>
+      <WorkspaceConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Xoá bài hướng dẫn Kinh văn tự tu"
+        description="Bản ghi này sẽ bị xoá khỏi workspace nội dung Kinh văn tự tu."
+        confirmLabel="Xoá"
+        isPending={deleteGuide.isPending}
+        onConfirm={() => deleteGuide.mutate(publicId, { onSuccess: () => navigateTo("/noi-dung/kinh-van-tu-tu") })}
+      />
+    </>
   );
 }
 
@@ -474,6 +461,9 @@ export function SelfCultivationFaqDetailPage() {
   const { data: overview, isLoading } = useQuery(selfCultivationOverviewOptions());
   const faq = overview?.faq.find((item) => item.publicId === publicId);
   const updateFaq = useUpdateSelfCultivationFaq();
+  const deleteFaq = useDeleteSelfCultivationFaq();
+  const navigateTo = useNavigateTo();
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const form = useAdminZodForm(createFaqSchema, { defaultValues: buildFaqDefaults(faq) });
   const values = form.watch();
 
@@ -488,28 +478,40 @@ export function SelfCultivationFaqDetailPage() {
   if (isLoading) return <WorkspaceDetailSkeleton />;
 
   return (
-    <AdminDetailPage
-      backHref="/noi-dung/kinh-van-tu-tu"
-      backLabel="Kinh văn tự tu"
-      title={faq?.question ?? "Không tìm thấy mục hỏi đáp"}
-      onSave={() => void handleSave()}
-      isSaving={updateFaq.isPending}
-      saveDisabled={!faq || !values.question.trim() || !values.answer.trim() || !values.sourceReference.trim()}
-      sidebar={
-        <AdminDetailSection title="Thông tin">
-          <AdminDetailField label="Nguồn" value={values.sourceReference || "Chưa nhập"} />
-          {faq ? <AdminDetailField label="Cập nhật" value={new Date(faq.updatedAt).toLocaleString("vi-VN")} /> : null}
-        </AdminDetailSection>
-      }
-    >
-      {faq ? (
-        <FaqForm form={form} />
-      ) : (
-        <AdminDetailSection title="Không có dữ liệu">
-          <p className="text-sm text-muted-foreground">Mục hỏi đáp này không tồn tại hoặc đã bị xoá.</p>
-        </AdminDetailSection>
-      )}
-    </AdminDetailPage>
+    <>
+      <AdminDetailPage
+        backHref="/noi-dung/kinh-van-tu-tu"
+        backLabel="Kinh văn tự tu"
+        title={faq?.question ?? "Không tìm thấy mục hỏi đáp"}
+        onSave={() => void handleSave()}
+        isSaving={updateFaq.isPending}
+        saveDisabled={!faq || !values.question.trim() || !values.answer.trim() || !values.sourceReference.trim()}
+        actions={faq ? [{ label: "Xoá mục hỏi đáp", variant: "destructive", onClick: () => setDeleteOpen(true) }] : []}
+        sidebar={
+          <AdminDetailSection title="Thông tin">
+            <AdminDetailField label="Nguồn" value={values.sourceReference || "Chưa nhập"} />
+            {faq ? <AdminDetailField label="Cập nhật" value={new Date(faq.updatedAt).toLocaleString("vi-VN")} /> : null}
+          </AdminDetailSection>
+        }
+      >
+        {faq ? (
+          <FaqForm form={form} />
+        ) : (
+          <AdminDetailSection title="Không có dữ liệu">
+            <p className="text-sm text-muted-foreground">Mục hỏi đáp này không tồn tại hoặc đã bị xoá.</p>
+          </AdminDetailSection>
+        )}
+      </AdminDetailPage>
+      <WorkspaceConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Xoá mục hỏi đáp Kinh văn tự tu"
+        description="Mục hỏi đáp này sẽ bị xoá khỏi workspace nội dung Kinh văn tự tu."
+        confirmLabel="Xoá"
+        isPending={deleteFaq.isPending}
+        onConfirm={() => deleteFaq.mutate(publicId, { onSuccess: () => navigateTo("/noi-dung/kinh-van-tu-tu") })}
+      />
+    </>
   );
 }
 
@@ -532,13 +534,19 @@ export function SelfCultivationWorkspacePage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-2">
+        <div>
           <h1 className="text-3xl font-bold tracking-tight">Kinh văn tự tu</h1>
-          <p className="text-sm text-muted-foreground">
-            Khu quản lý chính cho `/kinh-van-tu-tu`. Không được gắn nhầm sang nội dung hỗ trợ thực hành tại nhà.
+          <p className="mt-2 text-sm text-muted-foreground">
+            Quản lý bài hướng dẫn, nhóm sử dụng, hỏi đáp, file tải xuống, nguồn tham chiếu và trạng thái xuất bản của Kinh văn tự tu.
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link to="/noi-dung/kinh-van-tu-tu/huong-dan/tao-moi">
+              <PlusIcon className="size-4" />
+              Thêm bài hướng dẫn
+            </Link>
+          </Button>
           <Button variant="outline" onClick={() => void refetch()} disabled={isRefetching}>
             <RefreshCwIcon className={cn("mr-2 size-4", isRefetching && "animate-spin")} />
             Làm mới
@@ -551,80 +559,6 @@ export function SelfCultivationWorkspacePage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <CardTitle>Tổng quan khu biên tập</CardTitle>
-              <CardDescription>Khu này bám đúng cấu trúc tab của đặc tả quản trị Kinh văn tự tu.</CardDescription>
-            </div>
-            {overview ? <Badge variant="outline" className={statusBadgeClass(overview.status)}>{overview.status === "PUBLISHED" ? "Đã xuất bản" : "Nháp"}</Badge> : null}
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-4 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-base">Khác với Kinh Bài Tập</CardTitle></CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? <Skeleton className="h-4 w-full" />}</CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-base">Khác với Ngôi Nhà Nhỏ</CardTitle></CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromLittleHouse ?? <Skeleton className="h-4 w-full" />}</CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-base">Thông tin biên tập</CardTitle></CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p><span className="font-medium text-foreground">Biên tập:</span> {overview?.updatedByLabel ?? "—"}</p>
-              <p><span className="font-medium text-foreground">Cập nhật:</span> {overview ? new Date(overview.updatedAt).toLocaleString("vi-VN") : "—"}</p>
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Ranh giới quản trị</CardTitle>
-            <CardDescription>
-              Kinh văn tự tu có liên hệ với Ngôi Nhà Nhỏ, nhưng không cùng khu phụ trách. Admin chỉ liên kết chéo và giữ nguồn tham chiếu rõ ràng.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-3">
-            {DOMAIN_BOUNDARIES.map((item) => (
-              <div key={item.title} className="flex min-h-36 flex-col justify-between rounded-lg border bg-muted/20 p-4">
-                <div className="space-y-2">
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm leading-5 text-muted-foreground">{item.description}</p>
-                  <Badge variant="outline">{item.owner}</Badge>
-                </div>
-                {item.href ? (
-                  <Button asChild variant="outline" size="sm" className="mt-4 justify-between">
-                    <Link to={item.href}>
-                      Mở khu này
-                      <ArrowRightIcon className="size-4" />
-                    </Link>
-                  </Button>
-                ) : null}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Checklist đúng design</CardTitle>
-            <CardDescription>Operator nhìn vào đây để biết màn này được phép quản lý gì.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {SELF_CULTIVATION_WORKFLOW.map((item) => (
-              <div key={item} className="flex gap-2 text-sm leading-5">
-                <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
       <Tabs defaultValue="tong-quan" className="space-y-4">
         <TabsList className="h-auto flex-wrap gap-1 p-1">
           <TabsTrigger value="tong-quan">Tổng quan</TabsTrigger>
@@ -633,25 +567,28 @@ export function SelfCultivationWorkspacePage() {
           <TabsTrigger value="truong-hop">Trường hợp sử dụng</TabsTrigger>
           <TabsTrigger value="faq">Hỏi đáp</TabsTrigger>
           <TabsTrigger value="tai-xuong">Tải xuống</TabsTrigger>
-          <TabsTrigger value="bieu-mau">
-            <FileTextIcon className="mr-1.5 size-3.5" />
-            Biểu mẫu
-          </TabsTrigger>
-          <TabsTrigger value="luong-dot">
-            <FlameIcon className="mr-1.5 size-3.5" />
-            Rủi ro
-          </TabsTrigger>
           <TabsTrigger value="version">Phiên bản và nguồn</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tong-quan" className="space-y-4">
-          <div className="flex justify-end">
-            <Button asChild variant="outline">
-              <Link to="/noi-dung/kinh-van-tu-tu/huong-dan/tao-moi">
-                <PlusIcon className="mr-2 size-4" />
-                Thêm bài hướng dẫn
-              </Link>
-            </Button>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className="rounded-lg border bg-card p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-medium">Trạng thái</p>
+                {overview ? <Badge variant="outline" className={statusBadgeClass(overview.status)}>{overview.status === "PUBLISHED" ? "Đã xuất bản" : "Nháp"}</Badge> : null}
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {overview ? `Cập nhật: ${new Date(overview.updatedAt).toLocaleString("vi-VN")}` : "Đang tải trạng thái xuất bản."}
+              </p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">Khác với Kinh bài tập</p>
+              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? <Skeleton className="h-4 w-full" />}</p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">Khác với Ngôi Nhà Nhỏ</p>
+              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromLittleHouse ?? <Skeleton className="h-4 w-full" />}</p>
+            </div>
           </div>
           <GuideList items={groupedGuides.BAT_DAU} />
           <Card>
@@ -720,9 +657,6 @@ export function SelfCultivationWorkspacePage() {
             </Card>
           )}
         </TabsContent>
-
-        <TabsContent value="bieu-mau"><TemplatesTab /></TabsContent>
-        <TabsContent value="luong-dot"><BurnFlowTab /></TabsContent>
 
         <TabsContent value="version" className="grid gap-4 lg:grid-cols-2">
           <Card>

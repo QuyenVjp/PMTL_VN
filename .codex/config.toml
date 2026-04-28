@@ -1,0 +1,3 @@
+# PMTL project-local Codex layer.
+# Keep runtime/model defaults in the user config; this file exists so trusted
+# PMTL sessions can load repo-scoped rules from .codex/rules/.

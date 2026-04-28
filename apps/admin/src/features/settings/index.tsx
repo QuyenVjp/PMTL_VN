@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { BellIcon, ImagePlusIcon, Loader2Icon, MonitorIcon, PaletteIcon, Trash2Icon, UserCogIcon, WrenchIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -150,10 +151,19 @@ export function SettingsPage() {
         <aside className="lg:w-72">
           <div className="rounded-2xl border bg-card p-3">
             <div className="mb-3 flex items-center gap-3 rounded-xl border bg-muted/30 p-3">
-              <Avatar className="size-12 rounded-xl">
-                <AvatarImage src={resolveMediaSrc(adminUser.avatar) ?? undefined} alt={adminUser.name} />
-                <AvatarFallback className="rounded-xl">{adminUser.initials}</AvatarFallback>
-              </Avatar>
+              {adminUser.avatar ? (
+                <PreviewableImage
+                  src={adminUser.avatar}
+                  alt={adminUser.name}
+                  title={adminUser.name}
+                  className="size-12 shrink-0 rounded-xl"
+                  imageClassName="rounded-xl"
+                />
+              ) : (
+                <Avatar className="size-12 rounded-xl">
+                  <AvatarFallback className="rounded-xl">{adminUser.initials}</AvatarFallback>
+                </Avatar>
+              )}
               <div className="min-w-0">
                 <p className="truncate font-semibold">{adminUser.name}</p>
                 <p className="truncate text-sm text-muted-foreground">{adminUser.role}</p>
@@ -214,17 +224,19 @@ export function SettingsPage() {
                   <div className="grid gap-2">
                     <label className="text-sm font-medium">Ảnh đại diện</label>
                     <div className="flex flex-wrap items-center gap-4 rounded-xl border p-4">
-                      <button
-                        type="button"
-                        onClick={openAvatarPicker}
-                        className="rounded-2xl border border-transparent transition hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        aria-label="Chọn ảnh đại diện"
-                      >
+                      {avatarPreview ? (
+                        <PreviewableImage
+                          src={avatarPreview}
+                          alt={profile.displayName}
+                          title="Ảnh đại diện"
+                          className="size-16 shrink-0 rounded-2xl"
+                          imageClassName="rounded-2xl"
+                        />
+                      ) : (
                         <Avatar className="size-16 rounded-2xl border">
-                          <AvatarImage src={resolveMediaSrc(avatarPreview) ?? undefined} alt={profile.displayName} />
                           <AvatarFallback className="rounded-2xl">{adminUser.initials}</AvatarFallback>
                         </Avatar>
-                      </button>
+                      )}
                       <div className="grid gap-2">
                         <input
                           ref={fileInputRef}

@@ -3,7 +3,7 @@
   "slug": "kinh-van-tu-tu",
   "title": "Kinh văn tự tu",
   "status": "DRAFT",
-  "updatedAt": "2026-03-29T19:00:00.000Z",
+  "updatedAt": "2026-04-28T01:58:39.167Z",
   "updatedByLabel": "Biên tập Kinh Văn Tự Tu",
   "boundarySummary": {
     "differentFromDailyPractice": "Kinh văn tự tu là lane reference-first cho cách dùng, bảo quản và nguồn dẫn; không phải engine preset hằng ngày hay tracker user-state.",
@@ -33,7 +33,7 @@
       "boundaryNote": "Khối mở đầu này là orientation block, không phải tracker công khóa.",
       "warningNotes": [],
       "displayOrder": 0,
-      "updatedAt": "2026-03-29T19:00:00.000Z"
+      "updatedAt": "2026-04-28T01:58:39.167Z"
     },
     {
       "publicId": "scg-cach-dung-0001",

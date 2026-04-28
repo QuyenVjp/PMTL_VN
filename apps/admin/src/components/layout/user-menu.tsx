@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { BellIcon, LogOutIcon, Settings2Icon, ShieldCheckIcon, UserIcon } from "lucide-react";
 
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/lib/query/use-current-user";
 import {
@@ -35,10 +36,19 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-64 rounded-lg">
         <DropdownMenuLabel className="font-normal">
           <div className="flex items-center gap-3 px-1 py-1">
-            <Avatar className="size-9">
-              <AvatarImage src={resolveMediaSrc(user.avatar) ?? undefined} alt={user.name} />
-              <AvatarFallback className="text-sm font-semibold">{user.initials}</AvatarFallback>
-            </Avatar>
+            {user.avatar ? (
+              <PreviewableImage
+                src={user.avatar}
+                alt={user.name}
+                title={user.name}
+                className="size-9 shrink-0 rounded-full"
+                imageClassName="rounded-full"
+              />
+            ) : (
+              <Avatar className="size-9">
+                <AvatarFallback className="text-sm font-semibold">{user.initials}</AvatarFallback>
+              </Avatar>
+            )}
             <div className="grid text-start">
               <span className="font-semibold">{user.name}</span>
               <span className="text-xs text-muted-foreground">{user.email}</span>

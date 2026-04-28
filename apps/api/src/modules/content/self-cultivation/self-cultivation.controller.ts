@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 
@@ -125,6 +125,17 @@ export class AdminSelfCultivationController {
     });
   }
 
+  @Delete("guides/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteGuide(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.selfCultivationService.adminDeleteGuide(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
   @Post("faq")
   @HttpCode(HttpStatus.CREATED)
   adminCreateFaq(
@@ -148,6 +159,17 @@ export class AdminSelfCultivationController {
     @Req() req: Request,
   ) {
     return this.selfCultivationService.adminUpdateFaq(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete("faq/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteFaq(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.selfCultivationService.adminDeleteFaq(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

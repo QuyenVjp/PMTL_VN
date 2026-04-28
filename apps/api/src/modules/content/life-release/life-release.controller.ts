@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 
@@ -124,6 +124,17 @@ export class AdminLifeReleaseContentController {
     });
   }
 
+  @Delete("guides/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteGuide(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.lifeReleaseService.adminDeleteGuide(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
   @Post("ritual-variants")
   @HttpCode(HttpStatus.CREATED)
   adminCreateVariant(
@@ -154,6 +165,17 @@ export class AdminLifeReleaseContentController {
     });
   }
 
+  @Delete("ritual-variants/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteVariant(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.lifeReleaseService.adminDeleteVariant(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
   @Post("faq")
   @HttpCode(HttpStatus.CREATED)
   adminCreateFaq(
@@ -177,6 +199,17 @@ export class AdminLifeReleaseContentController {
     @Req() req: Request,
   ) {
     return this.lifeReleaseService.adminUpdateFaq(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete("faq/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteFaq(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.lifeReleaseService.adminDeleteFaq(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

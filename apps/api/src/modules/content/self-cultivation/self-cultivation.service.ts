@@ -209,6 +209,23 @@ export class SelfCultivationService {
     return updated;
   }
 
+  async adminDeleteGuide(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.guides.findIndex((guide) => guide.publicId === publicId);
+    if (index === -1) throw new NotFoundException("Guide Kinh văn tự tu không tồn tại");
+
+    const [deleted] = overview.guides.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Kinh Văn Tự Tu";
+    await this.saveOverview(selfCultivationOverviewSchema.parse(overview));
+
+    await this.auditService.append(auditContext, "admin.self_cultivation.guide.delete", "self_cultivation_guide", publicId, {
+      title: deleted.title,
+      slug: deleted.slug,
+    });
+    return { publicId };
+  }
+
   async adminCreateFaq(input: CreateSelfCultivationFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: SelfCultivationFaqDto = {
@@ -253,6 +270,22 @@ export class SelfCultivationService {
     });
 
     return updated;
+  }
+
+  async adminDeleteFaq(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.faq.findIndex((faq) => faq.publicId === publicId);
+    if (index === -1) throw new NotFoundException("FAQ Kinh văn tự tu không tồn tại");
+
+    const [deleted] = overview.faq.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Kinh Văn Tự Tu";
+    await this.saveOverview(selfCultivationOverviewSchema.parse(overview));
+
+    await this.auditService.append(auditContext, "admin.self_cultivation.faq.delete", "self_cultivation_faq", publicId, {
+      question: deleted.question,
+    });
+    return { publicId };
   }
 
   async adminPublish(input: PublishSelfCultivationInput, auditContext: AuditContext) {

@@ -1,0 +1,176 @@
+# PMTL_VN command guardrails.
+#
+# Design basis:
+# - Postgres is the source of truth; Prisma migrations need review.
+# - apps/api is the backend/write-path authority.
+# - audit_logs and karma_events are append-only.
+# - Production, restore, search, queue, and Dharma-compliance paths must not be
+#   changed by ad-hoc destructive commands.
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "PMTL protects user/agent worktree changes. Use git status/diff first and revert only explicit files with owner approval.",
+    match = ["git reset --hard", "git reset --hard HEAD"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "forbidden",
+    justification = "PMTL generated, uploaded, and local evidence files must not be bulk-deleted. Remove explicit paths only after review.",
+    match = ["git clean -fd", "git clean -fdx"],
+)
+
+prefix_rule(
+    pattern = ["git", "checkout", "--"],
+    decision = "forbidden",
+    justification = "Do not discard file changes implicitly. Use a targeted patch or ask before reverting user edits.",
+    match = ["git checkout -- apps/api/src/main.ts"],
+)
+
+prefix_rule(
+    pattern = ["git", "restore"],
+    decision = "forbidden",
+    justification = "Do not discard file changes implicitly. Use a targeted patch or ask before reverting user edits.",
+    match = ["git restore apps/api/src/main.ts", "git restore ."],
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf"],
+    decision = "forbidden",
+    justification = "Bulk recursive deletion is not allowed in PMTL. Use explicit, reviewed Remove-Item paths when deletion is genuinely required.",
+    match = ["rm -rf node_modules", "rm -rf ."],
+)
+
+prefix_rule(
+    pattern = ["rm", "-r"],
+    decision = "forbidden",
+    justification = "Bulk recursive deletion is not allowed in PMTL. Use explicit, reviewed Remove-Item paths when deletion is genuinely required.",
+    match = ["rm -r tmp"],
+)
+
+prefix_rule(
+    pattern = ["Remove-Item", "-Recurse"],
+    decision = "forbidden",
+    justification = "Recursive deletion must be scoped and reviewed. Prefer targeted cleanup scripts with resolved path checks.",
+    match = ["Remove-Item -Recurse .\\tmp"],
+)
+
+prefix_rule(
+    pattern = ["Remove-Item", "-Force", "-Recurse"],
+    decision = "forbidden",
+    justification = "Forced recursive deletion must not run automatically in PMTL.",
+    match = ["Remove-Item -Force -Recurse .\\tmp"],
+)
+
+prefix_rule(
+    pattern = ["docker", "compose", "down", "-v"],
+    decision = "forbidden",
+    justification = "Docker volume deletion can wipe Postgres/Meilisearch state. Use documented restore/reset runbooks instead.",
+    match = ["docker compose down -v"],
+)
+
+prefix_rule(
+    pattern = ["docker-compose", "down", "-v"],
+    decision = "forbidden",
+    justification = "Docker volume deletion can wipe Postgres/Meilisearch state. Use documented restore/reset runbooks instead.",
+    match = ["docker-compose down -v"],
+)
+
+prefix_rule(
+    pattern = ["docker", "volume", "rm"],
+    decision = "forbidden",
+    justification = "PMTL data volumes are protected because Postgres is the source of truth.",
+    match = ["docker volume rm pmtl_postgres_data"],
+)
+
+prefix_rule(
+    pattern = ["docker", "volume", "prune"],
+    decision = "forbidden",
+    justification = "Pruning volumes can delete PMTL database/search/runtime state outside the restore discipline.",
+    match = ["docker volume prune"],
+)
+
+prefix_rule(
+    pattern = ["docker", "system", "prune"],
+    decision = "forbidden",
+    justification = "System prune is too broad for PMTL automation. Clean explicit images/containers only after inspection.",
+    match = ["docker system prune", "docker system prune -a"],
+)
+
+prefix_rule(
+    pattern = ["npx", "prisma", "migrate", "reset"],
+    decision = "forbidden",
+    justification = "Prisma reset destroys source-of-truth data. Use reviewed migrations or documented local reset runbooks.",
+    match = ["npx prisma migrate reset"],
+)
+
+prefix_rule(
+    pattern = ["pnpm", "prisma", "migrate", "reset"],
+    decision = "forbidden",
+    justification = "Prisma reset destroys source-of-truth data. Use reviewed migrations or documented local reset runbooks.",
+    match = ["pnpm prisma migrate reset"],
+)
+
+prefix_rule(
+    pattern = ["pnpm", "exec", "prisma", "migrate", "reset"],
+    decision = "forbidden",
+    justification = "Prisma reset destroys source-of-truth data. Use reviewed migrations or documented local reset runbooks.",
+    match = ["pnpm exec prisma migrate reset"],
+)
+
+prefix_rule(
+    pattern = ["prisma", "migrate", "reset"],
+    decision = "forbidden",
+    justification = "Prisma reset destroys source-of-truth data. Use reviewed migrations or documented local reset runbooks.",
+    match = ["prisma migrate reset"],
+)
+
+prefix_rule(
+    pattern = ["npx", "prisma", "db", "push", "--force-reset"],
+    decision = "forbidden",
+    justification = "Force-reset bypasses migration review and can erase canonical data.",
+    match = ["npx prisma db push --force-reset"],
+)
+
+prefix_rule(
+    pattern = ["pnpm", "prisma", "db", "push", "--force-reset"],
+    decision = "forbidden",
+    justification = "Force-reset bypasses migration review and can erase canonical data.",
+    match = ["pnpm prisma db push --force-reset"],
+)
+
+prefix_rule(
+    pattern = ["pnpm", "exec", "prisma", "db", "push", "--force-reset"],
+    decision = "forbidden",
+    justification = "Force-reset bypasses migration review and can erase canonical data.",
+    match = ["pnpm exec prisma db push --force-reset"],
+)
+
+prefix_rule(
+    pattern = ["psql", "-c", "DROP"],
+    decision = "forbidden",
+    justification = "Direct DROP statements bypass PMTL migration, audit, and restore discipline.",
+    match = ["psql -c DROP DATABASE pmtl"],
+)
+
+prefix_rule(
+    pattern = ["psql", "-c", "TRUNCATE"],
+    decision = "forbidden",
+    justification = "Direct TRUNCATE bypasses PMTL migration, audit, and restore discipline.",
+    match = ["psql -c TRUNCATE TABLE audit_logs"],
+)
+
+prefix_rule(
+    pattern = ["redis-cli", "FLUSHALL"],
+    decision = "forbidden",
+    justification = "Valkey/Redis state must be reset through PMTL runtime drills, not ad-hoc flushes.",
+    match = ["redis-cli FLUSHALL"],
+)
+
+prefix_rule(
+    pattern = ["redis-cli", "FLUSHDB"],
+    decision = "forbidden",
+    justification = "Valkey/Redis state must be reset through PMTL runtime drills, not ad-hoc flushes.",
+    match = ["redis-cli FLUSHDB"],
+)

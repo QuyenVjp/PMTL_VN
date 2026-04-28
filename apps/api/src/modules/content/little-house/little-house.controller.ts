@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 
@@ -124,6 +124,17 @@ export class AdminLittleHouseController {
     });
   }
 
+  @Delete("guides/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteGuide(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.littleHouseService.adminDeleteGuide(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
   @Post("case-variants")
   @HttpCode(HttpStatus.CREATED)
   adminCreateCaseVariant(
@@ -154,6 +165,17 @@ export class AdminLittleHouseController {
     });
   }
 
+  @Delete("case-variants/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteCaseVariant(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.littleHouseService.adminDeleteCaseVariant(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
   @Post("faq")
   @HttpCode(HttpStatus.CREATED)
   adminCreateFaq(
@@ -177,6 +199,17 @@ export class AdminLittleHouseController {
     @Req() req: Request,
   ) {
     return this.littleHouseService.adminUpdateFaq(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete("faq/:publicId")
+  @HttpCode(HttpStatus.OK)
+  adminDeleteFaq(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser, @Req() req: Request) {
+    return this.littleHouseService.adminDeleteFaq(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

@@ -3,20 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   AlertTriangleIcon,
-  ArrowRightIcon,
   BookOpenIcon,
   DownloadIcon,
   FileStackIcon,
-  FolderTreeIcon,
   ListChecksIcon,
+  PlusIcon,
   RefreshCwIcon,
-  ShieldAlertIcon,
 } from "lucide-react";
 
 import { WorkspaceConfirmDialog, WorkspaceRouteSkeleton } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { usePublishLittleHouse } from "./mutations.js";
@@ -63,13 +61,19 @@ export function LittleHouseContentWorkspace() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-2">
+        <div>
           <h1 className="text-3xl font-bold tracking-tight">Ngôi Nhà Nhỏ</h1>
-          <p className="text-sm text-muted-foreground">
-            Khu biên tập chính cho bài hướng dẫn, biến thể tình huống, phần hỏi đáp và tệp tải xuống của Ngôi Nhà Nhỏ. Không được đụng sang hồ sơ sớ hay logic Kinh văn tự tu.
+          <p className="mt-2 text-sm text-muted-foreground">
+            Quản lý nội dung chuẩn, biến thể tình huống, hỏi đáp, file tải xuống, nguồn tham chiếu và trạng thái xuất bản của Ngôi Nhà Nhỏ.
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link to="/noi-dung/ngoi-nha-nho/huong-dan/tao-moi">
+              <PlusIcon className="size-4" />
+              Thêm bài hướng dẫn
+            </Link>
+          </Button>
           <Button variant="outline" onClick={() => void refetch()} disabled={isRefetching}>
             <RefreshCwIcon className={cn("mr-2 size-4", isRefetching && "animate-spin")} />
             Làm mới
@@ -82,114 +86,9 @@ export function LittleHouseContentWorkspace() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <CardTitle>Tổng quan khu biên tập</CardTitle>
-              <CardDescription>Trang gốc này đang đọc dữ liệu thật của khu Ngôi Nhà Nhỏ từ API quản trị.</CardDescription>
-            </div>
-            {overview ? (
-              <Badge variant="outline" className={statusBadgeClass(overview.status)}>
-                {overview.status === "PUBLISHED" ? "Đã xuất bản" : "Nháp"}
-              </Badge>
-            ) : null}
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-4 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Khác với Kinh văn tự tu</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              {overview?.boundarySummary.differentFromSelfCultivation ?? "—"}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Khác với Kinh bài tập</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              {overview?.boundarySummary.differentFromDailyPractice ?? "—"}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Thông tin biên tập</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p><span className="font-medium text-foreground">Biên tập:</span> {overview?.updatedByLabel ?? "—"}</p>
-              <p><span className="font-medium text-foreground">Cập nhật:</span> {overview ? new Date(overview.updatedAt).toLocaleString("vi-VN") : "—"}</p>
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderTreeIcon className="size-5" />
-              Nhóm nội dung chuẩn
-            </CardTitle>
-            <CardDescription>
-              Public IA của Ngôi Nhà Nhỏ phải gom theo nhóm lớn, không để operator nhìn một mớ link phẳng lẫn ngữ cảnh.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {Object.entries(groupedGuides).map(([key, items]) => (
-              <div key={key} className="rounded-lg border bg-muted/20 p-4">
-                <p className="font-medium text-foreground">{GROUP_LABELS[key as LittleHouseGuideGroup]}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{items.length} bài hướng dẫn chuẩn</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {items[0]?.summary ?? "Nhóm này đang chờ biên tập bổ sung đúng nguồn tham chiếu."}
-                </p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldAlertIcon className="size-4 text-muted-foreground" />
-                Boundary vận hành
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              {(overview?.boundarySummary.nonNegotiables ?? []).map((item) => (
-                <div key={item} className="rounded-lg border px-3 py-2">
-                  {item}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Lane liên quan</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button asChild variant="outline" className="w-full justify-between">
-                <Link to="/so/danh-sach">
-                  Hồ sơ sớ
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full justify-between">
-                <Link to="/noi-dung/kinh-van-tu-tu">
-                  Kinh văn tự tu
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <Tabs defaultValue="guides" className="space-y-4">
+      <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="h-auto flex-wrap gap-1 p-1">
+          <TabsTrigger value="overview">Tổng quan</TabsTrigger>
           <TabsTrigger value="guides">Hướng dẫn chính</TabsTrigger>
           <TabsTrigger value="cases">Biến thể tình huống</TabsTrigger>
           <TabsTrigger value="faq">Hỏi đáp</TabsTrigger>
@@ -197,14 +96,62 @@ export function LittleHouseContentWorkspace() {
           <TabsTrigger value="review">Phiên bản và nguồn</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className="rounded-lg border bg-card p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-medium">Trạng thái</p>
+                {overview ? (
+                  <Badge variant="outline" className={statusBadgeClass(overview.status)}>
+                    {overview.status === "PUBLISHED" ? "Đã xuất bản" : "Nháp"}
+                  </Badge>
+                ) : null}
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {overview ? `Cập nhật: ${new Date(overview.updatedAt).toLocaleString("vi-VN")}` : "Đang tải trạng thái xuất bản."}
+              </p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">Nội dung đang quản lý</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {(overview?.guides.length ?? 0)} bài hướng dẫn, {(overview?.caseVariants.length ?? 0)} biến thể, {(overview?.faq.length ?? 0)} mục hỏi đáp.
+              </p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">File tải xuống</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {(overview?.downloads.length ?? 0)} asset đang gắn với workspace nội dung Ngôi Nhà Nhỏ.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">Khác với Kinh văn tự tu</p>
+              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromSelfCultivation ?? "—"}</p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="font-medium">Khác với Kinh bài tập</p>
+              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? "—"}</p>
+            </div>
+          </div>
+        </TabsContent>
+
         <TabsContent value="guides" className="space-y-4">
           {Object.entries(groupedGuides).map(([key, items]) => (
             <Card key={key}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <BookOpenIcon className="size-4 text-muted-foreground" />
-                  {GROUP_LABELS[key as LittleHouseGuideGroup]}
-                </CardTitle>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <BookOpenIcon className="size-4 text-muted-foreground" />
+                    {GROUP_LABELS[key as LittleHouseGuideGroup]}
+                  </CardTitle>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/noi-dung/ngoi-nha-nho/huong-dan/tao-moi">
+                      <PlusIcon className="mr-2 size-4" />
+                      Thêm bài
+                    </Link>
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 {items.length ? items.map((item) => (
@@ -214,7 +161,14 @@ export function LittleHouseContentWorkspace() {
                         <p className="font-medium text-foreground">{item.title}</p>
                         <p className="text-sm text-muted-foreground">{item.summary}</p>
                       </div>
-                      <Badge variant="outline">{item.slug}</Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{item.slug}</Badge>
+                        <Button asChild variant="outline" size="sm">
+                          <Link to="/noi-dung/ngoi-nha-nho/huong-dan/$guidePublicId" params={{ guidePublicId: item.publicId }}>
+                            Sửa và quản lý
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                     <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
                       <p><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
@@ -240,10 +194,18 @@ export function LittleHouseContentWorkspace() {
         <TabsContent value="cases">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ListChecksIcon className="size-4 text-muted-foreground" />
-                Biến thể tình huống
-              </CardTitle>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <ListChecksIcon className="size-4 text-muted-foreground" />
+                  Biến thể tình huống
+                </CardTitle>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/noi-dung/ngoi-nha-nho/bien-the/tao-moi">
+                    <PlusIcon className="mr-2 size-4" />
+                    Thêm biến thể
+                  </Link>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {overview?.caseVariants.length ? overview.caseVariants.map((item) => (
@@ -253,7 +215,14 @@ export function LittleHouseContentWorkspace() {
                       <p className="font-medium text-foreground">{item.name}</p>
                       <p className="text-sm text-muted-foreground">{item.summary}</p>
                     </div>
-                    <Badge variant="outline">{GROUP_LABELS[item.relatedGroup]}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{GROUP_LABELS[item.relatedGroup]}</Badge>
+                      <Button asChild variant="outline" size="sm">
+                        <Link to="/noi-dung/ngoi-nha-nho/bien-the/$variantPublicId" params={{ variantPublicId: item.publicId }}>
+                          Sửa và quản lý
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                   <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
                     <p><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
@@ -273,15 +242,30 @@ export function LittleHouseContentWorkspace() {
         <TabsContent value="faq">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <AlertTriangleIcon className="size-4 text-muted-foreground" />
-                Hỏi đáp trọng tâm
-              </CardTitle>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <AlertTriangleIcon className="size-4 text-muted-foreground" />
+                  Hỏi đáp trọng tâm
+                </CardTitle>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/noi-dung/ngoi-nha-nho/hoi-dap/tao-moi">
+                    <PlusIcon className="mr-2 size-4" />
+                    Thêm mục hỏi đáp
+                  </Link>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {overview?.faq.length ? overview.faq.map((item) => (
                 <div key={item.publicId} className="rounded-lg border bg-muted/20 p-4">
-                  <p className="font-medium text-foreground">{item.question}</p>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <p className="font-medium text-foreground">{item.question}</p>
+                    <Button asChild variant="outline" size="sm">
+                      <Link to="/noi-dung/ngoi-nha-nho/hoi-dap/$faqPublicId" params={{ faqPublicId: item.publicId }}>
+                        Sửa và quản lý
+                      </Link>
+                    </Button>
+                  </div>
                   <p className="mt-2 text-sm text-muted-foreground">{item.answer}</p>
                   <p className="mt-3 text-sm text-muted-foreground">
                     <span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangleIcon, ClipboardCheckIcon, ShieldAlertIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { WorkspaceScopeCards } from "@/components/workspace";
 import {
   Dialog,
   DialogContent,
@@ -47,29 +45,6 @@ export function DharmaComplianceFraudAlertsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Cảnh báo gian lận</h1>
         <p className="mt-2 text-sm text-muted-foreground">Hàng đợi cảnh báo gian lận cần xem xét và xử lý</p>
       </div>
-
-      <WorkspaceScopeCards
-        items={[
-          {
-            title: "Resolve có ghi chú",
-            description: "Operator phải để lại ghi chú xử lý; không có hành động ẩn một chạm trên cảnh báo rủi ro.",
-            badge: "Fraud alert",
-            icon: ClipboardCheckIcon,
-          },
-          {
-            title: "Không mở rộng queue",
-            description: "Design hiện chỉ backing list và resolve; chưa mở workflow điều tra, phong tỏa hay notify tự động.",
-            badge: "Hygiene tier",
-            icon: AlertTriangleIcon,
-          },
-          {
-            title: "Bảo vệ pháp lý",
-            description: "Surface này dùng để giảm rủi ro lừa đảo tài khoản/quyên góp, không phải CRM từ thiện.",
-            badge: "Dharma compliance",
-            icon: ShieldAlertIcon,
-          },
-        ]}
-      />
 
       <DharmaComplianceFraudAlertsTable
         isLoading={isLoading}

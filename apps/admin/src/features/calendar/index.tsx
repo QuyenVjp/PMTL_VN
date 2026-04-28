@@ -13,11 +13,12 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { AlertTriangleIcon, CalendarClockIcon, CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, EyeIcon, ListIcon, PlusIcon, SendIcon, Trash2Icon, WorkflowIcon } from "lucide-react";
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, EyeIcon, ListIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
 import { z } from "zod";
 import { FieldError } from "@/components/ui/field-error";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,6 @@ import {
   WorkspaceDetailSection,
   WorkspaceDetailSheet,
   WorkspaceRowActions,
-  WorkspaceScopeCards,
 } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { eventListOptions, type CalendarEventItem } from "./queries.js";
@@ -483,18 +483,18 @@ function CalendarTable() {
         cell: ({ row }) => (
           <div className="flex items-center gap-2 max-w-[260px]">
             {row.original.coverImageUrl ? (
-              <img
-                src={resolveMediaSrc(row.original.coverImageUrl) ?? undefined}
+              <PreviewableImage
+                src={row.original.coverImageUrl}
                 alt={row.original.title}
-                className="size-8 shrink-0 rounded border object-cover"
-                loading="lazy"
+                title={row.original.title}
+                className="size-8 shrink-0"
               />
             ) : row.original.coverImagePublicId ? (
-              <img
-                src={resolveMediaSrc(mediaUrlByPublicId.get(row.original.coverImagePublicId)) ?? undefined}
+              <PreviewableImage
+                src={resolveMediaSrc(mediaUrlByPublicId.get(row.original.coverImagePublicId))}
                 alt={row.original.title}
-                className="size-8 shrink-0 rounded border object-cover"
-                loading="lazy"
+                title={row.original.title}
+                className="size-8 shrink-0"
               />
             ) : null}
             <div className="truncate font-medium">{row.original.title}</div>
@@ -902,29 +902,6 @@ export function CalendarEventsPage() {
           </div>
           <CalendarPrimaryButtons view={view} onViewChange={setView} />
         </div>
-
-        <WorkspaceScopeCards
-          items={[
-            {
-              title: "Calendar owner",
-              description: "Trang này quản trị lịch hiển thị, thời gian, trạng thái xuất bản và ảnh sự kiện.",
-              badge: "Calendar events",
-              icon: CalendarClockIcon,
-            },
-            {
-              title: "Tách event domain",
-              description: "Các workflow check-in, đăng ký, vi phạm hoặc monetization không nằm trong page lịch này.",
-              badge: "Route boundary",
-              icon: WorkflowIcon,
-            },
-            {
-              title: "Date picker chuẩn",
-              description: "Tạo/sửa sự kiện dùng popover calendar kèm giờ, không dùng input date/time trần.",
-              badge: "shadcn Calendar",
-              icon: AlertTriangleIcon,
-            },
-          ]}
-        />
 
         {view === "calendar" ? (
           isLoading ? (

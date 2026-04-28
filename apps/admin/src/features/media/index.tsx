@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { ImagePreviewDialog, PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -243,26 +244,27 @@ function MediaAssetsTable() {
           const isImage = mimeType.startsWith("image/");
           return (
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="size-10 shrink-0 overflow-hidden rounded border border-border bg-muted flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setCurrentRow(row.original);
-                  setOpen("lightbox");
-                }}
-              >
-                {isImage ? (
-                  <img
-                    src={resolveMediaSrc(row.original.url) ?? undefined}
-                    alt={filename}
-                    className="size-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
+              {isImage ? (
+                <PreviewableImage
+                  src={row.original.url}
+                  alt={filename}
+                  title={filename}
+                  className="size-10 shrink-0 rounded border-border"
+                  imageClassName="object-cover"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="flex size-10 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded border border-border bg-muted transition-opacity hover:opacity-80"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setCurrentRow(row.original);
+                    setOpen("lightbox");
+                  }}
+                >
                   <FileImageIcon className="size-5 text-muted-foreground" />
-                )}
-              </button>
+                </button>
+              )}
               <div className="max-w-[200px] truncate font-medium">{filename}</div>
             </div>
           );
@@ -383,6 +385,7 @@ function MediaFolderPanel() {
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [folderToDelete, setFolderToDelete] = useState<MediaFolderListItem | null>(null);
 
   function handleCreate() {
     const name = newName.trim();
@@ -413,13 +416,13 @@ function MediaFolderPanel() {
     );
   }
 
-  function handleDelete(folder: MediaFolderListItem) {
-    if (!window.confirm(`Xoá thư mục "${folder.name}"? File bên trong không bị xoá, chỉ bỏ khỏi thư mục.`)) {
-      return;
-    }
-    deleteFolder.mutate(folder.publicId, {
+  function handleDeleteConfirm() {
+    if (!folderToDelete) return;
+
+    deleteFolder.mutate(folderToDelete.publicId, {
       onSuccess: () => {
-        if (activeFolderPublicId === folder.publicId) selectFolder(null);
+        if (activeFolderPublicId === folderToDelete.publicId) selectFolder(null);
+        setFolderToDelete(null);
       },
     });
   }
@@ -543,7 +546,7 @@ function MediaFolderPanel() {
                     variant="ghost"
                     size="icon"
                     className="size-7 text-destructive opacity-70 hover:opacity-100"
-                    onClick={() => handleDelete(folder)}
+                    onClick={() => setFolderToDelete(folder)}
                   >
                     <Trash2Icon className="size-3.5" />
                   </Button>
@@ -557,6 +560,23 @@ function MediaFolderPanel() {
           </div>
         )}
       </div>
+      <WorkspaceConfirmDialog
+        open={Boolean(folderToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setFolderToDelete(null);
+        }}
+        title="Xoá thư mục media?"
+        description={
+          folderToDelete
+            ? `Xoá thư mục "${folderToDelete.name}"? File bên trong không bị xoá, chỉ bỏ khỏi thư mục.`
+            : ""
+        }
+        confirmLabel="Xoá thư mục"
+        cancelLabel="Hủy"
+        variant="destructive"
+        isPending={deleteFolder.isPending}
+        onConfirm={handleDeleteConfirm}
+      />
     </aside>
   );
 }
@@ -654,7 +674,12 @@ function MediaUploadDialog() {
               <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/40 p-2">
                 {previewUrls.map((url, index) => (
                   <div key={url} className="aspect-square overflow-hidden rounded-md border bg-background">
-                    <img src={url} alt={staged[index]?.name ?? "Preview"} className="size-full object-cover" />
+                    <PreviewableImage
+                      src={url}
+                      alt={staged[index]?.name ?? "Preview"}
+                      title={staged[index]?.name ?? "Preview"}
+                      className="size-full rounded-none border-0"
+                    />
                   </div>
                 ))}
               </div>
@@ -709,21 +734,27 @@ function MediaLightbox() {
   if (!currentRow) return null;
   const isImage = currentRow.mimeType.startsWith("image/");
 
+  if (isImage) {
+    return (
+      <ImagePreviewDialog
+        open={open === "lightbox"}
+        onOpenChange={(next) => {
+          if (!next) setOpen(null);
+        }}
+        src={currentRow.url}
+        alt={currentRow.filename}
+        title={currentRow.filename}
+      />
+    );
+  }
+
   return (
     <Dialog open={open === "lightbox"} onOpenChange={(v) => !v && setOpen(null)}>
       <DialogContent className="max-w-4xl p-0 overflow-hidden">
         <div className="relative">
-          {isImage ? (
-            <img
-              src={resolveMediaSrc(currentRow.url) ?? undefined}
-              alt={currentRow.filename}
-              className="max-h-[80vh] w-full object-contain bg-black/5"
-            />
-          ) : (
-            <div className="flex h-64 items-center justify-center bg-muted">
-              <FileImageIcon className="size-16 text-muted-foreground" />
-            </div>
-          )}
+          <div className="flex h-64 items-center justify-center bg-muted">
+            <FileImageIcon className="size-16 text-muted-foreground" />
+          </div>
         </div>
         <div className="flex items-center justify-between border-t px-4 py-3">
           <div className="text-sm">
@@ -804,10 +835,12 @@ function MediaDetailSheet() {
           {/* Preview */}
           <div className="relative bg-muted/40 flex items-center justify-center min-h-[200px] max-h-[280px] border-b">
             {isImage ? (
-              <img
+              <PreviewableImage
                 src={resolvedUrl}
                 alt={currentRow.filename}
-                className="max-h-[280px] max-w-full object-contain"
+                title={currentRow.filename}
+                className="max-h-[280px] min-h-[200px] w-full justify-center rounded-none border-0 bg-transparent"
+                imageClassName="max-h-[280px] w-auto object-contain"
               />
             ) : isVideo ? (
               <video src={resolvedUrl} controls className="max-h-[280px] max-w-full" />

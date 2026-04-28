@@ -208,6 +208,23 @@ export class LittleHouseService {
     return updated;
   }
 
+  async adminDeleteGuide(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.guides.findIndex((guide) => guide.publicId === publicId);
+    if (index === -1) throw new NotFoundException("Guide Ngôi Nhà Nhỏ không tồn tại");
+
+    const [deleted] = overview.guides.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Ngôi Nhà Nhỏ";
+    await this.saveOverview(littleHouseOverviewSchema.parse(overview));
+
+    await this.auditService.append(auditContext, "admin.little_house.guide.delete", "little_house_guide", publicId, {
+      title: deleted.title,
+      slug: deleted.slug,
+    });
+    return { publicId };
+  }
+
   async adminCreateCaseVariant(input: CreateLittleHouseCaseVariantInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const variant: LittleHouseCaseVariantDto = {
@@ -259,6 +276,22 @@ export class LittleHouseService {
     return updated;
   }
 
+  async adminDeleteCaseVariant(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.caseVariants.findIndex((variant) => variant.publicId === publicId);
+    if (index === -1) throw new NotFoundException("Case variant Ngôi Nhà Nhỏ không tồn tại");
+
+    const [deleted] = overview.caseVariants.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Ngôi Nhà Nhỏ";
+    await this.saveOverview(littleHouseOverviewSchema.parse(overview));
+
+    await this.auditService.append(auditContext, "admin.little_house.variant.delete", "little_house_variant", publicId, {
+      name: deleted.name,
+    });
+    return { publicId };
+  }
+
   async adminCreateFaq(input: CreateLittleHouseFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: LittleHouseFaqDto = {
@@ -302,6 +335,22 @@ export class LittleHouseService {
       updatedFields: Object.keys(input),
     });
     return updated;
+  }
+
+  async adminDeleteFaq(publicId: string, auditContext: AuditContext) {
+    const overview = await this.loadOverview();
+    const index = overview.faq.findIndex((faq) => faq.publicId === publicId);
+    if (index === -1) throw new NotFoundException("FAQ Ngôi Nhà Nhỏ không tồn tại");
+
+    const [deleted] = overview.faq.splice(index, 1);
+    overview.updatedAt = new Date().toISOString();
+    overview.updatedByLabel = "Biên tập Ngôi Nhà Nhỏ";
+    await this.saveOverview(littleHouseOverviewSchema.parse(overview));
+
+    await this.auditService.append(auditContext, "admin.little_house.faq.delete", "little_house_faq", publicId, {
+      question: deleted.question,
+    });
+    return { publicId };
   }
 
   async adminPublish(input: PublishLittleHouseInput, auditContext: AuditContext) {

@@ -16,9 +16,10 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { WorkspaceDataTable } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { GuidesRowActions } from "@/features/guides/data-table-row-actions";
 import { guideListOptions, type GuideItem } from "@/features/guides/queries";
@@ -116,6 +117,7 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     defaultCategory ? [{ id: "category", value: [defaultCategory] }] : [],
   );
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const columns = useMemo<ColumnDef<GuideItem>[]>(
     () => [
@@ -132,11 +134,11 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
                   : undefined;
                 const src = resolveMediaSrc(row.original.coverImageUrl ?? mediaUrl);
                 return src ? (
-                <img
-                  src={src ?? undefined}
+                <PreviewableImage
+                  src={src}
                   alt={row.original.title}
-                  className="size-full object-cover"
-                  loading="lazy"
+                  title={row.original.title}
+                  className="size-full rounded-none border-0"
                 />
                 ) : null;
               })()}
@@ -230,55 +232,68 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
     table.resetRowSelection();
   };
 
-  const handleBulkDelete = async () => {
+  const handleBulkDeleteConfirm = async () => {
     if (!selectedRows.length) return;
-    if (!confirm(`Xác nhận xóa ${selectedRows.length} hướng dẫn?`)) return;
     await Promise.all(selectedRows.map((g) => deleteGuide.mutateAsync(g.publicId)));
     table.resetRowSelection();
+    setBulkDeleteOpen(false);
   };
 
   return (
-    <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
-      <DataTableToolbar
-        table={table}
-        searchPlaceholder="Lọc hướng dẫn..."
-        searchKey="title"
-        viewButtonLabel="Xem"
-        filters={[
-          { columnId: "category", title: "Danh mục", options: categoryOptions },
-          { columnId: "status", title: "Trạng thái", options: statusOptions },
-        ]}
-      />
+    <>
+      <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
+        <DataTableToolbar
+          table={table}
+          searchPlaceholder="Lọc hướng dẫn..."
+          searchKey="title"
+          viewButtonLabel="Xem"
+          filters={[
+            { columnId: "category", title: "Danh mục", options: categoryOptions },
+            { columnId: "status", title: "Trạng thái", options: statusOptions },
+          ]}
+        />
 
-      <WorkspaceDataTable
-        table={table}
-        columns={columns}
-        isLoading={isLoading}
-        emptyMessage="Chưa có hướng dẫn nào."
-        onRowClick={(row) => {
-          navigateTo(`${detailBasePath}/${row.publicId}`);
-        }}
+        <WorkspaceDataTable
+          table={table}
+          columns={columns}
+          isLoading={isLoading}
+          emptyMessage="Chưa có hướng dẫn nào."
+          onRowClick={(row) => {
+            navigateTo(`${detailBasePath}/${row.publicId}`);
+          }}
+        />
+        <DataTableBulkActions table={table} entityName="hướng dẫn">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={publishGuide.isPending}
+            onClick={() => void handleBulkPublish()}
+          >
+            <CheckCircleIcon className="mr-1.5 size-3.5" />
+            Xuất bản đã chọn
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={deleteGuide.isPending}
+            onClick={() => setBulkDeleteOpen(true)}
+          >
+            <Trash2Icon className="mr-1.5 size-3.5" />
+            Xóa đã chọn
+          </Button>
+        </DataTableBulkActions>
+      </div>
+      <WorkspaceConfirmDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title="Xóa hướng dẫn đã chọn?"
+        description={`Xác nhận xóa ${selectedRows.length} hướng dẫn. Hành động này không thể hoàn tác.`}
+        confirmLabel="Xóa đã chọn"
+        cancelLabel="Hủy"
+        variant="destructive"
+        isPending={deleteGuide.isPending}
+        onConfirm={() => void handleBulkDeleteConfirm()}
       />
-      <DataTableBulkActions table={table} entityName="hướng dẫn">
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={publishGuide.isPending}
-          onClick={() => void handleBulkPublish()}
-        >
-          <CheckCircleIcon className="mr-1.5 size-3.5" />
-          Xuất bản đã chọn
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={deleteGuide.isPending}
-          onClick={() => void handleBulkDelete()}
-        >
-          <Trash2Icon className="mr-1.5 size-3.5" />
-          Xóa đã chọn
-        </Button>
-      </DataTableBulkActions>
-    </div>
+    </>
   );
 }

@@ -60,6 +60,18 @@ export function useUpdateSelfCultivationGuide() {
   });
 }
 
+export function useDeleteSelfCultivationGuide() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => adminClient.delete(`/admin/content/self-cultivation/guides/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá bài hướng dẫn Kinh văn tự tu.");
+      void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
+    },
+    onError: handleApiError,
+  });
+}
+
 export function useCreateSelfCultivationFaq() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -78,6 +90,18 @@ export function useUpdateSelfCultivationFaq() {
     mutationFn: ({ publicId, ...input }: UpdateSelfCultivationFaqInput) => adminClient.patch(`/admin/content/self-cultivation/faq/${publicId}`, input),
     onSuccess: () => {
       toast.success("Đã cập nhật mục hỏi đáp Kinh văn tự tu.");
+      void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useDeleteSelfCultivationFaq() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => adminClient.delete(`/admin/content/self-cultivation/faq/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá mục hỏi đáp Kinh văn tự tu.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,
