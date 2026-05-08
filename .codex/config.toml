@@ -1,3 +1,27 @@
-# PMTL project-local Codex layer.
-# Keep runtime/model defaults in the user config; this file exists so trusted
-# PMTL sessions can load repo-scoped rules from .codex/rules/.
+[mcp_servers.postgres-pmtl]
+args = [
+    "-NoProfile",
+    "-File",
+    "infra/tools/start_mcp_server.ps1",
+    "-Server",
+    "postgres",
+]
+command = "pwsh"
+
+[mcp_servers.shadcn]
+args = [
+    "/c",
+    "npx",
+    "-y",
+    "shadcn@latest",
+    "mcp",
+    "--cwd",
+    "apps/web",
+]
+command = "cmd"
+
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "80"

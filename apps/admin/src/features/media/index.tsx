@@ -10,7 +10,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -42,6 +41,7 @@ import {
   WorkspaceRowActions,
 } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
   mediaFoldersOptions,
   mediaListOptions,
@@ -230,6 +230,14 @@ function MediaAssetsTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const { setOpen, setCurrentRow } = useMedia();
 
@@ -330,16 +338,24 @@ function MediaAssetsTable() {
     [setCurrentRow, setOpen],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: assets,
     columns,
     state: { sorting, rowSelection, columnVisibility, pagination },
     getRowId: (row) => row.publicId,
     enableRowSelection: true,
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
+    onSortingChange: (updater) => {
+      if (mountedRef.current) setSorting(updater);
+    },
+    onRowSelectionChange: (updater) => {
+      if (mountedRef.current) setRowSelection(updater);
+    },
+    onColumnVisibilityChange: (updater) => {
+      if (mountedRef.current) setColumnVisibility(updater);
+    },
+    onPaginationChange: (updater) => {
+      if (mountedRef.current) setPagination(updater);
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -638,7 +654,9 @@ function MediaUploadDialog() {
         : "JPG, PNG, MP4, PDF…";
 
   return (
-    <Dialog open={open === "upload"} onOpenChange={(v) => !v && handleClose()}>
+    <Dialog open={open === "upload"} onOpenChange={(v) => {
+      if (!v && open === "upload") handleClose();
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{uploadDialogTitle}</DialogTitle>

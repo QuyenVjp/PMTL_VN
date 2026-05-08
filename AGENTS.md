@@ -19,6 +19,7 @@
 - `AUDIT_VERIFIED_2026.md` when present
 - `TEAM_GUIDE.md`
 - `.vscode/.instructions.md`
+- `docs/codex-agent-quickstart-lite.md` for low-token Codex Desktop startup
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
 - `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
@@ -80,6 +81,7 @@
 - Pre-code discipline for non-trivial implementation, refactor, bugfix, review, seed/data reset, or broad "fix all / 100%" requests: `.agents/skills/pmtl-karpathy-coding-discipline/SKILL.md`
 - GitNexus-first bugfix / refactor / feature workflow: `gitnexus_query` + `gitnexus_impact` + `gitnexus_detect_changes` (see GitNexus section below)
 - Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
+- Paid Team Claude Skills package adoption for Codex Desktop and PMTL: `.agents/skills/pmtl-team-claude-skills/SKILL.md`
 - External AI CLI routing and worker selection: `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
 - Production defaults, logging, validation, runtime guidance: `.agents/skills/pmtl-production-baseline/SKILL.md`
@@ -105,6 +107,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
 - Use global platform skills only for tool-oriented integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
 - Prefer canonical PMTL skills over compatibility aliases and design-library entrypoints unless the user explicitly names the older skill.
+- Treat `D:\downloadALL\brave-download\team-claude-skills` as a paid reference library. Use `pmtl-team-claude-skills` to adopt or adapt useful workflows; do not install its raw Claude CLI `settings.json`, hooks, commands, or install scripts into PMTL without explicit review.
 - Codex combo defaults for fresh UI sessions:
   - `apps/web` feature/page: `pmtl-fe-implementation` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
   - `apps/admin` workspace/page: `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
@@ -184,6 +187,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Use `playwright` for browser reproduction, screenshots, interaction debugging, and rendered-state evidence.
 - Use `postgres-pmtl` for database inspection and runtime data checks.
 - Use `github` for repos/issues/PRs/actions metadata when `GITHUB_PERSONAL_ACCESS_TOKEN` is available.
+- Use `neural-memory` for PMTL cross-session context: call `nmem_recap(level=1, topic="<task>")` at session start or before broad project-history decisions; after durable workflow changes, decisions, or completed multi-step fixes, save the result with `nmem_eternal` or `nmem_remember`.
 - Use `meilisearch-admin` for index/tasks/settings/health checks when Meilisearch is part of the debugging lane.
 - Use `redis-admin` when keyspace, cache state, or Redis runtime inspection matters.
 - Use `sentry-mcp` for hosted error triage when `SENTRY_ACCESS_TOKEN` is available.
@@ -196,6 +200,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
   - shadcn component/library question -> `shadcn`
   - browser/UI reality -> `playwright`
   - source-control and GitHub workflow state -> `github`
+  - durable project memory / prior decisions -> `neural-memory`
   - search runtime/index state -> `meilisearch-admin`
   - cache/runtime key-value state -> `redis-admin`
   - hosted error/observability state -> `sentry-mcp` or `grafana`
@@ -242,9 +247,9 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **PMTL_VN** (22780 symbols, 32090 relationships, 186 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **PMTL_VN** (22974 symbols, 32499 relationships, 190 execution flows, 9760 embeddings as of 2026-05-03). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+> If any GitNexus tool warns the index is stale, run `C:\Users\ADMIN\.codex\tools\gitnexus\node_modules\.bin\gitnexus.cmd analyze --embeddings` from the repo root first. Use plain `npx gitnexus analyze` only as fallback; on this host the npm-fetched GitNexus 1.6.3 has failed during analyze.
 
 ## Always Do
 
@@ -254,44 +259,12 @@ This project is indexed by GitNexus as **PMTL_VN** (22780 symbols, 32090 relatio
 - When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
 - When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
 
-## When Debugging
-
-1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
-2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
-3. `READ gitnexus://repo/PMTL_VN/process/{processName}` — trace the full execution flow step by step
-4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
-
-## When Refactoring
-
-- **Renaming**: MUST use `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` first. Review the preview — graph edits are safe, text_search edits need manual review. Then run with `dry_run: false`.
-- **Extracting/Splitting**: MUST run `gitnexus_context({name: "target"})` to see all incoming/outgoing refs, then `gitnexus_impact({target: "target", direction: "upstream"})` to find all external callers before moving code.
-- After any refactor: run `gitnexus_detect_changes({scope: "all"})` to verify only expected files changed.
-
 ## Never Do
 
 - NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
 - NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
 - NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
 - NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
-
-## Tools Quick Reference
-
-| Tool | When to use | Command |
-|------|-------------|---------|
-| `query` | Find code by concept | `gitnexus_query({query: "auth validation"})` |
-| `context` | 360-degree view of one symbol | `gitnexus_context({name: "validateUser"})` |
-| `impact` | Blast radius before editing | `gitnexus_impact({target: "X", direction: "upstream"})` |
-| `detect_changes` | Pre-commit scope check | `gitnexus_detect_changes({scope: "staged"})` |
-| `rename` | Safe multi-file rename | `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` |
-| `cypher` | Custom graph queries | `gitnexus_cypher({query: "MATCH ..."})` |
-
-## Impact Risk Levels
-
-| Depth | Meaning | Action |
-|-------|---------|--------|
-| d=1 | WILL BREAK — direct callers/importers | MUST update these |
-| d=2 | LIKELY AFFECTED — indirect deps | Should test |
-| d=3 | MAY NEED TESTING — transitive | Test if critical path |
 
 ## Resources
 
@@ -301,32 +274,6 @@ This project is indexed by GitNexus as **PMTL_VN** (22780 symbols, 32090 relatio
 | `gitnexus://repo/PMTL_VN/clusters` | All functional areas |
 | `gitnexus://repo/PMTL_VN/processes` | All execution flows |
 | `gitnexus://repo/PMTL_VN/process/{name}` | Step-by-step execution trace |
-
-## Self-Check Before Finishing
-
-Before completing any code modification task, verify:
-1. `gitnexus_impact` was run for all modified symbols
-2. No HIGH/CRITICAL risk warnings were ignored
-3. `gitnexus_detect_changes()` confirms changes match expected scope
-4. All d=1 (WILL BREAK) dependents were updated
-
-## Keeping the Index Fresh
-
-After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
-
-```bash
-npx gitnexus analyze
-```
-
-If the index previously included embeddings, preserve them by adding `--embeddings`:
-
-```bash
-npx gitnexus analyze --embeddings
-```
-
-To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
-
-> Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
 
 ## CLI
 

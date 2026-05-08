@@ -32,7 +32,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { WorkspaceDataTable, WorkspaceDetailSheet, WorkspaceDetailStandardSections, WorkspaceRowActions } from "@/components/workspace";
+import {
+  WorkspaceConfirmDialog,
+  WorkspaceDataTable,
+  WorkspaceDetailSheet,
+  WorkspaceDetailStandardSections,
+  WorkspaceRowActions,
+} from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import {
   getChantEnvironmentRulesQueryOptions,
@@ -266,6 +272,11 @@ export function EnvironmentRulesTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [editingRow, setEditingRow] = useState<ChantEnvironmentRuleRow | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [confirmReferenceOnly, setConfirmReferenceOnly] = useState<
+    | { mode: "single"; row: ChantEnvironmentRuleRow; referenceOnly: boolean }
+    | { mode: "bulk"; rows: ChantEnvironmentRuleRow[]; referenceOnly: boolean }
+    | null
+  >(null);
 
   const rows = useMemo(() => (data ? flattenEnvironmentRules(data) : []), [data]);
 
@@ -331,9 +342,10 @@ export function EnvironmentRulesTable() {
               setEditOpen(true);
             }}
             onToggleReferenceOnly={(selectedRow) => {
-              void updateRule.mutateAsync({
-                ruleKey: selectedRow.ruleKey,
-                payload: { referenceOnly: !selectedRow.referenceOnly },
+              setConfirmReferenceOnly({
+                mode: "single",
+                row: selectedRow,
+                referenceOnly: !selectedRow.referenceOnly,
               });
             }}
           />
@@ -365,37 +377,40 @@ export function EnvironmentRulesTable() {
 
   const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
 
-  const markSelectedAsReferenceOnly = async () => {
+  const markSelectedAsReferenceOnly = () => {
     if (!selectedRows.length) {
       return;
     }
+    setConfirmReferenceOnly({ mode: "bulk", rows: selectedRows, referenceOnly: true });
+  };
 
+  const unmarkSelectedReferenceOnly = () => {
+    if (!selectedRows.length) {
+      return;
+    }
+    setConfirmReferenceOnly({ mode: "bulk", rows: selectedRows, referenceOnly: false });
+  };
+
+  const confirmReferenceOnlyLabel = confirmReferenceOnly?.referenceOnly ? "Đặt tham khảo" : "Bỏ tham khảo";
+  const confirmReferenceOnlyTarget =
+    confirmReferenceOnly?.mode === "single"
+      ? confirmReferenceOnly.row.title
+      : `${confirmReferenceOnly?.rows.length ?? 0} quy tắc đã chọn`;
+
+  async function handleConfirmReferenceOnly() {
+    if (!confirmReferenceOnly) return;
+    const rows = confirmReferenceOnly.mode === "single" ? [confirmReferenceOnly.row] : confirmReferenceOnly.rows;
     await Promise.all(
-      selectedRows.map((row) =>
+      rows.map((row) =>
         updateRule.mutateAsync({
           ruleKey: row.ruleKey,
-          payload: { referenceOnly: true },
+          payload: { referenceOnly: confirmReferenceOnly.referenceOnly },
         }),
       ),
     );
     table.resetRowSelection();
-  };
-
-  const unmarkSelectedReferenceOnly = async () => {
-    if (!selectedRows.length) {
-      return;
-    }
-
-    await Promise.all(
-      selectedRows.map((row) =>
-        updateRule.mutateAsync({
-          ruleKey: row.ruleKey,
-          payload: { referenceOnly: false },
-        }),
-      ),
-    );
-    table.resetRowSelection();
-  };
+    setConfirmReferenceOnly(null);
+  }
 
   return (
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
@@ -430,7 +445,7 @@ export function EnvironmentRulesTable() {
           size="sm"
           variant="outline"
           disabled={updateRule.isPending}
-          onClick={() => void markSelectedAsReferenceOnly()}
+          onClick={markSelectedAsReferenceOnly}
         >
           Đặt tham khảo
         </Button>
@@ -438,7 +453,7 @@ export function EnvironmentRulesTable() {
           size="sm"
           variant="outline"
           disabled={updateRule.isPending}
-          onClick={() => void unmarkSelectedReferenceOnly()}
+          onClick={unmarkSelectedReferenceOnly}
         >
           Bỏ tham khảo
         </Button>
@@ -453,6 +468,17 @@ export function EnvironmentRulesTable() {
             setEditingRow(null);
           }
         }}
+      />
+      <WorkspaceConfirmDialog
+        open={confirmReferenceOnly !== null}
+        onOpenChange={(open) => {
+          if (!open) setConfirmReferenceOnly(null);
+        }}
+        title={`${confirmReferenceOnlyLabel} quy tắc?`}
+        description={`Xác nhận ${confirmReferenceOnlyLabel.toLowerCase()} cho ${confirmReferenceOnlyTarget}. Thay đổi này ảnh hưởng cách rule được dùng trong bề mặt quản trị Niệm kinh.`}
+        confirmLabel={confirmReferenceOnlyLabel}
+        isPending={updateRule.isPending}
+        onConfirm={() => void handleConfirmReferenceOnly()}
       />
     </div>
   );

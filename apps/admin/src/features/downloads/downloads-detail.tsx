@@ -18,6 +18,7 @@ import {
   WorkspaceDetailStandardSections,
   WorkspaceDetailField,
   WorkspaceDetailDivider,
+  WorkspaceConfirmDialog,
   contentStatusLabel,
   contentStatusBadgeClass,
   downloadCategoryLabel,
@@ -85,6 +86,7 @@ export function DownloadsDetailSheet({ open, onClose, currentRow }: DownloadsDet
   const [title, setTitle] = useState(currentRow.title);
   const [description, setDescription] = useState(currentRow.description ?? "");
   const [category, setCategory] = useState(currentRow.category);
+  const [confirmPublishAction, setConfirmPublishAction] = useState<"publish" | "unpublish" | null>(null);
 
   // Sync form when row changes
   useEffect(() => {
@@ -118,45 +120,44 @@ export function DownloadsDetailSheet({ open, onClose, currentRow }: DownloadsDet
   const isPublished = currentRow.status === "PUBLISHED";
 
   return (
-    <WorkspaceDetailSheet
-      open={open}
-      onOpenChange={(v) => !v && onClose()}
-      title={currentRow.title}
-      subtitle={`Tạo bởi ${currentRow.uploader.displayName} · ${new Date(currentRow.createdAt).toLocaleDateString("vi-VN")}`}
-      status={
-        <Badge
-          variant="outline"
-          className={contentStatusBadgeClass(currentRow.status)}
-        >
-          {contentStatusLabel(currentRow.status)}
-        </Badge>
-      }
-      primaryActions={
-        isPublished ? (
-          <Button
-            size="sm"
+    <>
+      <WorkspaceDetailSheet
+        open={open}
+        onOpenChange={(v) => !v && onClose()}
+        title={currentRow.title}
+        subtitle={`Tạo bởi ${currentRow.uploader.displayName} · ${new Date(currentRow.createdAt).toLocaleDateString("vi-VN")}`}
+        status={
+          <Badge
             variant="outline"
-            disabled={unpublishDownload.isPending}
-            onClick={() => unpublishDownload.mutate(currentRow.publicId)}
+            className={contentStatusBadgeClass(currentRow.status)}
           >
-            {unpublishDownload.isPending ? "Đang xử lý..." : "Gỡ xuất bản"}
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            disabled={publishDownload.isPending}
-            onClick={() => {
-              publishDownload.mutate(currentRow.publicId);
-            }}
-          >
-            {publishDownload.isPending ? "Đang xuất bản..." : "Xuất bản"}
-          </Button>
-        )
-      }
-      onDelete={handleDelete}
-      deleteItemName={currentRow.title}
-      isPendingDelete={deleteDownload.isPending}
-    >
+            {contentStatusLabel(currentRow.status)}
+          </Badge>
+        }
+        primaryActions={
+          isPublished ? (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={unpublishDownload.isPending}
+              onClick={() => setConfirmPublishAction("unpublish")}
+            >
+              {unpublishDownload.isPending ? "Đang xử lý..." : "Gỡ xuất bản"}
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              disabled={publishDownload.isPending}
+              onClick={() => setConfirmPublishAction("publish")}
+            >
+              {publishDownload.isPending ? "Đang xuất bản..." : "Xuất bản"}
+            </Button>
+          )
+        }
+        onDelete={handleDelete}
+        deleteItemName={currentRow.title}
+        isPendingDelete={deleteDownload.isPending}
+      >
       {/* ── Thông tin ─────────────────────────────────────────────── */}
       <WorkspaceDetailSection title="Thông tin">
         <WorkspaceDetailField label="Danh mục" value={downloadCategoryLabel(currentRow.category)} />
@@ -221,6 +222,31 @@ export function DownloadsDetailSheet({ open, onClose, currentRow }: DownloadsDet
         </div>
       </WorkspaceDetailSection>
     <WorkspaceDetailStandardSections />
-    </WorkspaceDetailSheet>
+      </WorkspaceDetailSheet>
+      <WorkspaceConfirmDialog
+        open={confirmPublishAction !== null}
+        onOpenChange={(next) => {
+          if (!next) setConfirmPublishAction(null);
+        }}
+        title={confirmPublishAction === "unpublish" ? "Gỡ xuất bản tài liệu?" : "Xuất bản tài liệu?"}
+        description={
+          confirmPublishAction === "unpublish"
+            ? `Gỡ xuất bản "${currentRow.title}" khỏi bề mặt công khai?`
+            : `Xuất bản "${currentRow.title}" ra bề mặt công khai?`
+        }
+        confirmLabel={confirmPublishAction === "unpublish" ? "Gỡ xuất bản" : "Xuất bản"}
+        variant={confirmPublishAction === "unpublish" ? "destructive" : "default"}
+        isPending={publishDownload.isPending || unpublishDownload.isPending}
+        onConfirm={() => {
+          const action = confirmPublishAction;
+          if (action === "unpublish") {
+            unpublishDownload.mutate(currentRow.publicId, { onSuccess: () => setConfirmPublishAction(null) });
+          }
+          if (action === "publish") {
+            publishDownload.mutate(currentRow.publicId, { onSuccess: () => setConfirmPublishAction(null) });
+          }
+        }}
+      />
+    </>
   );
 }

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
 import { resolveMediaSrc } from "@/lib/media-src";
@@ -52,6 +53,7 @@ export function SettingsPage() {
     moderationAlerts: true,
     securityAlerts: true,
   });
+  const [confirmRevokeSessions, setConfirmRevokeSessions] = useState(false);
 
   const activeItem = settingsNav.find((item) => item.key === section) ?? settingsNav[0];
 
@@ -133,7 +135,7 @@ export function SettingsPage() {
   }
 
   function handleRevokeOtherSessions() {
-    revokeOtherSessions.mutate();
+    revokeOtherSessions.mutate(undefined, { onSuccess: () => setConfirmRevokeSessions(false) });
   }
 
   return (
@@ -339,7 +341,7 @@ export function SettingsPage() {
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
                       variant="destructive"
-                      onClick={handleRevokeOtherSessions}
+                      onClick={() => setConfirmRevokeSessions(true)}
                       disabled={revokeOtherSessions.isPending}
                     >
                       Thu hồi phiên khác
@@ -450,6 +452,16 @@ export function SettingsPage() {
           </Card>
         </div>
       </div>
+      <WorkspaceConfirmDialog
+        open={confirmRevokeSessions}
+        onOpenChange={setConfirmRevokeSessions}
+        title="Thu hồi các phiên đăng nhập khác?"
+        description="Tất cả phiên đăng nhập khác của tài khoản admin hiện tại sẽ bị thu hồi. Thiết bị đang dùng vẫn được giữ."
+        confirmLabel="Thu hồi phiên"
+        variant="destructive"
+        isPending={revokeOtherSessions.isPending}
+        onConfirm={handleRevokeOtherSessions}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Link } from "@tanstack/react-router";
 import {
   BookOpenIcon,
@@ -12,7 +13,8 @@ import {
   RefreshCwIcon,
 } from "lucide-react";
 
-import { WorkspaceConfirmDialog, WorkspaceRouteSkeleton } from "@/components/workspace";
+import { DataTableColumnHeader } from "@/components/data-table";
+import { WorkspaceConfirmDialog, WorkspaceManagementTable, WorkspaceRouteSkeleton } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,124 +35,168 @@ function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
     : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
 }
 
-function EmptyState({ text }: { text: string }) {
-  return (
-    <Card>
-      <CardContent className="pt-6 text-sm text-muted-foreground">{text}</CardContent>
-    </Card>
-  );
-}
-
-function GuideManagementItem({ item }: { item: LifeReleaseGuide }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 space-y-2">
-          <p className="font-medium text-foreground">{item.title}</p>
-          <p className="text-sm text-muted-foreground">{item.summary}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{item.slug}</Badge>
+function GuideManagementTable({ items }: { items: LifeReleaseGuide[] }) {
+  const columns = useMemo<ColumnDef<LifeReleaseGuide>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Bài hướng dẫn" />,
+        cell: ({ row }) => (
+          <div className="max-w-[420px]">
+            <p className="truncate font-medium">{row.original.title}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.summary}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "slug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.slug}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
           <Button asChild variant="outline" size="sm">
-            <Link to="/noi-dung/phong-sanh/huong-dan/$guidePublicId" params={{ guidePublicId: item.publicId }}>
+            <Link to="/noi-dung/phong-sanh/huong-dan/$guidePublicId" params={{ guidePublicId: row.original.publicId }}>
               Sửa và quản lý
             </Link>
           </Button>
-        </div>
-      </div>
-      <div className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-        <p><span className="font-medium text-foreground">Thứ tự:</span> {item.displayOrder}</p>
-        <p><span className="font-medium text-foreground">Cập nhật:</span> {new Date(item.updatedAt).toLocaleString("vi-VN")}</p>
-        <p className="md:col-span-2"><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-        <p className="md:col-span-2"><span className="font-medium text-foreground">Ghi chú biên tập:</span> {item.reviewNote}</p>
-      </div>
-      {item.warningNotes.length ? (
-        <div className="mt-4 space-y-2">
-          <p className="text-sm font-medium text-foreground">Cảnh báo</p>
-          {item.warningNotes.map((warning) => (
-            <div key={warning} className="rounded-lg border bg-muted/20 px-3 py-2 text-sm text-muted-foreground">
-              {warning}
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
+        ),
+      },
+    ],
+    [],
   );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có bài hướng dẫn." />;
 }
 
-function VariantManagementItem({ item }: { item: LifeReleaseVariant }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 space-y-2">
-          <p className="font-medium text-foreground">{item.name}</p>
-          <p className="text-sm text-muted-foreground">{item.summary}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{item.routeSlug}</Badge>
+function VariantManagementTable({ items }: { items: LifeReleaseVariant[] }) {
+  const columns = useMemo<ColumnDef<LifeReleaseVariant>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Biến thể" />,
+        cell: ({ row }) => (
+          <div className="max-w-[420px]">
+            <p className="truncate font-medium">{row.original.name}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.summary}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "routeSlug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.routeSlug}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
           <Button asChild variant="outline" size="sm">
-            <Link to="/noi-dung/phong-sanh/bien-the/$variantPublicId" params={{ variantPublicId: item.publicId }}>
+            <Link to="/noi-dung/phong-sanh/bien-the/$variantPublicId" params={{ variantPublicId: row.original.publicId }}>
               Sửa và quản lý
             </Link>
           </Button>
-        </div>
-      </div>
-      <div className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-        <p><span className="font-medium text-foreground">Thứ tự:</span> {item.displayOrder}</p>
-        <p><span className="font-medium text-foreground">Cập nhật:</span> {new Date(item.updatedAt).toLocaleString("vi-VN")}</p>
-        <p className="md:col-span-2"><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-        <p className="md:col-span-2"><span className="font-medium text-foreground">Ghi chú biên tập:</span> {item.reviewNote}</p>
-      </div>
-      {item.warningNotes.length ? (
-        <div className="mt-4 space-y-2">
-          <p className="text-sm font-medium text-foreground">Cảnh báo</p>
-          {item.warningNotes.map((warning) => (
-            <div key={warning} className="rounded-lg border bg-muted/20 px-3 py-2 text-sm text-muted-foreground">
-              {warning}
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
+        ),
+      },
+    ],
+    [],
   );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có biến thể nghi thức." />;
 }
 
-function FaqManagementItem({ item }: { item: LifeReleaseFaq }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 space-y-2">
-          <p className="font-medium text-foreground">{item.question}</p>
-          <p className="text-sm text-muted-foreground">{item.answer}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">#{item.displayOrder}</Badge>
+function FaqManagementTable({ items }: { items: LifeReleaseFaq[] }) {
+  const columns = useMemo<ColumnDef<LifeReleaseFaq>[]>(
+    () => [
+      {
+        accessorKey: "question",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Câu hỏi" />,
+        cell: ({ row }) => (
+          <div className="max-w-[520px]">
+            <p className="truncate font-medium">{row.original.question}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.answer}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "sourceReference",
+        header: "Nguồn",
+        cell: ({ row }) => <span className="line-clamp-2 text-muted-foreground">{row.original.sourceReference}</span>,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
           <Button asChild variant="outline" size="sm">
-            <Link to="/noi-dung/phong-sanh/hoi-dap/$faqPublicId" params={{ faqPublicId: item.publicId }}>
+            <Link to="/noi-dung/phong-sanh/hoi-dap/$faqPublicId" params={{ faqPublicId: row.original.publicId }}>
               Sửa và quản lý
             </Link>
           </Button>
-        </div>
-      </div>
-      <div className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-        <p><span className="font-medium text-foreground">Cập nhật:</span> {new Date(item.updatedAt).toLocaleString("vi-VN")}</p>
-        <p className="md:col-span-2"><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-      </div>
-    </div>
+        ),
+      },
+    ],
+    [],
   );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có mục hỏi đáp." />;
 }
 
-function DownloadManagementItem({ item }: { item: LifeReleaseDownload }) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4">
-      <div className="min-w-0">
-        <p className="font-medium text-foreground">{item.title}</p>
-        <p className="text-sm text-muted-foreground">{item.fileName}</p>
-        <p className="mt-1 text-xs text-muted-foreground">Thứ tự: {item.displayOrder}</p>
-      </div>
-      <Badge variant="outline">{item.assetType}</Badge>
-    </div>
+function DownloadManagementTable({ items }: { items: LifeReleaseDownload[] }) {
+  const columns = useMemo<ColumnDef<LifeReleaseDownload>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tài nguyên" />,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium">{row.original.title}</p>
+            <p className="text-xs text-muted-foreground">{row.original.fileName}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "assetType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.assetType}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+    ],
+    [],
   );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có file tải xuống." />;
 }
 
 export function LifeReleaseContentWorkspace() {
@@ -263,9 +309,7 @@ export function LifeReleaseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {groupedGuides.NGHI_THUC.length ? groupedGuides.NGHI_THUC.map((item) => (
-                <GuideManagementItem key={item.publicId} item={item} />
-              )) : <EmptyState text="Chưa có bài hướng dẫn nghi thức chuẩn." />}
+              <GuideManagementTable items={groupedGuides.NGHI_THUC} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -287,9 +331,7 @@ export function LifeReleaseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {overview?.ritualVariants.length ? overview.ritualVariants.map((item) => (
-                <VariantManagementItem key={item.publicId} item={item} />
-              )) : <EmptyState text="Chưa có biến thể nghi thức." />}
+              <VariantManagementTable items={overview?.ritualVariants ?? []} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -311,9 +353,7 @@ export function LifeReleaseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {groupedGuides.LUU_Y_CHUAN_BI.length ? groupedGuides.LUU_Y_CHUAN_BI.map((item) => (
-                <GuideManagementItem key={item.publicId} item={item} />
-              )) : <EmptyState text="Chưa có bài hướng dẫn phần chuẩn bị." />}
+              <GuideManagementTable items={groupedGuides.LUU_Y_CHUAN_BI} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -335,16 +375,8 @@ export function LifeReleaseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {[...groupedGuides.HOI_DAP, ...(overview?.faq ?? [])].length ? (
-                <>
-                  {groupedGuides.HOI_DAP.map((item) => (
-                    <GuideManagementItem key={item.publicId} item={item} />
-                  ))}
-                  {(overview?.faq ?? []).map((item) => (
-                    <FaqManagementItem key={item.publicId} item={item} />
-                  ))}
-                </>
-              ) : <EmptyState text="Chưa có mục hỏi đáp hay bài giải thích ngắn." />}
+              <GuideManagementTable items={groupedGuides.HOI_DAP} />
+              <FaqManagementTable items={overview?.faq ?? []} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -358,9 +390,7 @@ export function LifeReleaseContentWorkspace() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {overview?.downloads.length ? overview.downloads.map((item) => (
-                <DownloadManagementItem key={item.publicId} item={item} />
-              )) : <EmptyState text="Chưa có file tải xuống." />}
+              <DownloadManagementTable items={overview?.downloads ?? []} />
             </CardContent>
           </Card>
         </TabsContent>

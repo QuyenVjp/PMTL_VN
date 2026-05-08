@@ -194,6 +194,12 @@ const CharitiesPage = lazy(() =>
 const FraudAlertsPage = lazy(() =>
   import("@/features/dharma-compliance").then((mod) => ({ default: mod.FraudAlertsPage })),
 );
+const PurityVowsPage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.PurityVowsPage })),
+);
+const GuidanceQueuePage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.GuidanceQueuePage })),
+);
 const CharityCreatePage = lazy(() =>
   import("@/features/dharma-compliance").then((mod) => ({ default: mod.CharityCreatePage })),
 );
@@ -887,18 +893,12 @@ const fraudAlertsRoute = createRoute({
 const purityVowsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/loi-nguyen-thanh-tu",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
-  },
+  component: withSuspense(PurityVowsPage),
 });
 const guidanceQueueRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/hang-doi-huong-dan",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
-  },
+  component: withSuspense(GuidanceQueuePage),
 });
 
 // ── Thanh Tịnh Pháp — Sự kiện Phật pháp ────────────────────────────

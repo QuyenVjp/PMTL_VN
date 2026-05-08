@@ -12,7 +12,7 @@ const DEFAULT_FIELD_LABELS: FieldLabels = {
   email: "Email",
   entryType: "Loại bài",
   fileType: "Loại file",
-  fileUrl: "Đường dẫn file",
+  fileUrl: "Tệp tài liệu",
   location: "Địa điểm",
   originalText: "Nguyên văn gốc",
   question: "Câu hỏi",

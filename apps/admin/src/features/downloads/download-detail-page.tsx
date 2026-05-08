@@ -38,7 +38,7 @@ const downloadDetailSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
   description: z.string().trim().optional(),
   category: z.string().trim().min(1),
-  fileUrl: z.string().trim().min(1, "Đường dẫn file không được để trống."),
+  fileUrl: z.string().trim().min(1, "Vui lòng chọn tệp tài liệu."),
   fileType: z.string().trim().min(1, "Loại file không được để trống."),
   fileSize: z.coerce.number().catch(0),
 });
@@ -283,33 +283,6 @@ export function DownloadDetailPage({
               </AdminFormField>
             )}
 
-            <AdminFormField label="Đường dẫn file">
-              <Input
-                {...form.register("fileUrl")}
-                placeholder="https://..."
-                className={invalidFieldClass(Boolean(errors.fileUrl))}
-              />
-              <FieldError message={errors.fileUrl?.message} />
-            </AdminFormField>
-
-            <div className="grid grid-cols-2 gap-3">
-              <AdminFormField label="Loại file">
-                <Input
-                  {...form.register("fileType")}
-                  placeholder="PDF, DOCX..."
-                  className={invalidFieldClass(Boolean(errors.fileType))}
-                />
-                <FieldError message={errors.fileType?.message} />
-              </AdminFormField>
-              <AdminFormField label="Kích thước (bytes)">
-                <Input
-                  type="number"
-                  {...form.register("fileSize")}
-                  placeholder="0"
-                />
-              </AdminFormField>
-            </div>
-
             <AdminFormField label="Mô tả">
               <Textarea
                 {...form.register("description")}
@@ -320,7 +293,7 @@ export function DownloadDetailPage({
           </div>
         </AdminDetailSection>
 
-        <AdminDetailSection title="File media nội bộ (tuỳ chọn)">
+        <AdminDetailSection title="Tệp tài liệu" description="Chọn hoặc upload tệp từ thư viện media. Hệ thống tự lấy loại file, kích thước và URL lưu trữ từ asset đã chọn.">
           <div className="space-y-2">
             <MediaPickerField
               value={fileMediaPublicId}
@@ -330,9 +303,15 @@ export function DownloadDetailPage({
             />
             {selectedFileAsset && (
               <p className="text-xs text-muted-foreground">
-                Đã chọn tệp: {selectedFileAsset.filename}
+                Đã chọn tệp: {selectedFileAsset.filename} · {selectedFileAsset.mimeType}
               </p>
             )}
+            {!selectedFileAsset && download.fileUrl ? (
+              <p className="text-xs text-muted-foreground">
+                Đang dùng tệp hiện có: {download.fileType} · {formatFileSize(download.fileSize)}
+              </p>
+            ) : null}
+            <FieldError message={errors.fileUrl?.message ?? errors.fileType?.message} />
           </div>
         </AdminDetailSection>
 

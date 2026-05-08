@@ -461,7 +461,7 @@ function ReportDialogs() {
 
 export function ModerationReportsPage() {
   const [view, setView] = useState<"table" | "kanban">("kanban");
-  const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 200 }));
+  const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 100 }));
   const allReports = envelope?.data ?? [];
 
   const pendingCount = allReports.filter((r) => r.status === "PENDING").length;
@@ -531,5 +531,4 @@ export function ModerationReportsPage() {
     </ReportProvider>
   );
 }
-
 

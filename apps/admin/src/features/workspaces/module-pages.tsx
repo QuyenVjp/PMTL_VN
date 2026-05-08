@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIcon, CheckCircleIcon, AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { cn } from "@/lib/utils";
 import { searchStatusOptions } from "@/features/system/search-queries.js";
 import { useReindexMutation } from "@/features/system/mutations.js";
@@ -62,10 +64,28 @@ export function SutrasPage() {
 export function SearchOpsPage() {
   const { data: status, isLoading } = useQuery(searchStatusOptions());
   const reindex = useReindexMutation();
+  const [confirmReindex, setConfirmReindex] = useState<{ type: "all" } | { type: "single"; name: string } | null>(null);
 
   const isOperational = !isLoading && status?.status === "operational";
+  const reindexTargetLabel =
+    confirmReindex?.type === "all"
+      ? "tất cả index"
+      : confirmReindex?.type === "single"
+        ? confirmReindex.name
+        : "";
+
+  function handleConfirmReindex() {
+    if (!confirmReindex) return;
+    if (confirmReindex.type === "all") {
+      status?.indexes.forEach((idx) => reindex.mutate(idx.name));
+    } else {
+      reindex.mutate(confirmReindex.name);
+    }
+    setConfirmReindex(null);
+  }
 
   return (
+    <>
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Tìm kiếm</h1>
@@ -163,13 +183,7 @@ export function SearchOpsPage() {
               </div>
               <Button 
                 variant="outline" 
-                onClick={() => {
-                  if (status?.indexes) {
-                    status.indexes.forEach(idx => {
-                      reindex.mutate(idx.name);
-                    });
-                  }
-                }}
+                onClick={() => setConfirmReindex({ type: "all" })}
                 disabled={reindex.isPending}
                 className={cn(
                   "transition-all duration-200",
@@ -196,7 +210,7 @@ export function SearchOpsPage() {
                     variant="ghost"
                     size="sm"
                     disabled={reindex.isPending}
-                    onClick={() => reindex.mutate(idx.name)}
+                    onClick={() => setConfirmReindex({ type: "single", name: idx.name })}
                     className={cn(
                       "transition-all duration-200",
                       reindex.isPending && "animate-pulse"
@@ -217,5 +231,15 @@ export function SearchOpsPage() {
         </Card>
       )}
     </div>
+    <WorkspaceConfirmDialog
+      open={confirmReindex !== null}
+      onOpenChange={(open) => !open && setConfirmReindex(null)}
+      title="Chạy reindex tìm kiếm?"
+      description={`Hệ thống sẽ đồng bộ lại ${reindexTargetLabel}. Tác vụ này có thể ảnh hưởng hiệu năng tìm kiếm trong thời gian ngắn.`}
+      confirmLabel="Chạy reindex"
+      isPending={reindex.isPending}
+      onConfirm={handleConfirmReindex}
+    />
+    </>
   );
 }

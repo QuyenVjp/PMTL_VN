@@ -52,12 +52,17 @@ export interface DailyPracticeFaq {
 export const dailyPracticeWorkspaceKeys = {
   all: ["admin-daily-practice-workspace"] as const,
   overview: () => [...dailyPracticeWorkspaceKeys.all, "overview"] as const,
-  guides: () => [...dailyPracticeWorkspaceKeys.all, "guides"] as const,
-  guide: (publicId: string) => [...dailyPracticeWorkspaceKeys.guides(), publicId] as const,
-  presets: () => [...dailyPracticeWorkspaceKeys.all, "presets"] as const,
-  preset: (publicId: string) => [...dailyPracticeWorkspaceKeys.presets(), publicId] as const,
-  faq: () => [...dailyPracticeWorkspaceKeys.all, "faq"] as const,
-  faqItem: (publicId: string) => [...dailyPracticeWorkspaceKeys.faq(), publicId] as const,
+  lists: () => [...dailyPracticeWorkspaceKeys.all, "list"] as const,
+  list: (owner: "guides" | "presets" | "faq") => [...dailyPracticeWorkspaceKeys.lists(), owner] as const,
+  details: () => [...dailyPracticeWorkspaceKeys.all, "detail"] as const,
+  detail: (owner: "guide" | "preset" | "faq", publicId: string) =>
+    [...dailyPracticeWorkspaceKeys.details(), owner, publicId] as const,
+  guides: () => dailyPracticeWorkspaceKeys.list("guides"),
+  guide: (publicId: string) => dailyPracticeWorkspaceKeys.detail("guide", publicId),
+  presets: () => dailyPracticeWorkspaceKeys.list("presets"),
+  preset: (publicId: string) => dailyPracticeWorkspaceKeys.detail("preset", publicId),
+  faq: () => dailyPracticeWorkspaceKeys.list("faq"),
+  faqItem: (publicId: string) => dailyPracticeWorkspaceKeys.detail("faq", publicId),
 };
 
 export function dailyPracticeOverviewOptions() {

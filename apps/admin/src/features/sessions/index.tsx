@@ -103,6 +103,7 @@ function SessionsTable() {
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [confirmBulkRevoke, setConfirmBulkRevoke] = useState(false);
 
   const columns = useMemo<ColumnDef<AdminSessionListItem>[]>(
     () => [
@@ -211,13 +212,28 @@ function SessionsTable() {
           size="icon"
           variant="destructive"
           title="Thu hồi phiên đã chọn"
-          onClick={() => revokeBulk.mutate({ sessionIds: selectedIds })}
+          onClick={() => setConfirmBulkRevoke(true)}
           disabled={revokeBulk.isPending}
           className="rounded-xl"
         >
           <Trash2Icon className="size-4" />
         </Button>
       </DataTableBulkActions>
+      <WorkspaceConfirmDialog
+        open={confirmBulkRevoke}
+        onOpenChange={setConfirmBulkRevoke}
+        title="Thu hồi phiên đã chọn?"
+        description={`Thu hồi ${selectedIds.length} phiên đăng nhập đã chọn. Người dùng sẽ bị đăng xuất khỏi các phiên này ngay lập tức.`}
+        confirmLabel="Thu hồi"
+        variant="destructive"
+        isPending={revokeBulk.isPending}
+        onConfirm={() =>
+          revokeBulk.mutate(
+            { sessionIds: selectedIds },
+            { onSuccess: () => setConfirmBulkRevoke(false) },
+          )
+        }
+      />
     </div>
   );
 }
@@ -282,6 +298,5 @@ export function SessionsPage() {
     </SessionProvider>
   );
 }
-
 
 

@@ -69,6 +69,11 @@ export interface LittleHouseOverview {
 
 export const littleHouseContentKeys = {
   all: ["admin-little-house-content"] as const,
+  lists: () => [...littleHouseContentKeys.all, "list"] as const,
+  list: (owner: "guides" | "case-variants" | "faq" | "downloads") => [...littleHouseContentKeys.lists(), owner] as const,
+  details: () => [...littleHouseContentKeys.all, "detail"] as const,
+  detail: (owner: "guide" | "case-variant" | "faq" | "download", publicId: string) =>
+    [...littleHouseContentKeys.details(), owner, publicId] as const,
   overview: () => [...littleHouseContentKeys.all, "overview"] as const,
 };
 

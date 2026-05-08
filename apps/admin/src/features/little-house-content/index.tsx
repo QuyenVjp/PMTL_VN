@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
   AlertTriangleIcon,
   BookOpenIcon,
@@ -11,14 +12,22 @@ import {
   RefreshCwIcon,
 } from "lucide-react";
 
-import { WorkspaceConfirmDialog, WorkspaceRouteSkeleton } from "@/components/workspace";
+import { DataTableColumnHeader } from "@/components/data-table";
+import { WorkspaceConfirmDialog, WorkspaceManagementTable, WorkspaceRouteSkeleton } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { usePublishLittleHouse } from "./mutations.js";
-import { littleHouseOverviewOptions, type LittleHouseGuideGroup } from "./queries.js";
+import {
+  littleHouseOverviewOptions,
+  type LittleHouseCaseVariant,
+  type LittleHouseDownload,
+  type LittleHouseFaq,
+  type LittleHouseGuide,
+  type LittleHouseGuideGroup,
+} from "./queries.js";
 
 const GROUP_LABELS: Record<LittleHouseGuideGroup, string> = {
   BAT_DAU: "Bắt đầu",
@@ -34,12 +43,168 @@ function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
     : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
 }
 
-function EmptyState({ text }: { text: string }) {
-  return (
-    <Card>
-      <CardContent className="pt-6 text-sm text-muted-foreground">{text}</CardContent>
-    </Card>
+function GuideManagementTable({ items }: { items: LittleHouseGuide[] }) {
+  const columns = useMemo<ColumnDef<LittleHouseGuide>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Bài hướng dẫn" />,
+        cell: ({ row }) => (
+          <div className="max-w-[420px]">
+            <p className="truncate font-medium">{row.original.title}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.summary}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "slug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.slug}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/ngoi-nha-nho/huong-dan/$guidePublicId" params={{ guidePublicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
   );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Nhóm này chưa có bài hướng dẫn chuẩn." />;
+}
+
+function CaseVariantManagementTable({ items }: { items: LittleHouseCaseVariant[] }) {
+  const columns = useMemo<ColumnDef<LittleHouseCaseVariant>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Biến thể" />,
+        cell: ({ row }) => (
+          <div className="max-w-[420px]">
+            <p className="truncate font-medium">{row.original.name}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.summary}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "relatedGroup",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nhóm liên quan" />,
+        cell: ({ row }) => <Badge variant="outline">{GROUP_LABELS[row.original.relatedGroup]}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/ngoi-nha-nho/bien-the/$variantPublicId" params={{ variantPublicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có biến thể tình huống." />;
+}
+
+function FaqManagementTable({ items }: { items: LittleHouseFaq[] }) {
+  const columns = useMemo<ColumnDef<LittleHouseFaq>[]>(
+    () => [
+      {
+        accessorKey: "question",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Câu hỏi" />,
+        cell: ({ row }) => (
+          <div className="max-w-[520px]">
+            <p className="truncate font-medium">{row.original.question}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.answer}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "sourceReference",
+        header: "Nguồn",
+        cell: ({ row }) => <span className="line-clamp-2 text-muted-foreground">{row.original.sourceReference}</span>,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/ngoi-nha-nho/hoi-dap/$faqPublicId" params={{ faqPublicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có mục hỏi đáp." />;
+}
+
+function DownloadManagementTable({ items }: { items: LittleHouseDownload[] }) {
+  const columns = useMemo<ColumnDef<LittleHouseDownload>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tài nguyên" />,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium">{row.original.title}</p>
+            <p className="text-xs text-muted-foreground">{row.original.fileName}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "assetType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.assetType}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+    ],
+    [],
+  );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có file tải xuống." />;
 }
 
 export function LittleHouseContentWorkspace() {
@@ -154,38 +319,7 @@ export function LittleHouseContentWorkspace() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                {items.length ? items.map((item) => (
-                  <div key={item.publicId} className="rounded-lg border bg-muted/20 p-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="space-y-2">
-                        <p className="font-medium text-foreground">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">{item.summary}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{item.slug}</Badge>
-                        <Button asChild variant="outline" size="sm">
-                          <Link to="/noi-dung/ngoi-nha-nho/huong-dan/$guidePublicId" params={{ guidePublicId: item.publicId }}>
-                            Sửa và quản lý
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                      <p><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-                      <p><span className="font-medium text-foreground">Ghi chú phiên bản:</span> {item.versionNote}</p>
-                      {item.warningNotes.length ? (
-                        <div className="space-y-2">
-                          <p className="font-medium text-foreground">Cảnh báo</p>
-                          {item.warningNotes.map((warning) => (
-                            <div key={warning} className="rounded-lg border bg-background px-3 py-2">
-                              {warning}
-                            </div>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                )) : <EmptyState text="Nhóm này chưa có bài hướng dẫn chuẩn." />}
+                <GuideManagementTable items={items} />
               </CardContent>
             </Card>
           ))}
@@ -208,33 +342,7 @@ export function LittleHouseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {overview?.caseVariants.length ? overview.caseVariants.map((item) => (
-                <div key={item.publicId} className="rounded-lg border bg-muted/20 p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="space-y-2">
-                      <p className="font-medium text-foreground">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">{item.summary}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline">{GROUP_LABELS[item.relatedGroup]}</Badge>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="/noi-dung/ngoi-nha-nho/bien-the/$variantPublicId" params={{ variantPublicId: item.publicId }}>
-                          Sửa và quản lý
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                    <p><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-                    <p><span className="font-medium text-foreground">Ghi chú biên tập:</span> {item.reviewNote}</p>
-                    {item.warningNotes.map((warning) => (
-                      <div key={warning} className="rounded-lg border bg-background px-3 py-2">
-                        {warning}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )) : <EmptyState text="Chưa có biến thể tình huống." />}
+              <CaseVariantManagementTable items={overview?.caseVariants ?? []} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -256,22 +364,7 @@ export function LittleHouseContentWorkspace() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {overview?.faq.length ? overview.faq.map((item) => (
-                <div key={item.publicId} className="rounded-lg border bg-muted/20 p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <p className="font-medium text-foreground">{item.question}</p>
-                    <Button asChild variant="outline" size="sm">
-                      <Link to="/noi-dung/ngoi-nha-nho/hoi-dap/$faqPublicId" params={{ faqPublicId: item.publicId }}>
-                        Sửa và quản lý
-                      </Link>
-                    </Button>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{item.answer}</p>
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}
-                  </p>
-                </div>
-              )) : <EmptyState text="Chưa có mục hỏi đáp." />}
+              <FaqManagementTable items={overview?.faq ?? []} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -285,15 +378,7 @@ export function LittleHouseContentWorkspace() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {overview?.downloads.length ? overview.downloads.map((item) => (
-                <div key={item.publicId} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-muted/20 p-4">
-                  <div>
-                    <p className="font-medium text-foreground">{item.title}</p>
-                    <p className="text-sm text-muted-foreground">{item.fileName}</p>
-                  </div>
-                  <Badge variant="outline">{item.assetType}</Badge>
-                </div>
-              )) : <EmptyState text="Chưa có file tải xuống." />}
+              <DownloadManagementTable items={overview?.downloads ?? []} />
             </CardContent>
           </Card>
         </TabsContent>

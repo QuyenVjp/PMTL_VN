@@ -1,17 +1,18 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
   PlusIcon,
   RefreshCwIcon,
   ImageIcon,
 } from "lucide-react";
 
-import { WorkspaceRouteSkeleton } from "@/components/workspace";
+import { DataTableColumnHeader } from "@/components/data-table";
+import { WorkspaceManagementTable, WorkspaceRouteSkeleton } from "@/components/workspace";
 import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { resolveMediaSrc } from "@/lib/media-src";
@@ -20,8 +21,10 @@ import {
   dailyPracticeFaqOptions,
   dailyPracticeGuidesOptions,
   dailyPracticePresetsOptions,
+  type DailyPracticeFaq,
   type DailyPracticeDifficulty,
   type DailyPracticeGuide,
+  type DailyPracticePreset,
   type DailyPracticeStatus,
 } from "./workspace-queries.js";
 
@@ -45,69 +48,190 @@ function statusBadgeClass(status: DailyPracticeStatus) {
       : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400";
 }
 
-function EmptyState({ text }: { text: string }) {
-  return (
-    <Card>
-      <CardContent className="pt-6 text-sm text-muted-foreground">{text}</CardContent>
-    </Card>
-  );
-}
-
-function GuideCard({ guide }: { guide: DailyPracticeGuide }) {
-  const imageUrl = guide.scriptureImageUrl ? resolveMediaSrc(guide.scriptureImageUrl) : null;
-  const showImage = Boolean(imageUrl);
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="space-y-2">
-            <CardTitle className="text-base">{guide.title}</CardTitle>
-            <CardDescription>{difficultyLabels[guide.difficulty]}</CardDescription>
-          </div>
-          <Badge variant="outline" className={statusBadgeClass(guide.status)}>{statusLabels[guide.status]}</Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-3 text-sm text-muted-foreground">
-        <p className="line-clamp-4 whitespace-pre-wrap">{guide.body}</p>
-        <div className="grid gap-2 md:grid-cols-3">
-          <div className="rounded-lg border px-3 py-2"><span className="font-medium text-foreground">Slug:</span> {guide.slug}</div>
-          <div className="rounded-lg border px-3 py-2"><span className="font-medium text-foreground">Phút:</span> {guide.duration}</div>
-          <div className="rounded-lg border px-3 py-2"><span className="font-medium text-foreground">Thứ tự:</span> {guide.sortOrder}</div>
-        </div>
-        <div className="flex items-center gap-3 rounded-lg border px-3 py-2">
-          {showImage ? (
-            <PreviewableImage
-              src={imageUrl}
-              alt={`Ảnh/bản kinh ${guide.title}`}
-              title={`Ảnh/bản kinh ${guide.title}`}
-              className="size-16 shrink-0"
-            />
-          ) : (
-            <div className="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed bg-muted">
-              <ImageIcon className="size-6 text-muted-foreground/50" />
+function GuideManagementTable({ guides, isLoading }: { guides: DailyPracticeGuide[]; isLoading?: boolean }) {
+  const columns = useMemo<ColumnDef<DailyPracticeGuide>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Bài niệm / bài chú" />,
+        cell: ({ row }) => (
+          <div className="flex max-w-[460px] items-center gap-3">
+            {row.original.scriptureImageUrl ? (
+              <PreviewableImage
+                src={resolveMediaSrc(row.original.scriptureImageUrl)}
+                alt={`Ảnh/bản kinh ${row.original.title}`}
+                title={`Ảnh/bản kinh ${row.original.title}`}
+                className="size-12 shrink-0"
+              />
+            ) : (
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-md border border-dashed bg-muted">
+                <ImageIcon className="size-5 text-muted-foreground/50" />
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="truncate font-medium">{row.original.title}</p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.body}</p>
             </div>
-          )}
-          <div className="min-w-0">
-            <p className="font-medium text-foreground">Ảnh/bản kinh</p>
-            <p className="truncate text-xs text-muted-foreground">
-              {guide.scriptureImageMediaPublicId
-                ? showImage
-                  ? "Đã chọn từ thư viện media"
-                  : "Đã chọn media nhưng chưa có preview"
-                : "Chưa chọn ảnh/bản kinh"}
-            </p>
           </div>
-        </div>
-        <div className="flex justify-end">
-          <Button asChild variant="outline">
-            <Link to="/noi-dung/kinh-bai-tap/$publicId" params={{ publicId: guide.publicId }}>
+        ),
+      },
+      {
+        accessorKey: "difficulty",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nhóm" />,
+        cell: ({ row }) => <Badge variant="outline">{difficultyLabels[row.original.difficulty]}</Badge>,
+      },
+      {
+        accessorKey: "duration",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Phút" />,
+      },
+      {
+        accessorKey: "sortOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng thái" />,
+        cell: ({ row }) => (
+          <Badge variant="outline" className={statusBadgeClass(row.original.status)}>
+            {statusLabels[row.original.status]}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/kinh-bai-tap/$publicId" params={{ publicId: row.original.publicId }}>
               Sửa và quản lý
             </Link>
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return (
+    <WorkspaceManagementTable
+      rows={guides}
+      columns={columns}
+      isLoading={isLoading}
+      emptyMessage="Chưa có bài niệm/bài chú nào."
+    />
+  );
+}
+
+function PresetManagementTable({ presets, isLoading }: { presets: DailyPracticePreset[]; isLoading?: boolean }) {
+  const columns = useMemo<ColumnDef<DailyPracticePreset>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Scenario preset" />,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium">{row.original.name}</p>
+            <p className="text-xs text-muted-foreground">{row.original.scenarioType}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "practiceCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Số bài" />,
+      },
+      {
+        accessorKey: "guideIds",
+        header: "Liên kết",
+        cell: ({ row }) => row.original.guideIds.length,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/kinh-bai-tap/kich-ban/$publicId" params={{ publicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return (
+    <WorkspaceManagementTable
+      rows={presets}
+      columns={columns}
+      isLoading={isLoading}
+      emptyMessage="Chưa có scenario preset nào."
+    />
+  );
+}
+
+function FaqManagementTable({ faqs, isLoading }: { faqs: DailyPracticeFaq[]; isLoading?: boolean }) {
+  const columns = useMemo<ColumnDef<DailyPracticeFaq>[]>(
+    () => [
+      {
+        accessorKey: "question",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Câu hỏi" />,
+        cell: ({ row }) => (
+          <div className="max-w-[520px]">
+            <p className="truncate font-medium">{row.original.question}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.answer}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "category",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Danh mục" />,
+      },
+      {
+        accessorKey: "sortOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "featured",
+        header: "Nổi bật",
+        cell: ({ row }) => row.original.featured ? <Badge variant="outline">Nổi bật</Badge> : "—",
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/kinh-bai-tap/hoi-dap/$publicId" params={{ publicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return (
+    <WorkspaceManagementTable
+      rows={faqs}
+      columns={columns}
+      isLoading={isLoading}
+      emptyMessage="Chưa có mục hỏi đáp nào."
+    />
   );
 }
 
@@ -185,32 +309,17 @@ export function DailyRecitationWorkspace() {
         </TabsList>
 
         <TabsContent value="guides" className="space-y-4">
-          {guidesLoading ? <WorkspaceRouteSkeleton /> : guides.length ? (
-            <div className="space-y-6">
-              {Object.entries(groupedGuides).map(([difficulty, items]) => (
-                <div key={difficulty} className="space-y-3">
-                  <div>
-                    <h2 className="text-lg font-semibold">{difficultyLabels[difficulty as DailyPracticeDifficulty]}</h2>
-                    <p className="text-sm text-muted-foreground">{items.length} mục</p>
-                  </div>
-                  {items.length ? (
-                    <div className="grid gap-4">
-                      {items.map((guide) => (
-                        <GuideCard
-                          key={guide.publicId}
-                          guide={guide}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyState text="Chưa có bài nào cho nhóm này." />
-                  )}
+          <div className="space-y-6">
+            {Object.entries(groupedGuides).map(([difficulty, items]) => (
+              <div key={difficulty} className="space-y-3">
+                <div>
+                  <h2 className="text-lg font-semibold">{difficultyLabels[difficulty as DailyPracticeDifficulty]}</h2>
+                  <p className="text-sm text-muted-foreground">{items.length} mục</p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState text="Chưa có bài niệm/bài chú nào." />
-          )}
+                <GuideManagementTable guides={items} isLoading={guidesLoading} />
+              </div>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="presets" className="space-y-4">
@@ -221,36 +330,7 @@ export function DailyRecitationWorkspace() {
               </Link>
             </Button>
           </div>
-          {presetsLoading ? <WorkspaceRouteSkeleton /> : presets.length ? (
-            <div className="grid gap-4">
-              {presets.map((preset) => (
-                <Card key={preset.publicId}>
-                  <CardHeader>
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <CardTitle className="text-base">{preset.name}</CardTitle>
-                        <CardDescription>{preset.scenarioType}</CardDescription>
-                      </div>
-                        <Badge variant="outline">{preset.practiceCount} bài niệm/chú</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-muted-foreground">
-                    <div className="rounded-lg border px-3 py-2">Số bài liên kết: {preset.guideIds.length}</div>
-                    <div className="rounded-lg border px-3 py-2">Cập nhật: {new Date(preset.updatedAt).toLocaleString("vi-VN")}</div>
-                    <div className="flex justify-end">
-                      <Button asChild variant="outline">
-                        <Link to="/noi-dung/kinh-bai-tap/kich-ban/$publicId" params={{ publicId: preset.publicId }}>
-                          Sửa và quản lý
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <EmptyState text="Chưa có scenario preset nào." />
-          )}
+          <PresetManagementTable presets={presets} isLoading={presetsLoading} />
         </TabsContent>
 
         <TabsContent value="faq" className="space-y-4">
@@ -261,36 +341,7 @@ export function DailyRecitationWorkspace() {
               </Link>
             </Button>
           </div>
-          {faqLoading ? <WorkspaceRouteSkeleton /> : faqs.length ? (
-            <div className="grid gap-4">
-              {faqs.map((faq) => (
-                <Card key={faq.publicId}>
-                  <CardHeader>
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <CardTitle className="text-base">{faq.question}</CardTitle>
-                        <CardDescription>{faq.category}</CardDescription>
-                      </div>
-                      {faq.featured ? <Badge variant="outline">Nổi bật</Badge> : null}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-muted-foreground">
-                    <p className="whitespace-pre-wrap">{faq.answer}</p>
-                    <div className="rounded-lg border px-3 py-2">Thứ tự: {faq.sortOrder}</div>
-                    <div className="flex justify-end">
-                      <Button asChild variant="outline">
-                        <Link to="/noi-dung/kinh-bai-tap/hoi-dap/$publicId" params={{ publicId: faq.publicId }}>
-                          Sửa và quản lý
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <EmptyState text="Chưa có mục hỏi đáp nào." />
-          )}
+          <FaqManagementTable faqs={faqs} isLoading={faqLoading} />
         </TabsContent>
 
       </Tabs>

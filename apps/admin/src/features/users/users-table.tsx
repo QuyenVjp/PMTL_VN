@@ -20,7 +20,7 @@ import { PreviewableImage } from "@/components/media/image-preview-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { WorkspaceDataTable } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
@@ -47,6 +47,7 @@ export function UsersTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [bulkAction, setBulkAction] = useState<"block" | "unblock" | "revoke-sessions" | null>(null);
 
   const columns = useMemo<ColumnDef<AdminUserListItem>[]>(
     () => [
@@ -199,7 +200,7 @@ export function UsersTable() {
           size="sm"
           variant="outline"
           disabled={blockUser.isPending}
-          onClick={() => void handleBulkBlock()}
+          onClick={() => setBulkAction("block")}
         >
           <UserXIcon className="mr-1.5 size-3.5" />
           Khóa đã chọn
@@ -208,7 +209,7 @@ export function UsersTable() {
           size="sm"
           variant="outline"
           disabled={unblockUser.isPending}
-          onClick={() => void handleBulkUnblock()}
+          onClick={() => setBulkAction("unblock")}
         >
           <UserCheckIcon className="mr-1.5 size-3.5" />
           Mở khóa đã chọn
@@ -217,12 +218,48 @@ export function UsersTable() {
           size="sm"
           variant="outline"
           disabled={revokeSessions.isPending}
-          onClick={() => void handleBulkRevokeAllSessions()}
+          onClick={() => setBulkAction("revoke-sessions")}
         >
           <LogOutIcon className="mr-1.5 size-3.5" />
           Thu hồi phiên đã chọn
         </Button>
       </DataTableBulkActions>
+      <WorkspaceConfirmDialog
+        open={bulkAction !== null}
+        onOpenChange={(open) => {
+          if (!open) setBulkAction(null);
+        }}
+        title={
+          bulkAction === "block"
+            ? "Khóa người dùng đã chọn?"
+            : bulkAction === "unblock"
+              ? "Mở khóa người dùng đã chọn?"
+              : "Thu hồi phiên đã chọn?"
+        }
+        description={
+          bulkAction === "block"
+            ? `Khóa ${selectedRows.filter((user) => user.status === "ACTIVE").length} tài khoản đang hoạt động và thu hồi phiên liên quan.`
+            : bulkAction === "unblock"
+              ? `Mở khóa ${selectedRows.filter((user) => user.status === "SUSPENDED").length} tài khoản đang bị khóa.`
+              : `Thu hồi toàn bộ phiên đăng nhập của ${selectedRows.length} người dùng đã chọn.`
+        }
+        confirmLabel={
+          bulkAction === "block"
+            ? "Khóa"
+            : bulkAction === "unblock"
+              ? "Mở khóa"
+              : "Thu hồi phiên"
+        }
+        variant={bulkAction === "unblock" ? "default" : "destructive"}
+        isPending={blockUser.isPending || unblockUser.isPending || revokeSessions.isPending}
+        onConfirm={() => {
+          const action = bulkAction;
+          setBulkAction(null);
+          if (action === "block") void handleBulkBlock();
+          if (action === "unblock") void handleBulkUnblock();
+          if (action === "revoke-sessions") void handleBulkRevokeAllSessions();
+        }}
+      />
     </div>
   );
 }

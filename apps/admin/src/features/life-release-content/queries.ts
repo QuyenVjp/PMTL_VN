@@ -69,6 +69,11 @@ export interface LifeReleaseOverview {
 
 export const lifeReleaseContentKeys = {
   all: ["admin-life-release-content"] as const,
+  lists: () => [...lifeReleaseContentKeys.all, "list"] as const,
+  list: (owner: "guides" | "variants" | "faq" | "downloads") => [...lifeReleaseContentKeys.lists(), owner] as const,
+  details: () => [...lifeReleaseContentKeys.all, "detail"] as const,
+  detail: (owner: "guide" | "variant" | "faq" | "download", publicId: string) =>
+    [...lifeReleaseContentKeys.details(), owner, publicId] as const,
   overview: () => [...lifeReleaseContentKeys.all, "overview"] as const,
 };
 

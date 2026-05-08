@@ -97,7 +97,7 @@ function parseStoredUser(raw: string | null, maxAgeMs?: number): AdminUser | nul
     const parsed = JSON.parse(raw) as AdminUser | StoredUserEnvelope;
     const envelope = isStoredEnvelope(parsed)
       ? parsed
-      : { user: parsed as AdminUser, storedAt: 0 };
+      : { user: parsed, storedAt: 0 };
     if (!isAdminRole(envelope.user.role)) return null;
     if (maxAgeMs !== undefined) {
       if (!envelope.storedAt) return null;

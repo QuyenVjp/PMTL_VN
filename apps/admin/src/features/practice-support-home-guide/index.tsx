@@ -280,7 +280,7 @@ function PracticeHomeGuideEditor({ data }: { data: VietnamHomePracticeGuide }) {
               <span className="font-medium">Slug:</span> {data.slug}
             </div>
             <div>
-              <span className="font-medium">Public ID:</span> {data.publicId}
+              <span className="font-medium">Mã bản ghi:</span> {data.publicId.slice(0, 12)}
             </div>
             <div>
               <span className="font-medium">Cập nhật lần cuối:</span>{" "}

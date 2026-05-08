@@ -15,6 +15,7 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 ### Governance
 - `pmtl-workflow-router`
 - `pmtl-skill-governance`
+- `pmtl-team-claude-skills`
 - `pmtl-multi-cli-orchestrator`
 - `output-skill`
 - `pmtl-ui-style-system`
@@ -119,5 +120,6 @@ Backlog owner for the missing PMTL-native lanes:
 - Repo-local PMTL skills are the canonical source of repo behavior for both Codex and Claude Code when working inside this repository.
 - Superpowers is the preferred generic workflow engine, not the source of PMTL repo policy.
 - Global platform skills should stay tool-oriented and generic rather than duplicating repo policy.
+- Paid external skill packs such as `D:\downloadALL\brave-download\team-claude-skills` must pass through a PMTL adapter skill before they become repo policy. Use them as reference material first, then port only the useful behavior into PMTL-native skills or docs.
 - External worker routing baseline is currently `Gemini + Copilot` only. Claude, Codex CLI, and Aider stay disabled in PMTL auto-routing until they are explicitly re-enabled.
 - Read `docs/agent-operating-model.md` when the task changes Codex role framing, local subagent usage, or external-worker governance.

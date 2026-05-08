@@ -43,8 +43,8 @@ export function useSafeReactTable<TData extends RowData>(options: TableOptions<T
     onStateChange: (updater: Updater<typeof state>) => {
       if (mountedRef.current) {
         setState(updater);
+        options.onStateChange?.(updater);
       }
-      options.onStateChange?.(updater);
     },
   }));
 

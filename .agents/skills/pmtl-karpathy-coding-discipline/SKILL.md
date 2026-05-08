@@ -23,15 +23,19 @@ Skip only for tiny read-only answers, one-line commands, or pure documentation l
 ## Pre-Code Checklist
 
 1. Name the concrete user-visible failure or outcome.
-2. Read the nearest constitution first:
+2. Scout before diagnosing:
+   - identify the boundary, source-of-truth docs, existing implementation, and affected verification lane.
+   - do not propose a code fix from the first visible symptom.
+3. Read the nearest constitution first:
    - `apps/admin/AGENTS.override.md` for admin UI.
    - `apps/api/AGENTS.override.md` for API/runtime.
    - root `AGENTS.md` and relevant `design/` docs for shared decisions.
-3. For PMTL code changes, use GitNexus before edits when the touched symbol is known:
+4. Diagnose the smallest root cause that explains the symptom or requested gap.
+5. For PMTL code changes, use GitNexus before edits when the touched symbol is known:
    - `gitnexus_context` for symbol shape.
    - `gitnexus_impact` for upstream blast radius on shared logic.
-4. Choose the smallest implementation that satisfies the request.
-5. Define the strongest targeted verification before editing.
+6. Choose the smallest implementation that satisfies the request.
+7. Define the strongest targeted verification before editing.
 
 ## Coding Rules
 
@@ -41,6 +45,7 @@ Skip only for tiny read-only answers, one-line commands, or pure documentation l
 - Do not "clean up" unrelated files, generated outputs, or user edits.
 - Surface assumptions early when design docs, API contracts, or runtime data disagree.
 - If a request asks for "all pages" or "100%", convert it into auditable batches with checks.
+- If three fix attempts fail, stop changing code and re-open the diagnosis; repeated patching usually means the boundary or assumption is wrong.
 
 ## PMTL-Specific Guardrails
 

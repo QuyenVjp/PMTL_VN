@@ -461,6 +461,7 @@ function CollectionItemsPanel({ collection }: { collection: CollectionListItem }
   const [selectedAsset, setSelectedAsset] = useState<MediaAssetListItem | null>(null);
   const [externalUrl, setExternalUrl] = useState("");
   const [addMode, setAddMode] = useState<"asset" | "embed">("asset");
+  const [itemToRemove, setItemToRemove] = useState<CollectionItem | null>(null);
 
   function handleAdd() {
     if (addMode === "asset") {
@@ -566,7 +567,7 @@ function CollectionItemsPanel({ collection }: { collection: CollectionListItem }
                   size="icon"
                   className="shrink-0 text-destructive hover:text-destructive"
                   disabled={removeItem.isPending}
-                  onClick={() => removeItem.mutate(item.publicId)}
+                  onClick={() => setItemToRemove(item)}
                 >
                   <Trash2Icon className="size-4" />
                 </Button>
@@ -574,6 +575,27 @@ function CollectionItemsPanel({ collection }: { collection: CollectionListItem }
             ))}
           </div>
         )}
+        <WorkspaceConfirmDialog
+          open={itemToRemove !== null}
+          onOpenChange={(open) => !open && setItemToRemove(null)}
+          title="Xoá item khỏi bộ sưu tập?"
+          description={
+            <>
+              Xoá{" "}
+              <span className="font-semibold text-foreground">
+                {itemToRemove?.mediaAssetFilename ?? itemToRemove?.externalUrl ?? itemToRemove?.itemType ?? "item này"}
+              </span>{" "}
+              khỏi bộ sưu tập <span className="font-semibold text-foreground">{collection.title}</span>?
+            </>
+          }
+          confirmLabel="Xoá item"
+          variant="destructive"
+          isPending={removeItem.isPending}
+          onConfirm={() => {
+            if (!itemToRemove) return;
+            removeItem.mutate(itemToRemove.publicId, { onSuccess: () => setItemToRemove(null) });
+          }}
+        />
       </div>
     </AdminDetailSection>
   );
@@ -770,6 +792,7 @@ export function MediaLibraryDetailPage() {
   const unpublishCollection = useUnpublishCollection();
   const deleteCollection = useDeleteCollection();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmPublishAction, setConfirmPublishAction] = useState<"publish" | "unpublish" | null>(null);
 
   const form = useAdminZodForm(collectionFormSchema, {
     defaultValues: {
@@ -858,8 +881,8 @@ export function MediaLibraryDetailPage() {
         saveDisabled={!values.title.trim() || slugStatus === "taken"}
         actions={[
           collection.status === "DRAFT"
-            ? { label: "Xuất bản", icon: UploadIcon, onClick: () => publishCollection.mutate(collection.publicId) }
-            : { label: "Gỡ xuất bản", icon: UploadIcon, onClick: () => unpublishCollection.mutate(collection.publicId) },
+            ? { label: "Xuất bản", icon: UploadIcon, onClick: () => setConfirmPublishAction("publish") }
+            : { label: "Gỡ xuất bản", icon: UploadIcon, onClick: () => setConfirmPublishAction("unpublish") },
           { label: "Xoá", icon: Trash2Icon, variant: "destructive", separator: true, onClick: () => setConfirmDelete(true) },
         ]}
         sidebar={
@@ -944,6 +967,30 @@ export function MediaLibraryDetailPage() {
         variant="destructive"
         isPending={deleteCollection.isPending}
         onConfirm={() => deleteCollection.mutate(collection.publicId, { onSuccess: () => void navigate({ to: "/noi-dung/thu-vien-phap-mon" }) })}
+      />
+      <WorkspaceConfirmDialog
+        open={confirmPublishAction !== null}
+        onOpenChange={(next) => {
+          if (!next) setConfirmPublishAction(null);
+        }}
+        title={confirmPublishAction === "unpublish" ? "Gỡ xuất bản bộ sưu tập?" : "Xuất bản bộ sưu tập?"}
+        description={
+          confirmPublishAction === "unpublish"
+            ? `Gỡ xuất bản "${collection.title}" khỏi bề mặt công khai?`
+            : `Xuất bản "${collection.title}" ra bề mặt công khai?`
+        }
+        confirmLabel={confirmPublishAction === "unpublish" ? "Gỡ xuất bản" : "Xuất bản"}
+        variant={confirmPublishAction === "unpublish" ? "destructive" : "default"}
+        isPending={publishCollection.isPending || unpublishCollection.isPending}
+        onConfirm={() => {
+          const action = confirmPublishAction;
+          if (action === "publish") {
+            publishCollection.mutate(collection.publicId, { onSuccess: () => setConfirmPublishAction(null) });
+          }
+          if (action === "unpublish") {
+            unpublishCollection.mutate(collection.publicId, { onSuccess: () => setConfirmPublishAction(null) });
+          }
+        }}
       />
     </>
   );

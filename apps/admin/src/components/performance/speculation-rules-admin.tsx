@@ -77,25 +77,30 @@ function toPayload(dynamicUrls: Iterable<string>): SpeculationRulesPayload {
   };
 }
 
-function ensureScript(): HTMLScriptElement | null {
+function removeScript(): void {
   if (typeof document === "undefined") {
-    return null;
+    return;
   }
 
   const existing = document.getElementById(SPECULATION_SCRIPT_ID);
   if (existing instanceof HTMLScriptElement) {
-    return existing;
+    existing.remove();
   }
+}
+
+function writeRules(payload: SpeculationRulesPayload): HTMLScriptElement | null {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  removeScript();
 
   const script = document.createElement("script");
   script.id = SPECULATION_SCRIPT_ID;
   script.type = "speculationrules";
+  script.textContent = JSON.stringify(payload);
   document.head.appendChild(script);
   return script;
-}
-
-function writeRules(script: HTMLScriptElement, payload: SpeculationRulesPayload): void {
-  script.textContent = JSON.stringify(payload);
 }
 
 function normalizeCandidatePath(rawHref: string): string {
@@ -113,18 +118,22 @@ export function SpeculationRulesAdmin() {
       return;
     }
 
-    const script = ensureScript();
-    if (!script) {
+    const initialScript = writeRules(toPayload([]));
+    if (!initialScript) {
       return;
     }
+    let activeScript = initialScript;
 
     // Pair with existing service-worker cache: speculation warms HTML/doc responses,
     // service worker handles offline/static caching. This keeps navigation instant
     // while still saving data for elderly users on weak networks.
     const dynamicUrls = new Set<string>();
-    writeRules(script, toPayload(dynamicUrls));
-
-    const updateRules = () => writeRules(script, toPayload(dynamicUrls));
+    const updateRules = () => {
+      const nextScript = writeRules(toPayload(dynamicUrls));
+      if (nextScript) {
+        activeScript = nextScript;
+      }
+    };
 
     const handlePointerOver = (event: PointerEvent) => {
       const target = event.target;
@@ -182,6 +191,7 @@ export function SpeculationRulesAdmin() {
     return () => {
       document.removeEventListener("pointerover", handlePointerOver);
       window.removeEventListener("scroll", handleScrollIntent);
+      activeScript.remove();
     };
   }, []);
 

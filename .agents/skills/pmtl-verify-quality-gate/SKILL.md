@@ -26,6 +26,10 @@ Run the strongest relevant checks after implementation so delivery is backed by 
 
 ## Default order
 
+0. For non-trivial work, build a lightweight traceability map before running or adding tests:
+   - requirement/design source
+   - touched source files or symbols
+   - existing or missing tests/checks
 1. Targeted tests for touched areas.
 2. Typecheck for the affected package or the monorepo.
 3. Lint for the affected package or the monorepo.
@@ -34,8 +38,9 @@ Run the strongest relevant checks after implementation so delivery is backed by 
 ## Execution Approach
 
 1. Choose the narrowest scope that still proves the change.
-2. Run the quality gate through the repo wrapper instead of ad hoc commands.
-3. Escalate to smoke or domain-specific verification when contracts changed.
+2. Do not generate broad generic tests until the traceability map shows the real gap.
+3. Run the quality gate through the repo wrapper instead of ad hoc commands.
+4. Escalate to smoke or domain-specific verification when contracts changed.
 
 ## Script
 
@@ -59,6 +64,7 @@ python infra/tools/codex_actions.py quality-gate --scope web --skip-tests
 
 - Verification scope is as narrow as possible without becoming misleading.
 - Final reporting includes the actual executed scope and runtime.
+- Non-trivial verification reports the requirement-source-test relationship, not only pass/fail totals.
 - Quality gate is not used as a substitute for auth/search/domain-specific verification when those lanes changed.
 
 ## Edge Cases

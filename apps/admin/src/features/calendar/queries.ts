@@ -43,16 +43,25 @@ export const eventKeys = {
 // ── Query options ───────────────────────────────────────────────────
 
 export function eventListOptions(filters: CalendarEventFilters = {}) {
+  const rawLimit = filters.limit ?? 20;
+  const rawOffset = filters.offset ?? 0;
+  const limit = Math.min(Math.max(rawLimit, 1), 100);
+  const offset = Math.max(rawOffset, 0);
+  const normalizedFilters: CalendarEventFilters = {
+    ...filters,
+    limit,
+    offset,
+  };
   const params: Record<string, string | number | boolean | undefined> = {
-    limit: filters.limit ?? 20,
-    offset: filters.offset ?? 0,
-    search: filters.search || undefined,
-    status: filters.status || undefined,
-    eventType: filters.eventType || undefined,
+    limit,
+    offset,
+    search: normalizedFilters.search || undefined,
+    status: normalizedFilters.status || undefined,
+    eventType: normalizedFilters.eventType || undefined,
   };
 
   return queryOptions({
-    queryKey: eventKeys.list(filters),
+    queryKey: eventKeys.list(normalizedFilters),
     queryFn: () =>
       adminClient.get<ListEnvelope<CalendarEventItem>>("/admin/calendar/events", params),
   });

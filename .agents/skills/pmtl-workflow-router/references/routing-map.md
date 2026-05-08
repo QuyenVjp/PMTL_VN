@@ -24,6 +24,8 @@
   - `pmtl-review-web-ui`
 - Skill creation, audit, consolidation:
   - `pmtl-skill-governance`
+- Team Claude Skills package adoption or Codex Desktop porting:
+  - `pmtl-team-claude-skills`
 - Search verification:
   - `pmtl-verify-search-sync`
 - Auth verification:
@@ -86,4 +88,6 @@
   - Finish with `pmtl-verify-search-sync`
 - Skill or workflow cleanup:
   - `pmtl-workflow-router` + `pmtl-skill-governance`
-
+- Borrowing from `D:\downloadALL\brave-download\team-claude-skills`:
+  - `pmtl-workflow-router` + `pmtl-team-claude-skills`
+  - Then route the adopted behavior to its PMTL owner skill and finish with `pmtl-verify-quality-gate` or `skill-audit`

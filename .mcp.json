@@ -64,6 +64,16 @@
         "mcp"
       ]
     },
+    "cocoindex_code": {
+      "type": "stdio",
+      "command": "C:\\Users\\ADMIN\\.local\\bin\\ccc.exe",
+      "args": [
+        "mcp"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    },
     "next-devtools": {
       "type": "stdio",
       "command": "cmd",

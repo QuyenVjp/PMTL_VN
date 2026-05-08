@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Link, useParams } from "@tanstack/react-router";
 import { CheckCircle2Icon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
 import { z } from "zod";
@@ -20,11 +21,13 @@ import {
   AdminFormField,
   WorkspaceConfirmDialog,
   WorkspaceDetailSkeleton,
+  WorkspaceManagementTable,
   WorkspaceRouteSkeleton,
 } from "@/components/workspace";
+import { DataTableColumnHeader } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -35,7 +38,13 @@ import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { cn } from "@/lib/utils";
 import { invalidFieldClass } from "@/lib/form-validation";
 import { readRouteParam, useNavigateTo } from "@/lib/router-utils";
-import { selfCultivationOverviewOptions, type SelfCultivationGuide, type SelfCultivationGuideGroup } from "./queries";
+import {
+  selfCultivationOverviewOptions,
+  type SelfCultivationDownload,
+  type SelfCultivationFaq,
+  type SelfCultivationGuide,
+  type SelfCultivationGuideGroup,
+} from "./queries";
 import {
   useCreateSelfCultivationFaq,
   useCreateSelfCultivationGuide,
@@ -77,57 +86,134 @@ const createFaqSchema = z.object({
 });
 
 function GuideList({ items }: { items: SelfCultivationGuide[] }) {
-  if (!items.length) {
-    return (
-      <Card>
-        <CardContent className="pt-6 text-sm text-muted-foreground">
-          Chưa có nội dung.
-        </CardContent>
-      </Card>
-    );
-  }
+  const columns = useMemo<ColumnDef<SelfCultivationGuide>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Bài hướng dẫn" />,
+        cell: ({ row }) => (
+          <div className="max-w-[420px]">
+            <p className="truncate font-medium">{row.original.title}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.summary}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "groupKey",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nhóm" />,
+        cell: ({ row }) => <Badge variant="outline">{GROUP_LABELS[row.original.groupKey]}</Badge>,
+      },
+      {
+        accessorKey: "slug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
+        cell: ({ row }) => <span className="text-muted-foreground">{row.original.slug}</span>,
+      },
+      {
+        accessorKey: "sourceReference",
+        header: "Nguồn",
+        cell: ({ row }) => <span className="line-clamp-2 text-muted-foreground">{row.original.sourceReference}</span>,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/kinh-van-tu-tu/huong-dan/$guidePublicId" params={{ guidePublicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
 
   return (
-    <div className="grid gap-3">
-      {items.map((item) => (
-        <Card key={item.publicId}>
-          <CardHeader className="pb-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="space-y-1">
-                <CardTitle className="text-base">{item.title}</CardTitle>
-                <CardDescription>{item.summary}</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">{GROUP_LABELS[item.groupKey]}</Badge>
-                <Button asChild variant="outline" size="sm">
-                  <Link to="/noi-dung/kinh-van-tu-tu/huong-dan/$guidePublicId" params={{ guidePublicId: item.publicId }}>
-                    Sửa và quản lý
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>
-              <span className="font-medium text-foreground">Slug:</span> {item.slug}
-            </p>
-            <p>
-              <span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}
-            </p>
-            {item.boundaryNote ? <p><span className="font-medium text-foreground">Ghi chú ranh giới:</span> {item.boundaryNote}</p> : null}
-            {item.warningNotes.length ? (
-              <div className="space-y-1">
-                <p className="font-medium text-foreground">Lưu ý quan trọng</p>
-                {item.warningNotes.map((note) => (
-                  <div key={note} className="rounded-lg border px-3 py-2">{note}</div>
-                ))}
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <WorkspaceManagementTable
+      rows={items}
+      columns={columns}
+      emptyMessage="Chưa có bài hướng dẫn trong nhóm này."
+    />
   );
+}
+
+function FaqList({ items }: { items: SelfCultivationFaq[] }) {
+  const columns = useMemo<ColumnDef<SelfCultivationFaq>[]>(
+    () => [
+      {
+        accessorKey: "question",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Câu hỏi" />,
+        cell: ({ row }) => (
+          <div className="max-w-[520px]">
+            <p className="truncate font-medium">{row.original.question}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{row.original.answer}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+      {
+        accessorKey: "sourceReference",
+        header: "Nguồn",
+        cell: ({ row }) => <span className="line-clamp-2 text-muted-foreground">{row.original.sourceReference}</span>,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
+        cell: ({ row }) => new Date(row.original.updatedAt).toLocaleString("vi-VN"),
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <Button asChild variant="outline" size="sm">
+            <Link to="/noi-dung/kinh-van-tu-tu/hoi-dap/$faqPublicId" params={{ faqPublicId: row.original.publicId }}>
+              Sửa và quản lý
+            </Link>
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có mục hỏi đáp." />;
+}
+
+function DownloadList({ items }: { items: SelfCultivationDownload[] }) {
+  const columns = useMemo<ColumnDef<SelfCultivationDownload>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tài nguyên" />,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium">{row.original.title}</p>
+            <p className="text-xs text-muted-foreground">{row.original.fileName}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "assetType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.assetType}</Badge>,
+      },
+      {
+        accessorKey: "displayOrder",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thứ tự" />,
+      },
+    ],
+    [],
+  );
+
+  return <WorkspaceManagementTable rows={items} columns={columns} emptyMessage="Chưa có file tải xuống." />;
 }
 
 type GuideFormValues = z.infer<typeof createGuideSchema>;
@@ -583,11 +669,19 @@ export function SelfCultivationWorkspacePage() {
             </div>
             <div className="rounded-lg border bg-card p-4">
               <p className="font-medium">Khác với Kinh bài tập</p>
-              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? <Skeleton className="h-4 w-full" />}</p>
+              {overview ? (
+                <p className="mt-3 text-sm text-muted-foreground">{overview.boundarySummary.differentFromDailyPractice}</p>
+              ) : (
+                <Skeleton className="mt-3 h-4 w-full" />
+              )}
             </div>
             <div className="rounded-lg border bg-card p-4">
               <p className="font-medium">Khác với Ngôi Nhà Nhỏ</p>
-              <p className="mt-3 text-sm text-muted-foreground">{overview?.boundarySummary.differentFromLittleHouse ?? <Skeleton className="h-4 w-full" />}</p>
+              {overview ? (
+                <p className="mt-3 text-sm text-muted-foreground">{overview.boundarySummary.differentFromLittleHouse}</p>
+              ) : (
+                <Skeleton className="mt-3 h-4 w-full" />
+              )}
             </div>
           </div>
           <GuideList items={groupedGuides.BAT_DAU} />
@@ -612,50 +706,11 @@ export function SelfCultivationWorkspacePage() {
               </Link>
             </Button>
           </div>
-          {(overview?.faq?.length ?? 0) ? (
-            <div className="grid gap-3">
-              {overview?.faq.map((item) => (
-                <Card key={item.publicId}>
-                  <CardHeader className="pb-3">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <CardTitle className="text-base">{item.question}</CardTitle>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="/noi-dung/kinh-van-tu-tu/hoi-dap/$faqPublicId" params={{ faqPublicId: item.publicId }}>
-                          Sửa
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm text-muted-foreground">
-                    <p>{item.answer}</p>
-                    <p><span className="font-medium text-foreground">Nguồn:</span> {item.sourceReference}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="pt-6 text-sm text-muted-foreground">Chưa có nội dung.</CardContent>
-            </Card>
-          )}
+          <FaqList items={overview?.faq ?? []} />
         </TabsContent>
 
         <TabsContent value="tai-xuong" className="space-y-3">
-          {(overview?.downloads?.length ?? 0) ? overview?.downloads.map((item) => (
-            <Card key={item.publicId}>
-              <CardContent className="flex items-center justify-between gap-3 pt-6">
-                <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">{item.fileName}</p>
-                </div>
-                <Badge variant="outline">{item.assetType}</Badge>
-              </CardContent>
-            </Card>
-          )) : (
-            <Card>
-              <CardContent className="pt-6 text-sm text-muted-foreground">Chưa có nội dung.</CardContent>
-            </Card>
-          )}
+          <DownloadList items={overview?.downloads ?? []} />
         </TabsContent>
 
         <TabsContent value="version" className="grid gap-4 lg:grid-cols-2">

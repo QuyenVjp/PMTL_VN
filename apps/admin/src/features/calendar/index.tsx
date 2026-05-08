@@ -887,7 +887,7 @@ function CalendarPrimaryButtons({ view, onViewChange }: { view: "calendar" | "ta
 
 export function CalendarEventsPage() {
   const [view, setView] = useState<"calendar" | "table">("calendar");
-  const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 200 }));
+  const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
   const events = envelope?.data ?? [];
 
   return (

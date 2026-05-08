@@ -26,18 +26,27 @@ export const reportKeys = {
 };
 
 export function reportListOptions(filters: ReportListFilters = {}) {
+  const rawPage = filters.page ?? 1;
+  const rawLimit = filters.limit ?? 20;
+  const page = Math.max(rawPage, 1);
+  const limit = Math.min(Math.max(rawLimit, 1), 100);
+  const normalizedFilters: ReportListFilters = {
+    ...filters,
+    page,
+    limit,
+  };
   const params: Record<string, string | number | boolean | undefined> = {
-    page: filters.page ?? 1,
-    limit: filters.limit ?? 20,
-    status: filters.status || undefined,
-    search: filters.search || undefined,
+    page,
+    limit,
+    status: normalizedFilters.status || undefined,
+    search: normalizedFilters.search || undefined,
   };
 
   return queryOptions({
-    queryKey: reportKeys.list(filters),
+    queryKey: reportKeys.list(normalizedFilters),
     queryFn: () =>
       adminClient.get<{ data: ModerationReportListItem[] }>(
-        "/admin/moderation/reports",
+        "/moderation/reports",
         params
       ),
   });
@@ -48,7 +57,7 @@ export function reportDetailOptions(publicId: string) {
     queryKey: reportKeys.detail(publicId),
     queryFn: () =>
       adminClient.get<ModerationReportListItem>(
-        `/admin/moderation/reports/${publicId}`
+        `/moderation/reports/${publicId}`
       ),
     enabled: !!publicId,
   });

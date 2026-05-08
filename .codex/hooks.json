@@ -1,0 +1,59 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\block-dangerous-bash.js'"
+          },
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\pre-commit-message.js'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\post-edit-context.js'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\post-bash-verify.js'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\session-context.js'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.codex\\hooks\\stop-guard.js'"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -29,7 +29,7 @@ export function useResolveReport() {
       decision: DecisionType;
       note?: string;
     }) =>
-      adminClient.post(`/admin/moderation/reports/${publicId}/decision`, {
+      adminClient.post(`/moderation/reports/${publicId}/decision`, {
         decision,
         note,
       }),

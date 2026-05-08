@@ -21,32 +21,32 @@ const TABS: WorkspaceTab[] = [
   {
     path: "/noi-dung/niem-kinh/ban-kinh",
     label: "Bản kinh",
-    description: "Quản lý chant item, bản tụng, audio companion và trạng thái xuất bản.",
+    description: "Bản tụng, audio companion, trạng thái xuất bản.",
   },
   {
     path: "/noi-dung/niem-kinh/nghi-thuc",
     label: "Nghi thức",
-    description: "Owner cho ritual template như thắp tâm hương, khấn nguyện và flow nhiều bước.",
+    description: "Ritual template, khấn nguyện, flow nhiều bước.",
   },
   {
     path: "/noi-dung/niem-kinh/ke-hoach",
     label: "Kế hoạch",
-    description: "Quản lý chant plan, milestone và cấu trúc thực hành theo từng bối cảnh.",
+    description: "Chant plan, milestone, bối cảnh thực hành.",
   },
   {
     path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
     label: "Môi trường & thời gian",
-    description: "Owner cho rule time/place/environment/body-state và các warning không được suy diễn.",
+    description: "Rule thời gian, địa điểm, trạng thái thân tâm.",
   },
   {
     path: "/noi-dung/niem-kinh/kinh-bai-tap-hang-ngay",
     label: "Kinh bài tập hàng ngày",
-    description: "Danh mục bài kinh, bài chú, quy tắc thời gian, thời tiết, phác đồ tu học và luồng 7 bước.",
+    description: "Bài kinh, bài chú, phác đồ tu học, luồng 7 bước.",
   },
   {
     path: "/noi-dung/niem-kinh/don-tu-tam-linh",
     label: "Đơn từ tâm linh",
-    description: "Catalog đơn từ giấy vàng, nghi thức sử dụng và burn rules cho từng loại đơn.",
+    description: "Đơn giấy vàng, nghi thức sử dụng, burn rules.",
   },
 ];
 
@@ -97,9 +97,9 @@ export const niemKinhIndexRoute = createRoute({
   path: "/",
   component: () => (
     <div className="rounded-2xl border bg-card p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-foreground">Chọn tab để làm việc</h2>
+      <h2 className="text-lg font-semibold text-foreground">6 khu quản lý đang hoạt động</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Chọn đúng tab để đi vào phần rule, bản kinh, nghi thức hoặc kế hoạch cần thao tác.
+        Mở trực tiếp khu cần xử lý để cập nhật bản ghi, trạng thái xuất bản và rule vận hành.
       </p>
     </div>
   ),
@@ -119,7 +119,10 @@ function WorkspaceTabLink({ tab }: { tab: WorkspaceTab }) {
           "rounded-xl border border-border bg-background px-4 py-3 text-foreground transition-colors hover:border-primary/30 hover:bg-accent/60",
       }}
     >
-      <p className="text-sm font-semibold">{tab.label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-semibold">{tab.label}</p>
+        <span className="text-xs font-medium text-primary">Mở</span>
+      </div>
       <p className="mt-1 text-xs text-muted-foreground">{tab.description}</p>
     </Link>
   );
@@ -133,18 +136,16 @@ function NiemKinhWorkspace() {
           <div className="max-w-3xl">
             <p className="text-sm font-medium text-primary">Nội dung / Niệm kinh</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-              Niệm kinh
+              Quản lý Niệm kinh
             </h1>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Khu biên tập này gom các lane chính của module Niệm kinh: Bản kinh,
-              Nghi thức, Kế hoạch, Môi trường & thời gian, Kinh bài tập hàng ngày
-              và Đơn từ tâm linh. Mỗi tab giữ đúng ngữ cảnh biên tập riêng.
+              Điều phối bản kinh, nghi thức, kế hoạch, rule môi trường và đơn từ tâm linh trong cùng một cụm quản trị.
             </p>
           </div>
 
           <div className="rounded-xl border bg-background px-4 py-3 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">Lát cắt hiện tại</p>
-            <p className="mt-1">Chọn đúng tab để tiếp tục thao tác theo đúng phần nội dung tương ứng.</p>
+            <p className="font-medium text-foreground">{TABS.length} khu quản lý</p>
+            <p className="mt-1">Mỗi khu có owner API, bảng dữ liệu và thao tác riêng.</p>
           </div>
         </div>
       </section>
