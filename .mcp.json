@@ -164,6 +164,32 @@
         "-Server",
         "postgres"
       ]
+    },
+    "context-mode": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "context-mode"
+      ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@playwright/mcp@latest",
+        "--output-dir",
+        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp",
+        "--user-data-dir",
+        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp\\profile"
+      ],
+      "env": {
+        "PLAYWRIGHT_MCP_OUTPUT_DIR": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp",
+        "PLAYWRIGHT_MCP_USER_DATA_DIR": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp\\profile"
+      }
     }
   }
 }

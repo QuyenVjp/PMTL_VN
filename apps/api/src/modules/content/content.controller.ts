@@ -54,40 +54,6 @@ import {
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
-  @Get("admin/posts")
-  @Roles("ADMIN", "SUPER_ADMIN")
-  @ApiOperation({ summary: "Danh sách bài viết (admin)" })
-  @ApiResponse({ status: 200, description: "Danh sách bài viết cho admin" })
-  async listAdminPosts(
-    @Query() query: ListPostsQuery,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    const validated = listPostsQuerySchema.parse(query);
-    return this.contentService.listPosts(validated, user.role);
-  }
-
-  @Get("admin/slug-check")
-  @Roles("ADMIN", "SUPER_ADMIN")
-  @ApiOperation({ summary: "Kiểm tra slug có bị trùng không (POST / GUIDE)" })
-  @ApiResponse({ status: 200, description: "{ available: boolean }" })
-  async checkSlug(@Query() query: SlugCheckQuery) {
-    const validated = slugCheckQuerySchema.parse(query);
-    return this.contentService.checkSlugAvailability(validated.slug, validated.type, validated.excludePublicId);
-  }
-
-  @Get("admin/posts/:publicIdOrSlug")
-  @Roles("ADMIN", "SUPER_ADMIN")
-  @ApiOperation({ summary: "Chi tiết bài viết (admin)" })
-  @ApiParam({ name: "publicIdOrSlug", description: "Public ID hoặc slug của bài viết" })
-  @ApiResponse({ status: 200, description: "Chi tiết bài viết cho admin" })
-  @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
-  async getAdminPost(
-    @Param("publicIdOrSlug") publicIdOrSlug: string,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    return this.contentService.getPost(publicIdOrSlug, user.role);
-  }
-
   @Get("posts")
   @Public()
   @ApiOperation({ summary: "Danh sách bài viết" })
@@ -112,8 +78,46 @@ export class ContentController {
   ) {
     return this.contentService.getPost(publicIdOrSlug, user?.role);
   }
+}
 
-  @Post("posts")
+@ApiTags("admin-content-posts")
+@Controller("admin/content/posts")
+@Roles("ADMIN", "SUPER_ADMIN")
+export class AdminContentPostsController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @ApiOperation({ summary: "Danh sách bài viết (admin)" })
+  @ApiResponse({ status: 200, description: "Danh sách bài viết cho admin" })
+  async listAdminPosts(
+    @Query() query: ListPostsQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const validated = listPostsQuerySchema.parse(query);
+    return this.contentService.listPosts(validated, user.role);
+  }
+
+  @Get("slug-check")
+  @ApiOperation({ summary: "Kiểm tra slug có bị trùng không (POST / GUIDE)" })
+  @ApiResponse({ status: 200, description: "{ available: boolean }" })
+  async checkSlug(@Query() query: SlugCheckQuery) {
+    const validated = slugCheckQuerySchema.parse(query);
+    return this.contentService.checkSlugAvailability(validated.slug, validated.type, validated.excludePublicId);
+  }
+
+  @Get(":publicIdOrSlug")
+  @ApiOperation({ summary: "Chi tiết bài viết (admin)" })
+  @ApiParam({ name: "publicIdOrSlug", description: "Public ID hoặc slug của bài viết" })
+  @ApiResponse({ status: 200, description: "Chi tiết bài viết cho admin" })
+  @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
+  async getAdminPost(
+    @Param("publicIdOrSlug") publicIdOrSlug: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.contentService.getPost(publicIdOrSlug, user.role);
+  }
+
+  @Post()
   @RateLimit("content.create")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Tạo bài viết mới" })
@@ -132,7 +136,7 @@ export class ContentController {
     });
   }
 
-  @Patch("posts/:publicId")
+  @Patch(":publicId")
   @RateLimit("content.update")
   @ApiOperation({ summary: "Cập nhật bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
@@ -153,7 +157,7 @@ export class ContentController {
     });
   }
 
-  @Post("posts/:publicId/publish")
+  @Post(":publicId/publish")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Xuất bản bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
@@ -173,7 +177,7 @@ export class ContentController {
     });
   }
 
-  @Post("posts/:publicId/unpublish")
+  @Post(":publicId/unpublish")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Gỡ xuất bản bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
@@ -194,7 +198,7 @@ export class ContentController {
     });
   }
 
-  @Delete("posts/:publicId")
+  @Delete(":publicId")
   @ApiOperation({ summary: "Xoá bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
   @ApiResponse({ status: 200, description: "Bài viết đã được xoá" })

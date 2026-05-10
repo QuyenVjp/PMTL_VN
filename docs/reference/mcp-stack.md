@@ -63,6 +63,21 @@ Ghi chú:
 - `CONTEXT7_API_KEY` là optional nhưng nên có để tăng rate limit
 - với phần lớn library/framework, `context7` có giá trị hơn việc cắm 1 MCP riêng cho từng package
 
+### 1b. `context-mode`
+
+Vai trò:
+- command/search MCP cho output lớn, tự index kết quả để hỏi tiếp bằng search thay vì đổ raw log vào context
+
+Dùng cho:
+- audit nhiều file
+- scan logs hoặc command output dài
+- gom evidence trước khi viết report
+- xử lý dữ liệu tạm thời mà không làm bẩn repo
+
+Ghi chú:
+- dùng trước `rg`/command có thể trả nhiều hơn một màn hình
+- sau `/compact`, context-mode knowledge base vẫn giữ được evidence đã index cho session đó
+
 ### 2. `next-devtools`
 
 Vai trò:
@@ -93,6 +108,23 @@ Ghi chú:
 - phụ thuộc `apps/web` path tồn tại
 - rất hợp cho scaffold phase
 
+### 3b. `gitnexus` + `cocoindex_code`
+
+Vai trò:
+- `gitnexus`: call graph, execution flow, impact radius, detect changed scope
+- `cocoindex_code`: semantic/conceptual code search trên index local
+
+Dùng cho:
+- tìm feature/code path theo khái niệm trước khi grep rộng
+- hiểu symbol/caller/callee trước khi sửa code
+- kiểm tra blast radius trước patch
+- kiểm tra scope sau patch
+
+Ghi chú:
+- query mơ hồ hoặc theo intent: dùng `cocoindex_code` trước
+- symbol, shared logic, refactor, hoặc trước commit: dùng `gitnexus`
+- với NestJS service, nếu GitNexus báo zero caller vẫn grep module/controller/provider để bù giới hạn DI
+
 ### 4. `playwright`
 
 Vai trò:
@@ -113,6 +145,19 @@ Dùng cho:
 - query data
 - verify migrations or runtime content state
 - debug search/indexing related DB assumptions
+
+### 5b. `prisma-local`
+
+Vai trò:
+- Prisma schema/model reasoning lane
+
+Dùng cho:
+- inspect Prisma schema context
+- reason about migrations and model relationships
+- pair with `postgres-pmtl` when schema intent and live DB state must be compared
+
+Ghi chú:
+- `prisma-local` không thay thế runtime DB inspection; dùng nó cho model/schema, dùng `postgres-pmtl` cho dữ liệu thật
 
 ### 6. `docker-mcp`
 
@@ -247,9 +292,14 @@ Dedicated MCP chỉ đáng bật khi nó cho thêm một trong các leverage sau
 | Task shape | MCP nên dùng trước |
 |---|---|
 | hỏi docs thư viện mới nhất | `context7` |
+| hỏi OpenAI/Codex/API docs | `openaiDeveloperDocs` |
+| command/log/audit output lớn | `context-mode` |
+| tìm code theo khái niệm | `cocoindex_code` |
+| kiểm tra symbol/call graph/blast radius | `gitnexus` |
 | hỏi hành vi Next.js runtime/app router | `next-devtools` |
 | hỏi shadcn component/block | `shadcn` |
 | debug UI trong browser | `playwright` |
+| kiểm tra Prisma schema/model/migration context | `prisma-local` |
 | kiểm tra data/postgres | `postgres-pmtl` |
 | kiểm tra Docker/infra/container | `docker-mcp` |
 | wireframe/design generation | `stitch` |

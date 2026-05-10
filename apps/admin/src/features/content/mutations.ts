@@ -37,7 +37,7 @@ export function useCreatePost() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: CreatePostInput) =>
-      adminClient.post("/content/posts", input),
+      adminClient.post("/admin/content/posts", input),
     onSuccess: () => {
       toast.success("Đã tạo bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
@@ -51,7 +51,7 @@ export function useUpdatePost() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, ...input }: UpdatePostInput & { publicId: string }) =>
-      adminClient.patch(`/content/posts/${publicId}`, input),
+      adminClient.patch(`/admin/content/posts/${publicId}`, input),
     onSuccess: (_data, { publicId }) => {
       toast.success("Đã cập nhật bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
@@ -66,7 +66,7 @@ export function usePublishPost() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (publicId: string) =>
-      adminClient.post(`/content/posts/${publicId}/publish`),
+      adminClient.post(`/admin/content/posts/${publicId}/publish`),
     onSuccess: () => {
       toast.success("Đã xuất bản bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
@@ -80,7 +80,7 @@ export function useUnpublishPost() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, mode }: { publicId: string; mode: "keepDraft" | "replaceDraftWithPublished" }) =>
-      adminClient.post(`/content/posts/${publicId}/unpublish`, { mode }),
+      adminClient.post(`/admin/content/posts/${publicId}/unpublish`, { mode }),
     onSuccess: (_data, { publicId }) => {
       toast.success("Đã gỡ xuất bản bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
@@ -94,7 +94,7 @@ export function useUnpublishPost() {
 export function useDeletePost() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (publicId: string) => adminClient.delete(`/content/posts/${publicId}`),
+    mutationFn: (publicId: string) => adminClient.delete(`/admin/content/posts/${publicId}`),
     onSuccess: () => {
       toast.success("Đã xoá bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });

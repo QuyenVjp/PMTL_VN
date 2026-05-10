@@ -13,6 +13,7 @@ import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
+import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import type { AuditContext as AuditCtxType } from "../../platform/audit/audit.service.js";
 import { EventsService } from "./events.service.js";
@@ -51,22 +52,22 @@ export class AdminEventsController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Tạo sự kiện mới" })
   async create(
-    @Body() body: CreateEventInput,
+    @Body(ZodValidate(createEventSchema)) input: CreateEventInput,
     @CurrentUser() user: AuthenticatedUser,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.createEvent(createEventSchema.parse(body), user.id, auditCtx);
+    return this.svc.createEvent(input, user.id, auditCtx);
   }
 
   @Patch(":publicId")
   @ApiOperation({ summary: "Cập nhật sự kiện" })
   async update(
     @Param("publicId") publicId: string,
-    @Body() body: UpdateEventInput,
+    @Body(ZodValidate(updateEventSchema)) input: UpdateEventInput,
     @CurrentUser() user: AuthenticatedUser,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.updateEvent(publicId, updateEventSchema.parse(body), user.id, auditCtx);
+    return this.svc.updateEvent(publicId, input, user.id, auditCtx);
   }
 
   @Get(":publicId/registrations")
@@ -83,11 +84,11 @@ export class AdminEventsController {
   @ApiOperation({ summary: "Check-in thành viên" })
   async checkIn(
     @Param("publicId") publicId: string,
-    @Body() body: CheckInInput,
+    @Body(ZodValidate(checkInSchema)) input: CheckInInput,
     @CurrentUser() user: AuthenticatedUser,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.checkIn(publicId, checkInSchema.parse(body), user.id, auditCtx);
+    return this.svc.checkIn(publicId, input, user.id, auditCtx);
   }
 }
 

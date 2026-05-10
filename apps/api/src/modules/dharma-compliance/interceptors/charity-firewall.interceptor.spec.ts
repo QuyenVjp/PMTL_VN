@@ -166,7 +166,7 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Skip decorator", () => {
     it("should skip firewall check when @SkipCharityFirewall() is applied", async () => {
-      const context = createMockContext("POST", "/api/admin/posts", { title: "Admin post" });
+      const context = createMockContext("POST", "/api/admin/content/posts", { title: "Admin post" });
 
       const callHandler: CallHandler = {
         handle: vi.fn().mockReturnValue(of({ success: true })),

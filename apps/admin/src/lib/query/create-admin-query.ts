@@ -28,7 +28,7 @@ export interface PaginatedListResponse<T> {
  * export function getAdminPostsQuery(filters) {
  *   return createAdminListQuery({
  *     queryKey: postAdminKeys.list(filters),
- *     endpoint: "/admin/posts",
+ *     endpoint: "/admin/content/posts",
  *     params: filters,
  *   });
  * }
@@ -56,7 +56,7 @@ export function createAdminListQuery<T>({
  * export function getAdminPostQuery(postId) {
  *   return createAdminDetailQuery({
  *     queryKey: postAdminKeys.detail(postId),
- *     endpoint: `/admin/posts/${postId}`,
+ *     endpoint: `/admin/content/posts/${postId}`,
  *     enabled: !!postId,
  *   });
  * }

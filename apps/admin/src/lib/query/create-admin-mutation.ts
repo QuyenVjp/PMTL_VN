@@ -34,7 +34,7 @@ export interface InvalidationConfig {
  * export function useCreatePostMutation() {
  *   return useMutation(
  *     createAdminMutation<PostInput, Post>({
- *       endpoint: "/admin/posts",
+ *       endpoint: "/admin/content/posts",
  *       invalidate: {
  *         families: [postAdminKeys.lists()],
  *         dashboard: true,

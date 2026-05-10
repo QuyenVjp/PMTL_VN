@@ -64,7 +64,7 @@ function slugCheckUrl(slug: string, entityType: SlugEntityType, excludePublicId?
   // POST | GUIDE
   if (excludePublicId) params.set("excludePublicId", excludePublicId);
   params.set("type", entityType);
-  return `/content/admin/slug-check?${params.toString()}`;
+  return `/admin/content/posts/slug-check?${params.toString()}`;
 }
 
 export function useSlugField({ title, entityType, excludePublicId, initialSlug }: UseSlugFieldOptions) {

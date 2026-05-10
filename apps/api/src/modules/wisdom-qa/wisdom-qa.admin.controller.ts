@@ -63,13 +63,13 @@ export class WisdomQaAdminController {
     return this.wisdomQaService.listWisdomEntries(query);
   }
 
-  @Get("entries/:id")
+  @Get("entries/:publicId")
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Chi tiết bài tri tuệ (admin)" })
-  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Chi tiết bài tri tuệ" })
-  getEntry(@Param("id") id: string) {
-    return this.wisdomQaService.getWisdomEntry(id);
+  getEntry(@Param("publicId") publicId: string) {
+    return this.wisdomQaService.getWisdomEntry(publicId);
   }
 
   @Post("entries")
@@ -90,18 +90,18 @@ export class WisdomQaAdminController {
     });
   }
 
-  @Patch("entries/:id")
+  @Patch("entries/:publicId")
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Cập nhật bài tri tuệ" })
-  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   updateEntry(
-    @Param("id") id: string,
+    @Param("publicId") publicId: string,
     @Body(ZodValidate(updateWisdomEntrySchema)) input: UpdateWisdomEntryInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: ExpressRequest,
   ) {
-    return this.wisdomQaService.updateWisdomEntry(id, input, {
+    return this.wisdomQaService.updateWisdomEntry(publicId, input, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,
@@ -109,18 +109,18 @@ export class WisdomQaAdminController {
     });
   }
 
-  @Post("entries/:id/publish")
+  @Post("entries/:publicId/publish")
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Xuất bản bài tri tuệ" })
-  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã xuất bản" })
   publishEntry(
-    @Param("id") id: string,
+    @Param("publicId") publicId: string,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: ExpressRequest,
   ) {
-    return this.wisdomQaService.publishWisdomEntry(id, {
+    return this.wisdomQaService.publishWisdomEntry(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,
@@ -128,18 +128,18 @@ export class WisdomQaAdminController {
     });
   }
 
-  @Delete("entries/:id")
+  @Delete("entries/:publicId")
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Xoá bài tri tuệ" })
-  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 204, description: "Đã xoá" })
   deleteEntry(
-    @Param("id") id: string,
+    @Param("publicId") publicId: string,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: ExpressRequest,
   ) {
-    return this.wisdomQaService.deleteWisdomEntry(id, {
+    return this.wisdomQaService.deleteWisdomEntry(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

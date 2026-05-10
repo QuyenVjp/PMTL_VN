@@ -62,14 +62,14 @@ export function postListOptions(filters: PostListFilters = {}) {
 
   return queryOptions({
     queryKey: postKeys.list(filters),
-    queryFn: () => adminClient.get<ListResponse<PostListItem>>("/content/admin/posts", params),
+    queryFn: () => adminClient.get<ListResponse<PostListItem>>("/admin/content/posts", params),
   });
 }
 
 export function postDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: postKeys.detail(publicId),
-    queryFn: () => adminClient.get<PostDetail>(`/content/admin/posts/${publicId}`),
+    queryFn: () => adminClient.get<PostDetail>(`/admin/content/posts/${publicId}`),
     enabled: !!publicId,
   });
 }

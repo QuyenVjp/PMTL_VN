@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import {
   ContentController,
+  AdminContentPostsController,
   GuideController,
   AdminDownloadController,
   PublicBeginnerGuideController,
@@ -31,6 +32,7 @@ import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
   imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule, LittleHouseModule, LifeReleaseContentModule, SearchModule],
   controllers: [
     ContentController,
+    AdminContentPostsController,
     GuideController,
     AdminDownloadController,
     PublicBeginnerGuideController,

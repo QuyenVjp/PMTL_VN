@@ -114,6 +114,21 @@ Ghi chú:
 - admin (`Phụng sự viên`) hoặc super-admin là actor chính
 - `_status` và `publishedAt` là cặp field quyết định public delivery
 
+### Posts editorial workspace
+- `GET /api/admin/content/posts`
+- `GET /api/admin/content/posts/:publicId`
+- `GET /api/admin/content/posts/slug-check`
+- `POST /api/admin/content/posts`
+- `PATCH /api/admin/content/posts/:publicId`
+- `POST /api/admin/content/posts/:publicId/publish`
+- `POST /api/admin/content/posts/:publicId/unpublish`
+- `DELETE /api/admin/content/posts/:publicId`
+
+Quy tắc:
+- admin post write-path phải dùng `/api/admin/content/posts/*`; public `/api/content/posts/*` chỉ là read surface.
+- `posts` chỉ là editorial layer cho bài dẫn nhập, bài giải thích, hoặc bài tổng hợp; source-backed Wisdom/QA vẫn thuộc owner `wisdomEntries` hoặc `qaEntries`.
+- mọi publish/unpublish/delete phải audit-log và sync search index qua backend owner module.
+
 ### Downloads editorial workspace
 - `GET /api/admin/content/downloads`
 - `GET /api/admin/content/downloads/:publicId`

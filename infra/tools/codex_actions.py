@@ -395,6 +395,7 @@ def mcp_smoke() -> int:
 
     server_reports: list[dict[str, object]] = []
     overall_ok = True
+    secret_gated_servers = {"stitch"}
 
     for name, server in servers.items():
         if not isinstance(server, dict):
@@ -405,11 +406,16 @@ def mcp_smoke() -> int:
         command = str(server.get("command", ""))
         args = server.get("args", [])
         transport = server.get("type", "unknown")
+        url = str(server.get("url", ""))
+        is_http_server = transport == "http" or bool(url)
         env_refs = sorted(set(_extract_env_refs(server)))
         missing_env = [env_name for env_name in env_refs if not os.environ.get(env_name)]
-        command_ok = bool(command) and _tool_exists(command)
+        command_ok = bool(url) if is_http_server else bool(command) and _tool_exists(command)
         notes: list[str] = []
         required_paths: list[str] = []
+
+        if is_http_server:
+            notes.append("HTTP MCP config validates URL presence; runtime auth and tool exposure still depend on the Codex session")
 
         if name == "shadcn":
             required_paths.append("apps/web")
@@ -430,12 +436,16 @@ def mcp_smoke() -> int:
             notes.append("SWAGGER_API_KEY is not set, so hosted SmartBear/SwaggerHub lane will stay unavailable")
 
         ok = command_ok and not missing_env
+        skipped = False
+        if missing_env and name in secret_gated_servers:
+            skipped = True
+            notes.append("secret-gated MCP skipped for base local smoke because required env is not set")
         if "apps/web" in required_paths and not repo_paths["apps/web"]:
             ok = False
         if ".gitnexus/meta.json" in required_paths and not repo_paths[".gitnexus/meta.json"]:
             ok = False
 
-        overall_ok = overall_ok and ok
+        overall_ok = overall_ok and (ok or skipped)
         server_reports.append(
             {
                 "server": name,
@@ -443,10 +453,12 @@ def mcp_smoke() -> int:
                 "transport": transport,
                 "command": command,
                 "args": args,
+                "url": url,
                 "command_available": command_ok,
                 "required_env": env_refs,
                 "missing_env": missing_env,
                 "required_paths": required_paths,
+                "skipped": skipped,
                 "notes": notes,
             }
         )
