@@ -56,7 +56,7 @@ export class AdminLifeLiberationController {
   @Get(":publicId")
   @ApiOperation({ summary: "Chi tiết hồ sơ phóng sinh" })
   async getOne(@Param("publicId") publicId: string) {
-    return this.svc.getRecord(publicId);
+    return this.svc.getAdminRecord(publicId);
   }
 
   @Patch(":publicId/status")
@@ -84,9 +84,13 @@ export class MemberLifeLiberationController {
   }
 
   @Get(":publicId")
-  @ApiOperation({ summary: "Chi tiết hồ sơ phóng sinh" })
-  async getOne(@Param("publicId") publicId: string) {
-    return this.svc.getRecord(publicId);
+  @ApiOperation({ summary: "Chi tiết hồ sơ phóng sinh của tôi" })
+  async getOne(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    // Explicit member API — cannot forget owner scope.
+    return this.svc.getMemberRecord(publicId, user.id);
   }
 
   @Post()

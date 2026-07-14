@@ -1,6 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 import type {
+  ModerationReportDetail,
   ModerationReportListItem,
 } from "@pmtl/api-client";
 
@@ -44,8 +46,10 @@ export function reportListOptions(filters: ReportListFilters = {}) {
 
   return queryOptions({
     queryKey: reportKeys.list(normalizedFilters),
+    // Phase 4.2 batch 2: after client unwrap, payload is { items, pagination }
+    // (NOT the legacy ListEnvelope { data, meta.pagination }).
     queryFn: () =>
-      adminClient.get<{ data: ModerationReportListItem[] }>(
+      adminClient.get<PaginatedList<ModerationReportListItem>>(
         "/moderation/reports",
         params
       ),
@@ -56,7 +60,7 @@ export function reportDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: reportKeys.detail(publicId),
     queryFn: () =>
-      adminClient.get<ModerationReportListItem>(
+      adminClient.get<ModerationReportDetail>(
         `/moderation/reports/${publicId}`
       ),
     enabled: !!publicId,

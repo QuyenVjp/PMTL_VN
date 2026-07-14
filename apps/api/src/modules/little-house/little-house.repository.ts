@@ -35,18 +35,54 @@ export class LittleHouseRepository {
     return { data, total };
   }
 
-  async findByPublicId(publicId: string) {
+  /**
+   * Lookup by publicId. When `ownerUserId` is provided the query is scoped to that
+   * owner so a member cannot resolve another member's record (anti-enumeration 404).
+   * Admin paths omit `ownerUserId` for unscoped access.
+   * Email is only included for admin (unscoped) lookups — never for member views.
+   */
+  private detailInclude(includeEmail: boolean) {
+    return {
+      user: {
+        select: {
+          publicId: true,
+          displayName: true,
+          ...(includeEmail ? { email: true } : {}),
+        },
+      },
+      recitations: { orderBy: { sessionDate: "desc" as const }, take: 20 },
+      completions: true,
+      dottingSessions: { orderBy: { createdAt: "desc" as const } },
+      combustionLogs: { orderBy: { burnedAt: "desc" as const } },
+      fraudLogs: { orderBy: { flaggedAt: "desc" as const } },
+    };
+  }
+
+  /** Member lane — required owner scope. Never returns email. */
+  async findMemberByPublicId(publicId: string, ownerUserId: string) {
+    return this.prisma.lhRecord.findFirst({
+      where: { publicId, userId: ownerUserId },
+      include: this.detailInclude(false),
+    });
+  }
+
+  /** Admin lane — unscoped; may include owner email for ops. */
+  async findAdminByPublicId(publicId: string) {
     return this.prisma.lhRecord.findUnique({
       where: { publicId },
-      include: {
-        user: { select: { publicId: true, displayName: true, email: true } },
-        recitations: { orderBy: { sessionDate: "desc" }, take: 20 },
-        completions: true,
-        dottingSessions: { orderBy: { createdAt: "desc" } },
-        combustionLogs: { orderBy: { burnedAt: "desc" } },
-        fraudLogs: { orderBy: { flaggedAt: "desc" } },
-      },
+      include: this.detailInclude(true),
     });
+  }
+
+  /**
+   * @deprecated Prefer findMemberByPublicId / findAdminByPublicId.
+   * Optional owner is a sharp edge — member callers can forget to pass it.
+   */
+  async findByPublicId(publicId: string, ownerUserId?: string) {
+    if (ownerUserId !== undefined) {
+      return this.findMemberByPublicId(publicId, ownerUserId);
+    }
+    return this.findAdminByPublicId(publicId);
   }
 
   async create(input: CreateLhRecordInput, userId: string, publicId: string) {

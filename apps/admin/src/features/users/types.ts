@@ -31,6 +31,14 @@ export interface UpdateProfileInput {
   avatarUrl?: string | null;
 }
 
+/** Payload for POST /admin/users */
+export interface CreateUserInput {
+  displayName: string;
+  email: string;
+  password: string;
+  role: ApiUserRole;
+}
+
 /** Payload for PATCH /admin/users/:publicId/role */
 export interface ChangeRoleInput {
   role: ApiUserRole;
@@ -54,7 +62,7 @@ export interface UserListFilters {
 
 export const ROLE_LABELS: Record<ApiUserRole, string> = {
   MEMBER: "Thành viên",
-  ADMIN: "Admin",
+  ADMIN: "Phụng sự viên",
   SUPER_ADMIN: "Super Admin",
 };
 
@@ -66,7 +74,7 @@ export const STATUS_LABELS: Record<ApiUserStatus, string> = {
 
 export const roleOptions: { label: string; value: ApiUserRole }[] = [
   { label: "Thành viên", value: "MEMBER" },
-  { label: "Admin", value: "ADMIN" },
+  { label: "Phụng sự viên", value: "ADMIN" },
   { label: "Super Admin", value: "SUPER_ADMIN" },
 ];
 
@@ -82,13 +90,6 @@ export function roleLabel(role: ApiUserRole): string {
 
 export function statusLabel(status: ApiUserStatus): string {
   return STATUS_LABELS[status] ?? status;
-}
-
-/** @deprecated Use statusBadgeClass for rich colors */
-export function statusVariant(status: ApiUserStatus): "default" | "secondary" | "outline" {
-  if (status === "ACTIVE") return "secondary";
-  if (status === "PENDING_VERIFICATION") return "outline";
-  return "default";
 }
 
 /** Returns Tailwind color classes for `<Badge variant="outline" className={statusBadgeClass(s)}>` */

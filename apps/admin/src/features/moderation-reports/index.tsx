@@ -99,7 +99,7 @@ function ReportRowActions({ row }: { row: ModerationReportListItem }) {
 
 function ModerationReportsTable() {
   const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 100 }));
-  const reports = envelope?.data ?? [];
+  const reports = envelope?.items ?? [];
   const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
@@ -462,7 +462,7 @@ function ReportDialogs() {
 export function ModerationReportsPage() {
   const [view, setView] = useState<"table" | "kanban">("kanban");
   const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 100 }));
-  const allReports = envelope?.data ?? [];
+  const allReports = envelope?.items ?? [];
 
   const pendingCount = allReports.filter((r) => r.status === "PENDING").length;
 

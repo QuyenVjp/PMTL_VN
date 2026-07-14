@@ -43,7 +43,8 @@ import {
   useUnpublishPost,
   useDeletePost,
 } from "@/features/content/mutations";
-import { postDetailOptions } from "@/features/content/queries";
+import { PostTopicSelect } from "@/features/content/post-topic-select";
+import { postDetailOptions, postTopicListOptions, type PostTopic } from "@/features/content/queries";
 import { auditListOptions, type AuditLogItem } from "@/features/system/audit-queries";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
@@ -266,6 +267,10 @@ function EditableForm({
   slugStatus,
   bodyHtml,
   setBodyHtml,
+  topics,
+  topicsLoading,
+  primaryCategoryId,
+  setPrimaryCategoryId,
 }: {
   form: UseFormReturn<PostDetailFormValues>;
   slug: string;
@@ -273,6 +278,10 @@ function EditableForm({
   slugStatus: SlugStatus;
   bodyHtml: string;
   setBodyHtml: (v: string) => void;
+  topics: PostTopic[];
+  topicsLoading: boolean;
+  primaryCategoryId: string;
+  setPrimaryCategoryId: (v: string) => void;
 }) {
   const { errors } = form.formState;
   const values = form.watch();
@@ -313,7 +322,7 @@ function EditableForm({
             <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </AdminFormField>
 
-          <AdminFormField label="Loại bài viết">
+          <AdminFormField label="Dạng nội dung">
             <Select value={values.postType} onValueChange={(value) => form.setValue("postType", value, { shouldDirty: true, shouldValidate: true })}>
               <SelectTrigger>
                 <SelectValue />
@@ -329,6 +338,15 @@ function EditableForm({
           </AdminFormField>
         </div>
         <p className="text-xs text-muted-foreground">Để trống — hệ thống sẽ tự động tạo slug từ tiêu đề nếu cần.</p>
+
+        <AdminFormField label="Chủ đề" hint="Chọn nhánh chủ đề cha/con để người đọc dễ tìm các bài khai thị liên quan.">
+          <PostTopicSelect
+            topics={topics}
+            value={primaryCategoryId}
+            onChange={setPrimaryCategoryId}
+            disabled={topicsLoading}
+          />
+        </AdminFormField>
 
         <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
           <Input
@@ -493,6 +511,7 @@ export function PostDetailPage() {
   const { data: post, isLoading, isError } = useQuery(
     postDetailOptions(publicId ?? ""),
   );
+  const { data: topicData, isLoading: topicsLoading } = useQuery(postTopicListOptions());
   const { data: auditEnvelope } = useQuery(
     auditListOptions({
       resource: "post",
@@ -526,6 +545,7 @@ export function PostDetailPage() {
   const [bodyHtml, setBodyHtml] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
+  const [primaryCategoryId, setPrimaryCategoryId] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
 
@@ -554,6 +574,7 @@ export function PostDetailPage() {
     setBodyHtml(readPostBodyHtml(post.content));
     setFeaturedImageId("");
     setFeaturedImageChanged(false);
+    setPrimaryCategoryId(post.primaryCategory?.id ?? "");
     setFeatured(post.featured);
     setAllowComments(post.allowComments);
   }, [form, post, setSlugFromServer]);
@@ -580,6 +601,7 @@ export function PostDetailPage() {
         ...(featuredImageChanged
           ? { featuredImageId: featuredImageId.trim() || null }
           : {}),
+        primaryCategoryId: primaryCategoryId || null,
         featured,
         allowComments,
       },
@@ -632,6 +654,10 @@ export function PostDetailPage() {
       slugStatus={slugStatus}
       bodyHtml={bodyHtml}
       setBodyHtml={setBodyHtml}
+      topics={topicData?.items ?? []}
+      topicsLoading={topicsLoading}
+      primaryCategoryId={primaryCategoryId}
+      setPrimaryCategoryId={setPrimaryCategoryId}
     />
   );
 
@@ -685,7 +711,7 @@ export function PostDetailPage() {
               allowComments={allowComments}
               setAllowComments={setAllowComments}
             />
-            <AuditTrailSection logs={auditEnvelope?.data ?? []} />
+            <AuditTrailSection logs={auditEnvelope?.items ?? []} />
           </>
         }
       >

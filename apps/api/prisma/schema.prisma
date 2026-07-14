@@ -88,21 +88,32 @@ model FeatureFlag {
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
-  actorId    String?  @map("actor_id")
-  actorType  String   @map("actor_type")
-  action     String
-  resource   String
-  resourceId String?  @map("resource_id")
-  metadata   Json?
-  ipAddress  String?  @map("ip_address")
-  userAgent  String?  @map("user_agent")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id              String   @id @default(cuid())
+  /// Stable external identity — never expose internal `id` as publicId in APIs.
+  publicId        String   @unique @map("public_id")
+  actorId         String?  @map("actor_id")
+  actorType       String   @map("actor_type")
+  action          String
+  resource        String
+  resourceId      String?  @map("resource_id")
+  metadata        Json?
+  /// One-way hash of client IP. Raw IP is never stored (AUDIT_POLICY).
+  ipAddressHash   String?  @map("ip_address_hash")
+  userAgent       String?  @map("user_agent")
+  correlationId   String?  @map("correlation_id")
+  /// Monotonic chain position starting at 1.
+  sequenceNumber  BigInt   @unique @map("sequence_number")
+  previousHash    String?  @map("previous_hash") @db.VarChar(64)
+  rowHash         String   @map("row_hash") @db.VarChar(64)
+  /// 1 = legacy migration serializer; 2 = app recursive key-sort + redaction.
+  hashVersion     Int      @default(2) @map("hash_version")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@index([actorId])
   @@index([action])
   @@index([resource])
   @@index([createdAt])
+  @@index([correlationId])
   @@map("audit_logs")
 }
 
@@ -350,11 +361,19 @@ model PostCategory {
   name        String
   slug        String   @unique
   description String?
+  parentId    String?  @map("parent_id")
+  sortOrder   Int      @default(0) @map("sort_order")
+  level       Int      @default(0)
+  path        String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  posts Post[]
+  parent   PostCategory?  @relation("PostCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children PostCategory[] @relation("PostCategoryTree")
+  posts    Post[]
 
+  @@index([parentId])
+  @@index([level, sortOrder])
   @@map("post_categories")
 }
 

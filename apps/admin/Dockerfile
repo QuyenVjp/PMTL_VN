@@ -6,6 +6,7 @@ WORKDIR /repo
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/config/package.json ./packages/config/
+COPY packages/api-client/package.json ./packages/api-client/
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/ui/package.json ./packages/ui/
 COPY apps/admin/package.json ./apps/admin/
@@ -27,8 +28,6 @@ FROM caddy:2.10-alpine AS runtime
 # Serve static SPA — Caddy handles routing and compression
 COPY --from=builder /repo/apps/admin/dist /srv
 COPY apps/admin/Caddyfile /etc/caddy/Caddyfile
-
-USER caddy
 
 EXPOSE 3002
 

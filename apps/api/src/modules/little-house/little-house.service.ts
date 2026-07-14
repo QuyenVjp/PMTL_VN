@@ -43,10 +43,32 @@ export class LittleHouseService {
     return { data: data.map(mapLhToItem), meta: { total, limit: query.limit, offset: query.offset } };
   }
 
-  async getRecord(publicId: string) {
-    const r = await this.repo.findByPublicId(publicId);
+  /**
+   * Member lane — ALWAYS scoped to ownerUserId. Cross-user → 404.
+   * Prefer this over optional-owner getRecord so callers cannot forget the owner arg.
+   */
+  async getMemberRecord(publicId: string, ownerUserId: string) {
+    const r = await this.repo.findMemberByPublicId(publicId, ownerUserId);
     if (!r) throw new NotFoundException("Hồ sơ sớ không tồn tại");
     return mapLhToDetail(r);
+  }
+
+  /** Admin lane — unscoped. Never call from member controllers. */
+  async getAdminRecord(publicId: string) {
+    const r = await this.repo.findAdminByPublicId(publicId);
+    if (!r) throw new NotFoundException("Hồ sơ sớ không tồn tại");
+    return mapLhToDetail(r);
+  }
+
+  /**
+   * @deprecated Prefer getMemberRecord / getAdminRecord so ownership cannot be forgotten.
+   * Kept as a thin dispatcher for any residual internal callers.
+   */
+  async getRecord(publicId: string, ownerUserId?: string) {
+    if (ownerUserId !== undefined) {
+      return this.getMemberRecord(publicId, ownerUserId);
+    }
+    return this.getAdminRecord(publicId);
   }
 
   async createRecord(input: CreateLhRecordInput, userId: string, auditCtx: AuditContext) {
@@ -76,8 +98,9 @@ export class LittleHouseService {
     return mapLhToItem(updated);
   }
 
-  async logRecitation(publicId: string, input: LogRecitationInput, _userId: string, _auditCtx: AuditContext) {
-    const r = await this.repo.findByPublicId(publicId);
+  async logRecitation(publicId: string, input: LogRecitationInput, userId: string, _auditCtx: AuditContext) {
+    // Scope to the calling member so A cannot write a recitation into B's record.
+    const r = await this.repo.findByPublicId(publicId, userId);
     if (!r) throw new NotFoundException("Hồ sơ sớ không tồn tại");
     if (["BURNED", "CANCELLED"].includes(r.status)) {
       throw new BadRequestException("Không thể ghi tụng kinh cho hồ sơ đã kết thúc");

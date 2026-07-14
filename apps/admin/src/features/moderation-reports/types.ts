@@ -15,5 +15,7 @@ export type {
   DecisionType,
   ReporterSummary,
   ModerationReportListItem,
+  ModerationReportDetail,
+  ReportTargetPreview,
   ReportListFilters,
 } from "@pmtl/api-client";

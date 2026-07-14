@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Sparkles,
   Settings2,
+  Tags,
   Users,
   UserSquare2,
   Bird,
@@ -38,6 +39,7 @@ export const sidebarNavGroups: NavGroup[] = [
     title: "Nội dung",
     items: [
       { title: "Bài viết", url: "/noi-dung/bai-viet", icon: Newspaper },
+      { title: "Chủ đề bài viết", url: "/noi-dung/chu-de", icon: Tags },
       { title: "Bạch thoại Phật pháp", url: "/noi-dung/bach-thoai", icon: BookOpen },
       { title: "Hướng dẫn", url: "/noi-dung/huong-dan", icon: BookOpen },
       { title: "Kinh bài tập", url: "/noi-dung/kinh-bai-tap", icon: NotebookTabs },

@@ -195,14 +195,14 @@ export function PostsTable() {
       },
       {
         accessorKey: "postType",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Dạng" />,
         cell: ({ row }) => (
           <Badge variant="outline" className={postTypeBadgeClass(row.original.postType)}>
             {postTypeLabel(row.original.postType)}
           </Badge>
         ),
         filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
-        meta: { label: "Loại" },
+        meta: { label: "Dạng" },
         enableSorting: false,
       },
       {
@@ -228,13 +228,13 @@ export function PostsTable() {
       },
       {
         accessorKey: "primaryCategory",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Danh mục" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Chủ đề" />,
         cell: ({ row }) => (
           <div className="text-nowrap text-muted-foreground text-sm">
             {row.original.primaryCategory?.name ?? "—"}
           </div>
         ),
-        meta: { label: "Danh mục" },
+        meta: { label: "Chủ đề" },
         enableSorting: false,
       },
       {
@@ -282,7 +282,7 @@ export function PostsTable() {
         searchKey="title"
         viewButtonLabel="Xem"
         filters={[
-          { columnId: "postType", title: "Loại", options: postTypeOptions },
+          { columnId: "postType", title: "Dạng", options: postTypeOptions },
           { columnId: "status", title: "Trạng thái", options: statusOptions },
         ]}
       />

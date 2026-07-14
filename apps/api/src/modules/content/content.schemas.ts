@@ -95,6 +95,39 @@ export const listPostsQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
+export const createPostTopicSchema = z.object({
+  name: z.string().trim().min(1, "Tên chủ đề không được để trống.").max(200),
+  slug: z.string().trim().min(1).max(200).optional(),
+  description: z.string().trim().max(1000).optional().nullable(),
+  parentId: z.string().trim().min(1).optional().nullable(),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+export const updatePostTopicSchema = z.object({
+  name: z.string().trim().min(1, "Tên chủ đề không được để trống.").max(200).optional(),
+  slug: z.string().trim().min(1).max(200).optional(),
+  description: z.string().trim().max(1000).optional().nullable(),
+  parentId: z.string().trim().min(1).optional().nullable(),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+});
+
+export interface PostTopicResponse {
+  id: string;
+  publicId: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  parentId: string | null;
+  parentName: string | null;
+  level: number;
+  path: string | null;
+  sortOrder: number;
+  postCount: number;
+  createdAt: string;
+  updatedAt: string;
+  children: PostTopicResponse[];
+}
+
 // Post response
 export const postResponseSchema = z.object({
   id: z.string(),
@@ -112,7 +145,13 @@ export const postResponseSchema = z.object({
     displayName: z.string(),
     avatarUrl: z.string().nullable(),
   }),
-  primaryCategory: z.object({ id: z.string(), name: z.string(), slug: z.string() }).nullable(),
+  primaryCategory: z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+    level: z.number().optional(),
+    path: z.string().nullable().optional(),
+  }).nullable(),
   tags: z.array(z.object({ id: z.string(), name: z.string(), slug: z.string() })),
   featuredImageUrl: z.string().nullable(),
   publishedAt: z.string().nullable(),
@@ -125,6 +164,8 @@ export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type UpdatePostInput = z.infer<typeof updatePostSchema>;
 export type ListPostsQuery = z.infer<typeof listPostsQuerySchema>;
 export type PostResponse = z.infer<typeof postResponseSchema>;
+export type CreatePostTopicRequest = z.infer<typeof createPostTopicSchema>;
+export type UpdatePostTopicRequest = z.infer<typeof updatePostTopicSchema>;
 
 // Type aliases for compatibility with controller imports
 export type CreatePostRequest = CreatePostInput;

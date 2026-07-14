@@ -10,6 +10,6 @@ import type { ZodType } from "zod";
 export function zodResolver<T extends FieldValues>(
   schema: ZodType<T>,
 ): Resolver<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
   return _zodResolver(schema as any) as any;
 }

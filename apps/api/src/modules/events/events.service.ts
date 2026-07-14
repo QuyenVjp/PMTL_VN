@@ -101,7 +101,8 @@ export class EventsService {
       throw new BadRequestException("Bạn đã đăng ký sự kiện này");
     }
     const reg = await this.repo.createRegistration(event.id, userId);
-    await this.audit.append(auditCtx, "member.event.register", "event_registration", reg.id, {
+    // EventRegistration has no publicId — resourceId is the event public identity.
+    await this.audit.append(auditCtx, "member.event.register", "event_registration", eventPublicId, {
       eventPublicId,
     });
     return mapRegistrationToItem(reg);
@@ -115,7 +116,7 @@ export class EventsService {
       throw new BadRequestException("Không tìm thấy đăng ký");
     }
     await this.repo.cancelRegistration(event.id, userId);
-    await this.audit.append(auditCtx, "member.event.cancel", "event_registration", existing.id, {
+    await this.audit.append(auditCtx, "member.event.cancel", "event_registration", eventPublicId, {
       eventPublicId,
     });
     return { message: "Đã hủy đăng ký" };

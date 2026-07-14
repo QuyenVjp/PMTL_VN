@@ -37,8 +37,8 @@ import {
 
 export function UsersTable() {
   const navigate = useNavigate();
-  const { data: envelope, isLoading } = useQuery(userListOptions({ limit: 100 }));
-  const users = envelope?.data ?? [];
+  const { data: list, isLoading } = useQuery(userListOptions({ limit: 100 }));
+  const users = list?.items ?? [];
 
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();

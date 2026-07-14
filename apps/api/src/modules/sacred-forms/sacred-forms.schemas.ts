@@ -29,6 +29,8 @@ export const applicantQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
   status: z.string().optional(),
   templateId: z.string().optional(),
+  /** Internal owner scope — set by member controller, never from client body. */
+  userId: z.string().optional(),
 });
 export type ApplicantQuery = z.infer<typeof applicantQuerySchema>;
 

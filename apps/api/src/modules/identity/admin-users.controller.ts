@@ -20,11 +20,13 @@ import { AdminUsersService } from "./admin-users.service.js";
 import {
   adminUserListQuerySchema,
   adminUserAuditQuerySchema,
+  adminCreateUserSchema,
   adminUpdateProfileSchema,
   adminChangeRoleSchema,
   adminBlockUserSchema,
   type AdminUserListQuery,
   type AdminUserAuditQuery,
+  type AdminCreateUserInput,
   type AdminUpdateProfileInput,
   type AdminChangeRoleInput,
   type AdminBlockUserInput,
@@ -42,6 +44,22 @@ export class AdminUsersController {
   async list(@Query() rawQuery: Record<string, unknown>) {
     const query: AdminUserListQuery = adminUserListQuerySchema.parse(rawQuery);
     return this.adminUsersService.list(query);
+  }
+
+  @Post()
+  @Roles("SUPER_ADMIN")
+  @ApiOperation({ summary: "Tạo tài khoản phụng sự viên (super-admin)" })
+  async create(
+    @Body(ZodValidate(adminCreateUserSchema)) input: AdminCreateUserInput,
+    @CurrentUser() actor: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.adminUsersService.createUser(input, actor.role, {
+      actorId: actor.id,
+      actorType: "admin",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
   }
 
   @Get(":publicId")

@@ -38,7 +38,7 @@ export class ContentRepository {
 
   private readonly postInclude = {
     author: { select: { publicId: true, displayName: true, avatarUrl: true } },
-    primaryCategory: { select: { publicId: true, name: true, slug: true } },
+    primaryCategory: { select: { publicId: true, name: true, slug: true, level: true, path: true } },
     tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
   } satisfies Prisma.PostInclude;
 

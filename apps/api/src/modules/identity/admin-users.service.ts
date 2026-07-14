@@ -1,4 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { nanoid } from "nanoid";
+import * as argon2 from "argon2";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { SessionsService } from "../../platform/sessions/sessions.service.js";
@@ -7,6 +9,7 @@ import type { UserRole, UserStatus } from "../../generated/prisma/client.js";
 import type {
   AdminUserListQuery,
   AdminUserAuditQuery,
+  AdminCreateUserInput,
   AdminUpdateProfileInput,
   AdminChangeRoleInput,
 } from "./admin-users.schemas.js";
@@ -57,15 +60,15 @@ export class AdminUsersService {
       this.prisma.user.count({ where }),
     ]);
 
+    // Canary list shape (Phase 4.1): { items, pagination } rides inside transport `data`.
+    // ResponseInterceptor is the sole transport envelope owner — do NOT wrap with { data, meta }.
     return {
-      data: users.map((u) => this.mapUserToListItem(u)),
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: users.map((u) => this.mapUserToListItem(u)),
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }
@@ -93,6 +96,10 @@ export class AdminUsersService {
       throw new NotFoundError("Người dùng", publicId);
     }
 
+    // Legacy SingleEnvelope shape until detail batch migrates service + Admin query + page together.
+    // List canary is { items, pagination }; detail stays { data: item } so Admin
+    // `envelope?.data` (user-detail-page) keeps working after one-layer client unwrap.
+    // Do NOT return a raw item here — that is a hybrid-shape regression.
     return {
       data: {
         publicId: user.publicId,
@@ -109,6 +116,58 @@ export class AdminUsersService {
         postCount: user._count.posts,
       },
     };
+  }
+
+  async createUser(
+    input: AdminCreateUserInput,
+    actorRole: UserRole,
+    auditCtx: AuditContext,
+  ) {
+    if (actorRole !== "SUPER_ADMIN") {
+      throw new ForbiddenError("Chỉ Super Admin mới có thể tạo tài khoản phụng sự viên");
+    }
+
+    const email = input.email.toLowerCase();
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      throw new ConflictError("Email đã được sử dụng");
+    }
+
+    const passwordHash = await argon2.hash(input.password);
+    const publicId = nanoid(21);
+
+    const created = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          publicId,
+          email,
+          passwordHash,
+          displayName: input.displayName,
+          role: input.role,
+          status: "ACTIVE",
+          emailVerifiedAt: new Date(),
+        },
+        select: {
+          id: true,
+          publicId: true,
+          email: true,
+          displayName: true,
+          avatarUrl: true,
+          role: true,
+          status: true,
+          lastLoginAt: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+      await this.audit.appendInTransaction(tx, auditCtx, "admin.user.create", "user", publicId, {
+        role: input.role,
+        email,
+      });
+      return user;
+    });
+
+    return { data: this.mapUserToListItem(created) };
   }
 
   async updateProfile(
@@ -149,7 +208,7 @@ export class AdminUsersService {
       auditCtx,
       "user.update",
       "user",
-      user.id,
+      user.publicId,
       { adminAction: "profile_edit", changes: input },
     );
 
@@ -191,7 +250,7 @@ export class AdminUsersService {
       auditCtx,
       "admin.user.role_change",
       "user",
-      user.id,
+      user.publicId,
       { previousRole, newRole: input.role },
     );
 
@@ -233,7 +292,7 @@ export class AdminUsersService {
       auditCtx,
       "admin.user.status_change",
       "user",
-      user.id,
+      user.publicId,
       { action: "block", reason, previousStatus: user.status },
     );
 
@@ -264,7 +323,7 @@ export class AdminUsersService {
       auditCtx,
       "admin.user.status_change",
       "user",
-      user.id,
+      user.publicId,
       { action: "unblock", previousStatus: "SUSPENDED" },
     );
 
@@ -274,27 +333,44 @@ export class AdminUsersService {
   async getAuditHistory(publicId: string, query: AdminUserAuditQuery) {
     const user = await this.findUserOrThrow(publicId);
 
+    // New writes store actorId = user.publicId (decorator owner).
+    // Legacy rows may still hold internal cuid — include both for continuity.
+    const actorWhere = {
+      OR: [{ actorId: user.publicId }, { actorId: user.id }],
+    };
+
     const logs = await this.prisma.auditLog.findMany({
-      where: { actorId: user.id },
+      where: actorWhere,
       orderBy: { createdAt: "desc" },
       skip: query.offset,
       take: query.limit,
       select: {
-        id: true,
+        publicId: true,
         action: true,
         resource: true,
         resourceId: true,
+        correlationId: true,
+        sequenceNumber: true,
         createdAt: true,
         metadata: true,
       },
     });
 
     const total = await this.prisma.auditLog.count({
-      where: { actorId: user.id },
+      where: actorWhere,
     });
 
     return {
-      data: logs,
+      data: logs.map((log) => ({
+        publicId: log.publicId,
+        action: log.action,
+        resource: log.resource,
+        resourceId: log.resourceId,
+        correlationId: log.correlationId,
+        sequenceNumber: log.sequenceNumber.toString(),
+        createdAt: log.createdAt,
+        metadata: log.metadata,
+      })),
       meta: {
         pagination: {
           total,
@@ -315,7 +391,7 @@ export class AdminUsersService {
       auditCtx,
       "admin.user.status_change",
       "user",
-      user.id,
+      user.publicId,
       { action: "revoke_all_sessions" },
     );
 

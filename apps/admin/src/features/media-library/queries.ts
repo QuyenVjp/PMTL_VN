@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
@@ -90,7 +90,8 @@ export function collectionsListOptions(filters: ListCollectionsFilters = {}) {
   return queryOptions({
     queryKey: mediaLibraryKeys.list(filters),
     queryFn:  () =>
-      adminClient.get<ListEnvelope<CollectionListItem>>(
+      // Phase 4.2 batch 3a: after client unwrap, payload is { items, pagination }.
+      adminClient.get<PaginatedList<CollectionListItem>>(
         "/admin/content/media-library/collections",
         params,
       ),

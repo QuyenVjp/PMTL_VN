@@ -4,6 +4,10 @@ services:
     container_name: pmtl-caddy
     restart: unless-stopped
     depends_on:
+      api:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
       web:
         condition: service_healthy
     ports:
@@ -39,6 +43,12 @@ services:
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
+      API_INTERNAL_URL: http://api:3001/api
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://${PMTL_DOMAIN}}
+      NEXT_PUBLIC_MEDIA_BASE_URL: ${NEXT_PUBLIC_MEDIA_BASE_URL:-https://${PMTL_DOMAIN}/media}
+    depends_on:
+      api:
+        condition: service_healthy
     ports:
       - "127.0.0.1:${MONITORING_WEB_PORT:-5173}:5173"
     networks:
@@ -55,6 +65,71 @@ services:
       options:
         max-size: 10m
         max-file: "5"
+
+  api:
+    image: ${API_IMAGE}
+    container_name: pmtl-api
+    restart: unless-stopped
+    mem_limit: 1024m
+    stop_grace_period: 120s
+    env_file:
+      - ${PMTL_ENV_FILE:-.env.prod}
+    environment:
+      NODE_ENV: production
+      API_PORT: 3001
+      DATABASE_URL: ${DATABASE_URL}
+      MEILI_HOST: http://meilisearch:7700
+      REDIS_URL: redis://redis:6379
+      VALKEY_URL: redis://redis:6379
+    depends_on:
+      pgbouncer:
+        condition: service_started
+      meilisearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-3001}:3001"
+    volumes:
+      - api-local-uploads:/app/uploads
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "const http=require('http');const req=http.get('http://127.0.0.1:3001/api/health/live',res=>process.exit(res.statusCode===200?0:1));req.on('error',()=>process.exit(1));req.setTimeout(5000,()=>{req.destroy();process.exit(1);});"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  admin:
+    image: ${ADMIN_IMAGE}
+    container_name: pmtl-admin
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${ADMIN_HOST_PORT:-3002}:3002"
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3002/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
 
   postgres:
     image: postgres:17-alpine
@@ -447,6 +522,7 @@ volumes:
   postgres-prod-data:
   meili-prod-data:
   redis-prod-data:
+  api-local-uploads:
   caddy-data:
   caddy-config:
   prometheus-data:

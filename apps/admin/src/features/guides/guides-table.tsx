@@ -96,16 +96,17 @@ type GuidesTableProps = {
 
 export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong-dan" }: GuidesTableProps) {
   const navigateTo = useNavigateTo();
-  const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
-  const guides = envelope?.data ?? [];
+  const { data: list, isLoading } = useQuery(guideListOptions({ limit: 100 }));
+  // Phase 4.2 batch 1: canary list shape — read items, not legacy envelope.data
+  const guides = list?.items ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
-  
+
   const publishGuide = usePublishGuide();
   const deleteGuide = useDeleteGuide();
 
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
-    for (const asset of mediaEnvelope?.data ?? []) {
+    for (const asset of mediaEnvelope?.items ?? []) {
       if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;

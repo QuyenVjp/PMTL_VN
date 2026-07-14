@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 export interface CommunityPostItem {
   publicId: string;
@@ -34,8 +34,10 @@ export const communityPostKeys = {
 export function communityPostListOptions(filters: CommunityPostFilters = {}) {
   return queryOptions({
     queryKey: communityPostKeys.list(filters),
+    // Phase 4.2 batch 2: after client unwrap, payload is { items, pagination }
+    // (NOT the legacy ListEnvelope { data, meta.pagination }).
     queryFn: () =>
-      adminClient.get<ListEnvelope<CommunityPostItem>>("/admin/community/posts", {
+      adminClient.get<PaginatedList<CommunityPostItem>>("/admin/community/posts", {
         limit: filters.limit ?? 20,
         offset: filters.offset ?? 0,
         status: filters.status || undefined,

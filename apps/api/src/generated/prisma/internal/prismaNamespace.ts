@@ -7891,14 +7891,20 @@ export type FeatureFlagScalarFieldEnum = (typeof FeatureFlagScalarFieldEnum)[key
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
+  publicId: 'publicId',
   actorId: 'actorId',
   actorType: 'actorType',
   action: 'action',
   resource: 'resource',
   resourceId: 'resourceId',
   metadata: 'metadata',
-  ipAddress: 'ipAddress',
+  ipAddressHash: 'ipAddressHash',
   userAgent: 'userAgent',
+  correlationId: 'correlationId',
+  sequenceNumber: 'sequenceNumber',
+  previousHash: 'previousHash',
+  rowHash: 'rowHash',
+  hashVersion: 'hashVersion',
   createdAt: 'createdAt'
 } as const
 
@@ -8042,6 +8048,10 @@ export const PostCategoryScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   description: 'description',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  level: 'level',
+  path: 'path',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -9593,6 +9603,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
 
 

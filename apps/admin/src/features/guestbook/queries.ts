@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 export interface GuestbookItem {
   publicId: string;
@@ -30,8 +30,10 @@ export const guestbookKeys = {
 export function guestbookListOptions(filters: GuestbookFilters = {}) {
   return queryOptions({
     queryKey: guestbookKeys.list(filters),
+    // Phase 4.2 batch 2: after client unwrap, payload is { items, pagination }
+    // (NOT the legacy ListEnvelope { data, meta.pagination }).
     queryFn: () =>
-      adminClient.get<ListEnvelope<GuestbookItem>>("/admin/community/guestbook", {
+      adminClient.get<PaginatedList<GuestbookItem>>("/admin/community/guestbook", {
         limit: filters.limit ?? 20,
         offset: filters.offset ?? 0,
         status: filters.status || undefined,

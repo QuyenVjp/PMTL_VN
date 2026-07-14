@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 export interface ModerationCommentItem {
   publicId: string;
@@ -37,8 +37,10 @@ export const moderationCommentKeys = {
 export function moderationCommentListOptions(filters: ModerationCommentFilters = {}) {
   return queryOptions({
     queryKey: moderationCommentKeys.list(filters),
+    // Phase 4.2 batch 2: shares /moderation/reports with moderation-reports.
+    // After client unwrap, payload is { items, pagination }.
     queryFn: () =>
-      adminClient.get<ListEnvelope<ModerationCommentItem>>("/moderation/reports", {
+      adminClient.get<PaginatedList<ModerationCommentItem>>("/moderation/reports", {
         limit: filters.limit ?? 20,
         offset: filters.offset ?? 0,
         status: filters.status || undefined,

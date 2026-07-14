@@ -82,7 +82,7 @@ async function cacheFirst(request, cacheName) {
     const cache = await caches.open(cacheName);
     cache.put(request, response.clone());
     return response;
-  } catch (error) {
+  } catch {
     // Return offline fallback
     return caches.match("/offline");
   }
@@ -105,7 +105,7 @@ async function networkFirstWithTimeout(request, timeout) {
     }
 
     return response;
-  } catch (error) {
+  } catch {
     // Try cache fallback
     const cached = await caches.match(request);
     if (cached) return cached;

@@ -19,7 +19,8 @@
 
 ## Verification
 - Prefer the smallest relevant command:
-  - `pnpm dev`
+  - `pnpm dev` starts the host Admin + API stack on ports `3002` and `3001`.
+  - `pnpm dev:core` starts the Docker web + core infrastructure stack when public web work is needed.
   - `pnpm smoke:test`
   - `pnpm monitoring:test`
   - `pnpm telegram:test`

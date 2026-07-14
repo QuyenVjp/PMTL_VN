@@ -19,11 +19,10 @@ just doctor
 # 3. Bootstrap everything
 just bootstrap
 
-# 4. Start dev stack
-just dev-core
+# 4. Start Admin + API dev stack
+pnpm dev
 
 # 5. Open browser
-# Web:   http://localhost:5173
 # API:   http://localhost:3001/api
 # Admin: http://localhost:3002
 ```
@@ -282,7 +281,7 @@ Differences (dev-only):
 
 - [ ] Clone repo và chạy `just doctor`
 - [ ] Chạy `just bootstrap`
-- [ ] Start `just dev-core` và xem http://localhost:5173
+- [ ] Chạy `pnpm dev`, mở Admin tại http://localhost:3002 và kiểm tra API tại http://localhost:3001/api
 - [ ] Tạo branch mới: `git checkout -b feat/my-feature`
 - [ ] Code + commit với conventional commits
 - [ ] Chạy `just verify-all` trước khi push

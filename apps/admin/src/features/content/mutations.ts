@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
-import { postKeys } from "./queries.js";
+import { postKeys, postTopicKeys } from "./queries.js";
 import { dashboardKeys } from "@/features/dashboard/queries.js";
 
 interface CreatePostInput {
@@ -31,6 +31,18 @@ interface UpdatePostInput {
   tagIds?: string[];
   featured?: boolean;
   allowComments?: boolean;
+}
+
+export interface CreatePostTopicInput {
+  name: string;
+  slug?: string;
+  description?: string | null;
+  parentId?: string | null;
+  sortOrder?: number;
+}
+
+export interface UpdatePostTopicInput extends Partial<CreatePostTopicInput> {
+  publicId: string;
 }
 
 export function useCreatePost() {
@@ -99,6 +111,47 @@ export function useDeletePost() {
       toast.success("Đã xoá bài viết.");
       void qc.invalidateQueries({ queryKey: postKeys.lists() });
       void qc.invalidateQueries({ queryKey: dashboardKeys.stats() });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useCreatePostTopic() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreatePostTopicInput) =>
+      adminClient.post("/admin/content/topics", input),
+    onSuccess: () => {
+      toast.success("Đã tạo chủ đề.");
+      void qc.invalidateQueries({ queryKey: postTopicKeys.lists() });
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useUpdatePostTopic() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ publicId, ...input }: UpdatePostTopicInput) =>
+      adminClient.patch(`/admin/content/topics/${publicId}`, input),
+    onSuccess: () => {
+      toast.success("Đã cập nhật chủ đề.");
+      void qc.invalidateQueries({ queryKey: postTopicKeys.lists() });
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useDeletePostTopic() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => adminClient.delete(`/admin/content/topics/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá chủ đề.");
+      void qc.invalidateQueries({ queryKey: postTopicKeys.lists() });
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
     },
     onError: handleApiError,
   });

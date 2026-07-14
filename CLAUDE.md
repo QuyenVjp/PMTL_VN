@@ -110,7 +110,7 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **PMTL_VN** (22974 symbols, 32499 relationships, 190 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **PMTL_VN** (23082 symbols, 32709 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

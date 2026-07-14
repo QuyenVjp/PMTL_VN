@@ -179,16 +179,18 @@ export class AdminSystemService {
         },
       }),
 
-      // Recent audit logs (last 10)
+      // Recent audit logs (last 10) — publicId only, never internal id
       this.prisma.auditLog.findMany({
         take: 10,
         orderBy: { createdAt: "desc" },
         select: {
-          id: true,
+          publicId: true,
           actorId: true,
           action: true,
           resource: true,
           resourceId: true,
+          correlationId: true,
+          sequenceNumber: true,
           createdAt: true,
         },
       }),
@@ -271,11 +273,14 @@ export class AdminSystemService {
         createdAt: r.createdAt.toISOString(),
       })),
       recentAuditLogs: recentAuditLogs.map((l) => ({
-        id: l.id,
+        id: l.publicId,
+        publicId: l.publicId,
         actorId: l.actorId,
         action: l.action,
         resource: l.resource,
         resourceId: l.resourceId,
+        correlationId: l.correlationId,
+        sequenceNumber: l.sequenceNumber.toString(),
         createdAt: l.createdAt.toISOString(),
       })),
       postStatusStats: postStatusGrouped.map((group) => ({
@@ -365,7 +370,7 @@ export class AdminSystemService {
       take: parsedLimit,
       orderBy: { createdAt: "desc" },
       select: {
-        id: true,
+        publicId: true,
         action: true,
         actorId: true,
         createdAt: true,
@@ -373,7 +378,7 @@ export class AdminSystemService {
     });
 
     return logs.map((log) => ({
-      id: log.id,
+      id: log.publicId,
       action: log.action,
       actor: log.actorId ?? "system",
       timestamp: log.createdAt.toISOString(),

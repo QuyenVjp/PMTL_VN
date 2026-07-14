@@ -3,7 +3,7 @@ import type { PostResponse } from "./content.schemas.js";
 
 type PostWithRelations = Post & {
   author: Pick<User, "publicId" | "displayName" | "avatarUrl">;
-  primaryCategory: Pick<PostCategory, "publicId" | "name" | "slug"> | null;
+  primaryCategory: Pick<PostCategory, "publicId" | "name" | "slug" | "level" | "path"> | null;
   tags: Array<PostTagMap & { tag: Pick<PostTag, "publicId" | "name" | "slug"> }>;
 };
 
@@ -25,7 +25,13 @@ export function mapPostToResponse(post: PostWithRelations, featuredImageUrl?: st
       avatarUrl: post.author.avatarUrl,
     },
     primaryCategory: post.primaryCategory
-      ? { id: post.primaryCategory.publicId, name: post.primaryCategory.name, slug: post.primaryCategory.slug }
+      ? {
+          id: post.primaryCategory.publicId,
+          name: post.primaryCategory.name,
+          slug: post.primaryCategory.slug,
+          level: post.primaryCategory.level,
+          path: post.primaryCategory.path,
+        }
       : null,
     tags: post.tags.map((t) => ({ id: t.tag.publicId, name: t.tag.name, slug: t.tag.slug })),
     featuredImageUrl: featuredImageUrl ?? null,

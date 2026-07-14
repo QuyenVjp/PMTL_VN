@@ -212,8 +212,12 @@ export class MemberSacredFormsController {
 
   @Get("my-applications/:publicId")
   @ApiOperation({ summary: "Chi tiết đơn của tôi" })
-  async getMyApplication(@Param("publicId") publicId: string) {
-    return this.svc.getApplicant(publicId);
+  async getMyApplication(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    // Member lane: scope by current user so cross-user publicId yields 404.
+    return this.svc.getMyApplicant(publicId, user.id);
   }
 
   @Get("my-probations")

@@ -247,9 +247,9 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **PMTL_VN** (22974 symbols, 32499 relationships, 190 execution flows, 9760 embeddings as of 2026-05-03). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **PMTL_VN** (23082 symbols, 32709 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> If any GitNexus tool warns the index is stale, run `C:\Users\ADMIN\.codex\tools\gitnexus\node_modules\.bin\gitnexus.cmd analyze --embeddings` from the repo root first. Use plain `npx gitnexus analyze` only as fallback; on this host the npm-fetched GitNexus 1.6.3 has failed during analyze.
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
 ## Always Do
 
@@ -290,24 +290,17 @@ This project is indexed by GitNexus as **PMTL_VN** (22974 symbols, 32499 relatio
 
 ## Design Gap Analysis & Refactor Roadmap
 
-**File**: `DESIGN_GAP_ANALYSIS.md` — comprehensive audit of all 17 domains vs. design intent.
+**Owner (current):** root `DESIGN_GAP_ANALYSIS.md` (verified May 2026).  
+**Conflict reconcile:** `docs/architecture/DOC_CONFLICT_RECONCILE_2026-07-13.md` (Plans task 0.1).
 
-**Top 5 Critical/High Gaps** (from 2026-04-06 analysis):
-1. **Dharma Compliance** — CharityFirewallInterceptor missing; bank account detection + auto-delete not implemented (CRITICAL)
-2. **Vows & Merit** — Assisted-entry audit trail (`ownerUserId` + `actorUserId`) not enforced (CRITICAL)
-3. **Content** — Typed content blocks (scripts, warnings, steps) validation missing before publish (HIGH)
-4. **Life Liberation** — Predatory species guard + habitat verification not implemented (HIGH)
-5. **Wisdom-QA** — Offline bundle recovery path + incremental delta missing (HIGH)
+> The April 2026 “Top 5 Critical Gaps” list is **stale**. Do not re-implement CharityFirewall, PredatorySpeciesGuard, vows assisted-entry audit, typed content blocks, or wisdom offline delta as if they were missing — they have current implementations. See `DESIGN_GAP_ANALYSIS.md` for evidence paths.
 
-**3 Domains Well-Aligned**:
-- ✅ Identity/Auth — Bootstrap route, session authority, reset tokens all match design
-- ✅ Community — Clean separation: posts own records, moderation owns reports
-- ✅ Calendar & Events — Proper event modeling, admin workspace
-
-**Refactor Roadmap**:
-- **Phase 1** (Weeks 1–2): CharityFirewallInterceptor + PredatorySpeciesGuard + Vows audit trail
-- **Phase 2** (Weeks 3–4): Content block validation + environment rules grouping + offline recovery
-- **Phase 3** (Weeks 5–6): Audit integration across all domains
+**Residual verification backlog** (implementation exists; still needs targeted proof — Plans Phase 8):
+1. Charity — possible double-scan between global interceptor and Community service.
+2. Life Liberation — 30-day follow-up + mortality escalation.
+3. Content — route-by-route DTO completeness for Little House / Daily Practice / Life Release.
+4. Wisdom-QA — search replay/reindex with Meili + SQL fallback.
+5. Vows & Merit — recovery/recompute from audit trail on progress drift.
 
 **When working on ANY domain**: Always cross-check with `design/03-domains/{domain}/CONTRACTS.md` first, then use `gitnexus_query` to find code, then compare intent vs reality.
 

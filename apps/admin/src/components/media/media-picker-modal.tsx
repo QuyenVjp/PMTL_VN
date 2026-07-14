@@ -301,7 +301,8 @@ export function MediaPickerModal({
       folderPublicId: activeFolderPublicId ?? undefined,
     }),
   );
-  const assets: MediaAssetListItem[] = data?.data ?? [];
+  // Phase 4.2 batch 3a: media list returns { items, pagination }.
+  const assets: MediaAssetListItem[] = data?.items ?? [];
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -829,7 +830,8 @@ export function MediaPickerField({
   const fieldCopy = MEDIA_FIELD_COPY[fieldTab.key];
 
   const { data } = useQuery(mediaListOptions({ limit: 100, mimeType: fieldTab.mimePrefix, mediaKind: fieldTab.mediaKind }));
-  const assets: MediaAssetListItem[] = data?.data ?? [];
+  // Phase 4.2 batch 3a: media list returns { items, pagination }.
+  const assets: MediaAssetListItem[] = data?.items ?? [];
   const selectedAsset = assets.find((a) => a.publicId === value) ?? null;
 
   const displayUrl = selectedAsset
@@ -946,8 +948,9 @@ export function MediaMultiPickerField({
     enabled: open,
   });
 
-  const assets: MediaAssetListItem[] = data?.data ?? [];
-  const pagination = data?.meta.pagination;
+  // Phase 4.2 batch 3a: media list returns { items, pagination }.
+  const assets: MediaAssetListItem[] = data?.items ?? [];
+  const pagination = data?.pagination;
   const total = pagination?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / MULTI_PICKER_PAGE_SIZE));
   const pendingSet = useMemo(() => new Set(pendingIds), [pendingIds]);

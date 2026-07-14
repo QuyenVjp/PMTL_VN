@@ -47,6 +47,10 @@ import {
   type UnpublishPostRequest,
   slugCheckQuerySchema,
   type SlugCheckQuery,
+  createPostTopicSchema,
+  updatePostTopicSchema,
+  type CreatePostTopicRequest,
+  type UpdatePostTopicRequest,
 } from "./content.schemas.js";
 
 @ApiTags("content")
@@ -210,6 +214,69 @@ export class AdminContentPostsController {
     @Req() req: Request,
   ) {
     return this.contentService.deletePost(publicId, user.id, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+}
+
+@ApiTags("admin-content-topics")
+@Controller("admin/content/topics")
+@Roles("ADMIN", "SUPER_ADMIN")
+export class AdminContentTopicsController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @ApiOperation({ summary: "Danh sách chủ đề bài viết" })
+  async listTopics() {
+    return this.contentService.listPostTopics();
+  }
+
+  @Post()
+  @RateLimit("content.create")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Tạo chủ đề bài viết" })
+  async createTopic(
+    @Body(ZodValidate(createPostTopicSchema)) input: CreatePostTopicRequest,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.createPostTopic(input, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Patch(":publicId")
+  @RateLimit("content.update")
+  @ApiOperation({ summary: "Cập nhật chủ đề bài viết" })
+  async updateTopic(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(updatePostTopicSchema)) input: UpdatePostTopicRequest,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.updatePostTopic(publicId, input, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete(":publicId")
+  @RateLimit("content.update")
+  @ApiOperation({ summary: "Xoá chủ đề bài viết" })
+  async deleteTopic(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.deletePostTopic(publicId, user.role, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

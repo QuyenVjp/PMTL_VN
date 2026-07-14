@@ -151,7 +151,7 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
 
 function CommunityPostsTable() {
   const { data: envelope, isLoading } = useQuery(communityPostListOptions({ limit: 100 }));
-  const posts = envelope?.data ?? [];
+  const posts = envelope?.items ?? [];
   const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([]);

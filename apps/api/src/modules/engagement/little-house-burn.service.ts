@@ -5,7 +5,7 @@
 import { Injectable, BadRequestException, UnprocessableEntityException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { BurnSessionStatus } from '../../generated/prisma/enums.js';
-import { AuditService } from '../../platform/audit/audit.service.js';
+import { AuditService, type AuditContext } from '../../platform/audit/audit.service.js';
 
 interface PreBurnCheckDto {
   littleHouseId: string;
@@ -30,9 +30,10 @@ export class LittleHouseBurnService {
    * PRE-BURN CHECKLIST - Kiểm tra trước khi đốt
    * POST /api/engagement/little-houses/:id/burn/pre-check
    */
-  async preBurnCheck(userId: string, dto: PreBurnCheckDto) {
+  async preBurnCheck(userId: string, dto: PreBurnCheckDto, auditCtx?: AuditContext) {
     const littleHouse = await this.prisma.littleHouse.findUnique({
       where: { id: dto.littleHouseId },
+      select: { id: true, userId: true, publicId: true },
     });
 
     if (!littleHouse || littleHouse.userId !== userId) {
@@ -61,13 +62,14 @@ export class LittleHouseBurnService {
       },
     });
 
+    // Resource is the little-house public identity (session rows have no publicId).
     await this.audit.append(
-      { actorId: userId, actorType: 'user' },
+      auditCtx ?? { actorType: 'user' },
       'member.lh.burn.pre_check_passed',
       'little_house_burn_session',
-      session.id,
+      littleHouse.publicId,
       {
-        littleHouseId: dto.littleHouseId,
+        littleHousePublicId: littleHouse.publicId,
         tweezersOnBlankEdge: dto.tweezersOnBlankEdge,
         burnAreaReady: dto.burnAreaReady,
       },
@@ -84,7 +86,7 @@ export class LittleHouseBurnService {
    * POST-BURN CHECKLIST - Kiểm tra sau khi đốt
    * POST /api/engagement/little-houses/:id/burn/post-check
    */
-  async postBurnCheck(userId: string, dto: PostBurnCheckDto) {
+  async postBurnCheck(userId: string, dto: PostBurnCheckDto, auditCtx?: AuditContext) {
     const session = await this.prisma.littleHouseBurnSession.findFirst({
       where: {
         littleHouseId: dto.littleHouseId,
@@ -99,6 +101,14 @@ export class LittleHouseBurnService {
         message: 'Không tìm thấy phiên đốt.',
       });
     }
+
+    // Resource is the little-house public identity (session rows have no publicId).
+    const littleHouse = await this.prisma.littleHouse.findUnique({
+      where: { id: dto.littleHouseId },
+      select: { publicId: true },
+    });
+    const littleHousePublicId = littleHouse?.publicId;
+    const actor = auditCtx ?? { actorType: 'user' as const };
 
     const now = new Date();
 
@@ -124,12 +134,11 @@ export class LittleHouseBurnService {
       });
 
       await this.audit.append(
-        { actorId: userId, actorType: 'user' },
+        actor,
         'member.lh.burn.completed',
-        'little_house_burn_session',
-        updated.id,
+        'little_house',
+        littleHousePublicId,
         {
-          littleHouseId: dto.littleHouseId,
           hadScraps: false,
           remediationDone: false,
         },
@@ -164,12 +173,11 @@ export class LittleHouseBurnService {
       });
 
       await this.audit.append(
-        { actorId: userId, actorType: 'user' },
+        actor,
         'member.lh.burn.completed',
-        'little_house_burn_session',
-        updated.id,
+        'little_house',
+        littleHousePublicId,
         {
-          littleHouseId: dto.littleHouseId,
           hadScraps: true,
           remediationDone: true,
         },

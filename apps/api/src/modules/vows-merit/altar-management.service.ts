@@ -158,9 +158,14 @@ export class AltarManagementService {
       },
     });
     if (!input.passed) {
-      await this.audit.append(auditCtx, "member.altar_validation.fail", "altar_validation_log", log.id, {
-        protocolType: input.protocolType,
-      });
+      // AltarValidationLog has no publicId — resourceId is altar item publicId when present.
+      await this.audit.append(
+        auditCtx,
+        "member.altar_validation.fail",
+        "altar_validation_log",
+        input.altarItemPublicId,
+        { protocolType: input.protocolType },
+      );
     }
     return log;
   }

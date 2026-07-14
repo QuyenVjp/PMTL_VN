@@ -28,6 +28,13 @@ export const adminUpdateProfileSchema = z.object({
   avatarUrl: avatarUrlSchema.optional().nullable(),
 });
 
+export const adminCreateUserSchema = z.object({
+  displayName: z.string().trim().min(2, "Tên hiển thị phải có ít nhất 2 ký tự.").max(50),
+  email: z.string().trim().email("Email không hợp lệ"),
+  password: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự."),
+  role: z.enum(["MEMBER", "ADMIN", "SUPER_ADMIN"]).default("ADMIN"),
+});
+
 export const adminChangeRoleSchema = z.object({
   role: z.enum(["MEMBER", "ADMIN", "SUPER_ADMIN"]),
 });
@@ -40,6 +47,7 @@ export const adminBlockUserSchema = z.object({
 
 export type AdminUserListQuery = z.infer<typeof adminUserListQuerySchema>;
 export type AdminUserAuditQuery = z.infer<typeof adminUserAuditQuerySchema>;
+export type AdminCreateUserInput = z.infer<typeof adminCreateUserSchema>;
 export type AdminUpdateProfileInput = z.infer<typeof adminUpdateProfileSchema>;
 export type AdminChangeRoleInput = z.infer<typeof adminChangeRoleSchema>;
 export type AdminBlockUserInput = z.infer<typeof adminBlockUserSchema>;

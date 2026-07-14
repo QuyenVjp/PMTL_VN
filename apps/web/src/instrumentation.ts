@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 
-export async function register() {
+export function register() {
   if (!process.env.SENTRY_DSN) {
     return;
   }

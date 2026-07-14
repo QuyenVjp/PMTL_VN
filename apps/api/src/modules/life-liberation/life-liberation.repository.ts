@@ -31,15 +31,44 @@ export class LifeLiberationRepository {
     return { data, total };
   }
 
-  async findByPublicId(publicId: string) {
+  private detailInclude(includeEmail: boolean) {
+    return {
+      user: {
+        select: {
+          publicId: true,
+          displayName: true,
+          ...(includeEmail ? { email: true } : {}),
+        },
+      },
+      animals: true,
+      proxyItems: true,
+    };
+  }
+
+  /** Member lane — required owner scope. Never returns email. */
+  async findMemberByPublicId(publicId: string, ownerUserId: string) {
+    return this.prisma.lifeReleaseRecord.findFirst({
+      where: { publicId, userId: ownerUserId },
+      include: this.detailInclude(false),
+    });
+  }
+
+  /** Admin lane — unscoped; may include owner email for ops. */
+  async findAdminByPublicId(publicId: string) {
     return this.prisma.lifeReleaseRecord.findUnique({
       where: { publicId },
-      include: {
-        user: { select: { publicId: true, displayName: true, email: true } },
-        animals: true,
-        proxyItems: true,
-      },
+      include: this.detailInclude(true),
     });
+  }
+
+  /**
+   * @deprecated Prefer findMemberByPublicId / findAdminByPublicId.
+   */
+  async findByPublicId(publicId: string, ownerUserId?: string) {
+    if (ownerUserId !== undefined) {
+      return this.findMemberByPublicId(publicId, ownerUserId);
+    }
+    return this.findAdminByPublicId(publicId);
   }
 
   async create(input: CreateLifeReleaseInput, userId: string, publicId: string, tx?: TransactionClient) {

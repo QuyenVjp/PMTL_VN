@@ -17,15 +17,14 @@ export class VowsMeritService {
 
   async adminAssistedEntryHistory(query: AssistedEntryHistoryQuery) {
     const { data, total } = await this.repo.findManyVows(query);
+    // Phase 4.2 batch 3a: canary list shape — rides inside transport `data`.
     return {
-      data: data.map(mapVowToAdminItem),
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: data.map(mapVowToAdminItem),
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }

@@ -104,8 +104,13 @@ function Wait-ForPort {
 function Test-ListeningPort {
   param([int]$Port)
 
-  $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
-  return $listeners.Count -gt 0
+  if (Get-Command Get-NetTCPConnection -ErrorAction SilentlyContinue) {
+    $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+    return $listeners.Count -gt 0
+  }
+
+  $netstatMatches = @(netstat -ano | Select-String "LISTENING" | Select-String ":$Port\s")
+  return $netstatMatches.Count -gt 0
 }
 
 function Get-LatestLogLine {

@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -66,7 +66,8 @@ export function vowHistoryOptions(filters: VowHistoryFilters = {}) {
   return queryOptions({
     queryKey: assistedEntryKeys.list(filters),
     queryFn: () =>
-      adminClient.get<ListEnvelope<VowHistoryItem>>(
+      // Phase 4.2 batch 3a: after client unwrap, payload is { items, pagination }.
+      adminClient.get<PaginatedList<VowHistoryItem>>(
         "/admin/vows/assisted-entry/history",
         params,
       ),

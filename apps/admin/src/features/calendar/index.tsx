@@ -459,11 +459,11 @@ function CalendarRowActions({ row }: { row: CalendarEventItem }) {
 function CalendarTable() {
   const { setOpen, setCurrentRow } = useCalendar();
   const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
-  const events = envelope?.data ?? [];
+  const events = envelope?.items ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
-    for (const asset of mediaEnvelope?.data ?? []) {
+    for (const asset of mediaEnvelope?.items ?? []) {
       if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;
@@ -888,7 +888,7 @@ function CalendarPrimaryButtons({ view, onViewChange }: { view: "calendar" | "ta
 export function CalendarEventsPage() {
   const [view, setView] = useState<"calendar" | "table">("calendar");
   const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
-  const events = envelope?.data ?? [];
+  const events = envelope?.items ?? [];
 
   return (
     <CalendarProvider>

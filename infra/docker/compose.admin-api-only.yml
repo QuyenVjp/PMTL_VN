@@ -1,0 +1,8 @@
+services:
+  caddy:
+    profiles:
+      - standalone-edge
+
+  web:
+    profiles:
+      - public-web

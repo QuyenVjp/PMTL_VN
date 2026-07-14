@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "./client.js";
-import type { ListEnvelope } from "../core/envelopes.js";
+import type { PaginatedList } from "../core/envelopes.js";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
@@ -30,6 +30,34 @@ export interface ReportListFilters {
   targetType?: string;
   limit?: number;
   offset?: number;
+}
+
+export interface ReportTargetPreview {
+  type: string;
+  publicId: string;
+  title: string;
+  slug: string | null;
+}
+
+/**
+ * Detail response — matches backend mapReportToDetail.
+ * Note: the decision timestamp is `decisionAt` (NOT `resolvedAt`).
+ */
+export interface ModerationReportDetail {
+  publicId: string;
+  status: ReportStatus;
+  reasonCode: string;
+  description: string | null;
+  targetType: string;
+  targetId: string;
+  targetPreview: ReportTargetPreview;
+  reporterSummary: ReporterSummary | null;
+  decisionBy: string | null;
+  decisionAt: string | null;
+  decisionNote: string | null;
+  currentDecisionOptions: DecisionType[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const REPORT_STATUS_LABELS: Record<ReportStatus, string> = {
@@ -77,8 +105,10 @@ export const reportKeys = {
 export function reportListOptions(filters: ReportListFilters = {}) {
   return queryOptions({
     queryKey: reportKeys.list(filters),
+    // Phase 4.2 batch 2: after client unwrap, payload is { items, pagination }
+    // (NOT the legacy ListEnvelope { data, meta.pagination }).
     queryFn: () =>
-      adminClient.get<ListEnvelope<ModerationReportListItem>>("/moderation/reports", {
+      adminClient.get<PaginatedList<ModerationReportListItem>>("/moderation/reports", {
         limit: filters.limit ?? 50,
         offset: filters.offset ?? 0,
         status: filters.status,

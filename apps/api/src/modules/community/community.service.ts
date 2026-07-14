@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import pino from "pino";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import type { Prisma } from "../../generated/prisma/client.js";
-import { AuditService } from "../../platform/audit/audit.service.js";
+import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { CharityFirewallService } from "../dharma-compliance/services/charity-firewall.service.js";
 import { mapGuestbookEntryToAdminItem, mapPostToAdminItem } from "./community.mapper.js";
 import { CommunityRepository } from "./community.repository.js";
@@ -62,12 +62,11 @@ export class CommunityService {
     return post;
   }
 
-  async createPost(input: CreateCommunityPostInput, userId: string) {
+  async createPost(input: CreateCommunityPostInput, userId: string, auditCtx: AuditContext) {
     // Anti-scam donation filter — design/03-domains/community/USE_CASES/anti-scam-donation-filter.md
     // Save first as PENDING, then run scan. Auto-hide silently if bank account detected (anti-evasion).
     const post = await this.repo.createPost(input, userId, nanoid());
 
-    const auditCtx = { actorId: userId, actorType: "user" as const };
     try {
       const scanResult = await this.charityFirewall.scanContent(
         userId,
@@ -98,14 +97,14 @@ export class CommunityService {
 
   // ── Public social endpoints ────────────────────────────────────────
 
-  async toggleHeart(postPublicId: string, userId: string) {
+  async toggleHeart(postPublicId: string, userId: string, auditCtx: AuditContext) {
     const post = await this.repo.findPublicPostByPublicId(postPublicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     const result = await this.repo.toggleHeart(post.id, userId);
 
     await this.audit.append(
-      { actorId: userId, actorType: "user" },
+      auditCtx,
       result.hearted ? "community.heart.add" : "community.heart.remove",
       "CommunityPost",
       postPublicId,
@@ -132,13 +131,16 @@ export class CommunityService {
     };
   }
 
-  async createComment(postPublicId: string, input: CreateCommentInput, userId: string) {
+  async createComment(
+    postPublicId: string,
+    input: CreateCommentInput,
+    userId: string,
+    auditCtx: AuditContext,
+  ) {
     const post = await this.repo.findPublicPostByPublicId(postPublicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     const comment = await this.repo.createComment(post.id, input, userId, nanoid());
-
-    const auditCtx = { actorId: userId, actorType: "user" as const };
 
     // Anti-scam donation filter on comments — auto-hide silently if bank account detected
     try {
@@ -165,7 +167,12 @@ export class CommunityService {
     return comment;
   }
 
-  async reportPost(postPublicId: string, input: CreateReportInput, userId: string) {
+  async reportPost(
+    postPublicId: string,
+    input: CreateReportInput,
+    userId: string,
+    auditCtx: AuditContext,
+  ) {
     const post = await this.repo.findPublicPostByPublicId(postPublicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
@@ -178,7 +185,7 @@ export class CommunityService {
     );
 
     await this.audit.append(
-      { actorId: userId, actorType: "user" },
+      auditCtx,
       "community.report.create",
       "ModerationReport",
       report.publicId,
@@ -205,11 +212,11 @@ export class CommunityService {
     };
   }
 
-  async publicCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string) {
+  async publicCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string, auditCtx: AuditContext) {
     const entry = await this.repo.createGuestbookEntry(input, userId, nanoid());
 
     await this.audit.append(
-      { actorId: userId, actorType: "user" },
+      auditCtx,
       "community.guestbook.create",
       "GuestbookEntry",
       entry.publicId,
@@ -222,15 +229,15 @@ export class CommunityService {
 
   async adminListPosts(query: CommunityPostQuery) {
     const { data, total } = await this.repo.findManyAdminPosts(query);
+    // Phase 4.2 batch 2: canary list shape — rides inside transport `data`.
+    // Do NOT return legacy ListEnvelope { data, meta.pagination } (double-wraps on wire).
     return {
-      data: data.map(mapPostToAdminItem),
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: data.map(mapPostToAdminItem),
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }
@@ -241,14 +248,14 @@ export class CommunityService {
     return mapPostToAdminItem(post);
   }
 
-  async adminUpdatePostStatus(publicId: string, input: AdminUpdateCommunityPostInput, adminId: string) {
+  async adminUpdatePostStatus(publicId: string, input: AdminUpdateCommunityPostInput, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     const updated = await this.repo.updatePostStatus(publicId, input);
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.update",
       "CommunityPost",
       publicId,
@@ -258,14 +265,14 @@ export class CommunityService {
     return updated;
   }
 
-  async adminDeletePost(publicId: string, adminId: string) {
+  async adminDeletePost(publicId: string, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     await this.repo.deletePost(publicId);
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.delete",
       "CommunityPost",
       publicId,
@@ -275,14 +282,14 @@ export class CommunityService {
 
   // ── Admin post actions ──────────────────────────────────────────────
 
-  async adminPinPost(publicId: string, adminId: string) {
+  async adminPinPost(publicId: string, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     await this.repo.updatePost(publicId, { isPinned: true });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.update",
       "community_post",
       publicId,
@@ -291,14 +298,14 @@ export class CommunityService {
     return { data: { publicId, pinned: true } };
   }
 
-  async adminUnpinPost(publicId: string, adminId: string) {
+  async adminUnpinPost(publicId: string, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     await this.repo.updatePost(publicId, { isPinned: false });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.update",
       "community_post",
       publicId,
@@ -307,14 +314,14 @@ export class CommunityService {
     return { data: { publicId, pinned: false } };
   }
 
-  async adminHidePost(publicId: string, adminId: string) {
+  async adminHidePost(publicId: string, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     await this.repo.updatePost(publicId, { isHidden: true });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.update",
       "community_post",
       publicId,
@@ -323,14 +330,14 @@ export class CommunityService {
     return { data: { publicId, hidden: true } };
   }
 
-  async adminRestorePost(publicId: string, adminId: string) {
+  async adminRestorePost(publicId: string, auditCtx: AuditContext) {
     const post = await this.repo.findAdminPostByPublicId(publicId);
     if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
     await this.repo.updatePost(publicId, { isHidden: false });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.community_post.update",
       "community_post",
       publicId,
@@ -343,15 +350,15 @@ export class CommunityService {
 
   async adminListGuestbook(query: GuestbookQuery) {
     const { data, total } = await this.repo.findManyAdminGuestbook(query);
+    // Phase 4.2 batch 2: canary list shape — rides inside transport `data`.
+    // Do NOT return legacy ListEnvelope { data, meta.pagination } (double-wraps on wire).
     return {
-      data: data.map(mapGuestbookEntryToAdminItem),
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: data.map(mapGuestbookEntryToAdminItem),
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }
@@ -362,11 +369,11 @@ export class CommunityService {
     return mapGuestbookEntryToAdminItem(entry);
   }
 
-  async adminCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string) {
+  async adminCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string, auditCtx: AuditContext) {
     const entry = await this.repo.createGuestbookEntry(input, userId, nanoid());
 
     await this.audit.append(
-      { actorId: userId, actorType: "user" },
+      auditCtx,
       "admin.guestbook.create",
       "GuestbookEntry",
       entry.publicId,
@@ -375,7 +382,7 @@ export class CommunityService {
     return entry;
   }
 
-  async adminUpdateGuestbookStatus(publicId: string, input: AdminUpdateGuestbookInput, adminId: string) {
+  async adminUpdateGuestbookStatus(publicId: string, input: AdminUpdateGuestbookInput, adminId: string, auditCtx: AuditContext) {
     const entry = await this.repo.findAdminGuestbookEntryByPublicId(publicId);
     if (!entry) throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
 
@@ -386,7 +393,7 @@ export class CommunityService {
     );
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.guestbook.update",
       "GuestbookEntry",
       publicId,
@@ -396,14 +403,14 @@ export class CommunityService {
     return updated;
   }
 
-  async adminDeleteGuestbookEntry(publicId: string, adminId: string) {
+  async adminDeleteGuestbookEntry(publicId: string, auditCtx: AuditContext) {
     const entry = await this.repo.findAdminGuestbookEntryByPublicId(publicId);
     if (!entry) throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
 
     await this.repo.deleteGuestbookEntry(publicId);
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.guestbook.delete",
       "GuestbookEntry",
       publicId,
@@ -428,11 +435,11 @@ export class CommunityService {
     };
   }
 
-  async adminCreateVolunteer(input: CreateVolunteerInput, adminId: string) {
+  async adminCreateVolunteer(input: CreateVolunteerInput, auditCtx: AuditContext) {
     const volunteer = await this.repo.createVolunteer(input, nanoid());
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "content.create",
       "volunteer",
       volunteer.publicId,
@@ -447,14 +454,14 @@ export class CommunityService {
     return volunteer;
   }
 
-  async adminUpdateVolunteer(publicId: string, input: UpdateVolunteerInput, adminId: string) {
+  async adminUpdateVolunteer(publicId: string, input: UpdateVolunteerInput, auditCtx: AuditContext) {
     const volunteer = await this.repo.findVolunteerByPublicId(publicId);
     if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
 
     const updated = await this.repo.updateVolunteer(publicId, input);
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "content.update",
       "volunteer",
       publicId,
@@ -463,28 +470,28 @@ export class CommunityService {
     return updated;
   }
 
-  async adminDeleteVolunteer(publicId: string, adminId: string) {
+  async adminDeleteVolunteer(publicId: string, auditCtx: AuditContext) {
     const volunteer = await this.repo.findVolunteerByPublicId(publicId);
     if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
 
     await this.repo.deleteVolunteer(publicId);
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "content.delete",
       "volunteer",
       publicId,
     );
   }
 
-  async adminActivateVolunteer(publicId: string, adminId: string) {
+  async adminActivateVolunteer(publicId: string, auditCtx: AuditContext) {
     const volunteer = await this.repo.findVolunteerByPublicId(publicId);
     if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
 
     await this.repo.updateVolunteer(publicId, { isActive: true });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.volunteer.update",
       "volunteer",
       publicId,
@@ -493,14 +500,14 @@ export class CommunityService {
     return { data: { publicId, isActive: true } };
   }
 
-  async adminDeactivateVolunteer(publicId: string, adminId: string) {
+  async adminDeactivateVolunteer(publicId: string, auditCtx: AuditContext) {
     const volunteer = await this.repo.findVolunteerByPublicId(publicId);
     if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
 
     await this.repo.updateVolunteer(publicId, { isActive: false });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "admin" },
+      auditCtx,
       "admin.volunteer.update",
       "volunteer",
       publicId,
@@ -512,7 +519,11 @@ export class CommunityService {
   // ── Testimonial disclaimer auto-inject ─────────────────────────────────
   // Design: design/03-domains/community/USE_CASES/USE_CASE_TESTIMONIAL_DISCLAIMER_AUTO_INJECT.md
 
-  async createTestimonial(input: CreateTestimonialInput, userId: string) {
+  async createTestimonial(
+    input: CreateTestimonialInput,
+    userId: string,
+    auditCtx: AuditContext,
+  ) {
     const requiresDisclaimer = input.authorRole === "VOLUNTEER" || input.authorRole === "ORGANIZER";
 
     if (requiresDisclaimer && !input.disclaimerAcknowledge) {
@@ -564,7 +575,7 @@ export class CommunityService {
     });
 
     await this.audit.append(
-      { actorId: userId, actorType: "user" },
+      auditCtx,
       "community.testimonial.published",
       "CommunityTestimonial",
       testimonial.publicId,

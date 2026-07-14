@@ -280,7 +280,7 @@ export class IdentityController {
 
   @Post("forgot-password")
   @Public()
-  @RateLimit("auth.login")
+  @RateLimit("auth.forgot_password")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Yêu cầu đặt lại mật khẩu" })
   @ApiResponse({ status: 200, description: "Yêu cầu đã được xử lý" })
@@ -292,15 +292,20 @@ export class IdentityController {
 
   @Post("reset-password")
   @Public()
-  @RateLimit("auth.login")
+  @RateLimit("auth.reset_password")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Đặt lại mật khẩu bằng token" })
   @ApiResponse({ status: 200, description: "Mật khẩu đã được đặt lại" })
   @ApiResponse({ status: 400, description: "Token không hợp lệ hoặc đã hết hạn" })
   async resetPassword(
     @Body(ZodValidate(resetPasswordSchema)) input: ResetPasswordInput,
+    @Res({ passthrough: true }) res: Response,
   ) {
-    return this.identityService.resetPassword(input);
+    const result = await this.identityService.resetPassword(input);
+    // Clear any residual auth cookies on this browser after a successful reset
+    // so a previously-logged-in session cannot silently continue.
+    this.clearAuthCookies(res);
+    return result;
   }
 
   private setAuthCookies(res: Response, accessToken: string, refreshToken: string) {

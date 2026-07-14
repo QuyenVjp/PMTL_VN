@@ -117,7 +117,7 @@ function MediaProvider({ children, mode }: { children: React.ReactNode; mode: Me
         }),
       )
       .then((envelope) => {
-        if (!cancelled) setFolderAssets(envelope?.data ?? []);
+        if (!cancelled) setFolderAssets(envelope?.items ?? []);
       })
       .finally(() => {
         if (!cancelled) setIsFolderLoading(false);
@@ -216,7 +216,7 @@ function MediaAssetsTable() {
       mediaKind: modeMediaKind(mode),
     }),
   );
-  const assets = activeFolderPublicId ? (folderAssets ?? []) : (envelope?.data ?? []);
+  const assets = activeFolderPublicId ? (folderAssets ?? []) : (envelope?.items ?? []);
   const isLoading = isBaseLoading || isFolderLoading;
   const emptyMessage = mode === "video"
     ? "Chưa có video asset nào."

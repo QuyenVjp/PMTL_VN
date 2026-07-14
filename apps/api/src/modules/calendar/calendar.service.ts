@@ -127,11 +127,10 @@ export class CalendarService {
         };
       }),
     );
+    // Phase 4.2 batch 3a: canary list shape — rides inside transport `data`.
     return {
-      data: mapped,
-      meta: {
-        pagination: { total, limit, offset, hasMore: offset + mapped.length < total },
-      },
+      items: mapped,
+      pagination: { total, limit, offset, hasMore: offset + mapped.length < total },
     };
   }
 
@@ -146,12 +145,10 @@ export class CalendarService {
     };
   }
 
-  async adminCreateEvent(input: AdminCreateEventInput, userId: string) {
+  async adminCreateEvent(input: AdminCreateEventInput, userId: string, auditCtx: AuditContext) {
     const event = await this.repo.createEvent(input, userId, nanoid());
 
-    const auditCtx: AuditContext = { actorId: userId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.create", "calendar_event", event.id, {
-      publicId: event.publicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.create", "calendar_event", event.publicId, {
       title: event.title,
     });
 
@@ -167,8 +164,7 @@ export class CalendarService {
     if (actorId) {
       const changedFields = Object.keys(input).filter((k) => input[k as keyof typeof input] !== undefined);
       const auditCtx: AuditContext = { actorId, actorType: "user" };
-      await this.audit.append(auditCtx, "admin.calendar_event.update", "calendar_event", updated.id, {
-        publicId,
+      await this.audit.append(auditCtx, "admin.calendar_event.update", "calendar_event", publicId, {
         changedFields,
       });
     }
@@ -184,8 +180,7 @@ export class CalendarService {
 
     if (actorId) {
       const auditCtx: AuditContext = { actorId, actorType: "user" };
-      await this.audit.append(auditCtx, "admin.calendar_event.delete", "calendar_event", existing.id, {
-        publicId,
+      await this.audit.append(auditCtx, "admin.calendar_event.delete", "calendar_event", publicId, {
         title: existing.title,
       });
     }
@@ -214,8 +209,7 @@ export class CalendarService {
 
     if (actorId) {
       const auditCtx: AuditContext = { actorId, actorType: "user" };
-      await this.audit.append(auditCtx, "admin.calendar_event.publish", "calendar_event", updated.id, {
-        publicId,
+      await this.audit.append(auditCtx, "admin.calendar_event.publish", "calendar_event", publicId, {
         title: updated.title,
       });
     }
@@ -238,8 +232,7 @@ export class CalendarService {
     const item = await this.repo.createAgendaItem(event.id, input, nanoid());
 
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.create", "calendar_event", event.id, {
-      eventPublicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.create", "calendar_event", eventPublicId, {
       agendaItemPublicId: item.publicId,
       title: input.title,
     });
@@ -260,8 +253,7 @@ export class CalendarService {
 
     const changedFields = Object.keys(input).filter((k) => input[k as keyof typeof input] !== undefined);
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.update", "calendar_event", event.id, {
-      eventPublicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.update", "calendar_event", eventPublicId, {
       agendaItemPublicId: itemPublicId,
       changedFields,
     });
@@ -281,8 +273,7 @@ export class CalendarService {
     await this.repo.deleteAgendaItem(itemPublicId);
 
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.delete", "calendar_event", event.id, {
-      eventPublicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.delete", "calendar_event", eventPublicId, {
       agendaItemPublicId: itemPublicId,
       title: existing.title,
     });
@@ -297,8 +288,7 @@ export class CalendarService {
     await this.repo.reorderAgendaItems(input.items);
 
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.reorder", "calendar_event", event.id, {
-      eventPublicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.reorder", "calendar_event", eventPublicId, {
       itemCount: input.items.length,
     });
 
@@ -318,8 +308,7 @@ export class CalendarService {
     );
 
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.reschedule", "calendar_event", updated.id, {
-      publicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.reschedule", "calendar_event", publicId, {
       previousStartAt: existing.startAt.toISOString(),
       newStartAt: input.startAt,
       ...(input.note && { note: input.note }),
@@ -335,8 +324,7 @@ export class CalendarService {
     const updated = await this.repo.cancelEvent(publicId);
 
     const auditCtx: AuditContext = { actorId, actorType: "user" };
-    await this.audit.append(auditCtx, "admin.calendar_event.cancel", "calendar_event", updated.id, {
-      publicId,
+    await this.audit.append(auditCtx, "admin.calendar_event.cancel", "calendar_event", publicId, {
       title: updated.title,
       previousStatus: existing.status,
     });

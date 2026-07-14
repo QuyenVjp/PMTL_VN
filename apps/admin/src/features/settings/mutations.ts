@@ -6,6 +6,7 @@ import { clearAuthCache } from "@/lib/auth";
 import { buildCsrfHeader } from "@/lib/csrf";
 import { handleApiError } from "@/lib/handle-api-error";
 import { currentUserQueryKey } from "@/lib/query/use-current-user";
+import type { UserRole } from "@/lib/roles";
 
 interface UploadResponse {
   publicId: string;
@@ -19,7 +20,7 @@ interface ProfileResponse {
   id: string;
   email: string;
   displayName: string;
-  role: string;
+  role: UserRole;
   avatarUrl: string | null;
 }
 
@@ -101,6 +102,17 @@ export function useRevokeOtherSessions() {
     onSuccess: () => {
       clearAuthCache();
       toast.success("Đã thu hồi toàn bộ phiên đăng nhập khác.");
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (input: { currentPassword: string; newPassword: string }) =>
+      adminClient.post("/auth/change-password", input),
+    onSuccess: () => {
+      toast.success("Đã đổi mật khẩu.");
     },
     onError: handleApiError,
   });

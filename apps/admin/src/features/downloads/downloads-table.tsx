@@ -99,16 +99,17 @@ export function DownloadsTable({
   searchPlaceholder = "Lọc tài liệu...",
 }: DownloadsTableProps) {
   const navigateTo = useNavigateTo();
-  const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
-  const downloads = envelope?.data ?? [];
+  const { data: list, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
+  // Phase 4.2 batch 1: canary list shape — read items, not legacy envelope.data
+  const downloads = list?.items ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
-  
+
   const publishDownload = usePublishDownload();
   const deleteDownload = useDeleteDownload();
 
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
-    for (const asset of mediaEnvelope?.data ?? []) {
+    for (const asset of mediaEnvelope?.items ?? []) {
       if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;

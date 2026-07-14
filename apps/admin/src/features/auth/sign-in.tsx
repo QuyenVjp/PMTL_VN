@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { adminClient } from "@/lib/api/admin-client";
 import { HttpError } from "@/lib/api/http-error";
 import { primeAuthCacheFromLogin } from "@/lib/auth";
+import type { UserRole } from "@/lib/roles";
 
 interface LoginResponse {
   user: {
@@ -23,7 +24,7 @@ interface LoginResponse {
     publicId?: string;
     email: string;
     displayName: string;
-    role: string;
+    role: UserRole;
   };
 }
 

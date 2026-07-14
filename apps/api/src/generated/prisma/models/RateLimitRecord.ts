@@ -422,14 +422,6 @@ export type RateLimitRecordSumOrderByAggregateInput = {
   count?: Prisma.SortOrder | runtime.Types.Skip
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number | runtime.Types.Skip
-  increment?: number | runtime.Types.Skip
-  decrement?: number | runtime.Types.Skip
-  multiply?: number | runtime.Types.Skip
-  divide?: number | runtime.Types.Skip
-}
-
 
 
 export type RateLimitRecordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{

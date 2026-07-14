@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -51,8 +51,10 @@ export function guideListOptions(filters: GuideListFilters = {}) {
 
   return queryOptions({
     queryKey: guideKeys.list(filters),
+    // Phase 4.2 batch 1: after client unwrap, payload is { items, pagination }
+    // (NOT the legacy ListEnvelope { data, meta.pagination }).
     queryFn: () =>
-      adminClient.get<ListEnvelope<GuideItem>>("/admin/content/guides", params),
+      adminClient.get<PaginatedList<GuideItem>>("/admin/content/guides", params),
   });
 }
 

@@ -136,7 +136,7 @@ export class LifeReleaseContentService {
   async adminCreateGuide(input: CreateLifeReleaseGuideInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const guide: LifeReleaseGuideDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       slug: input.slug ?? this.slugify(input.title),
       title: input.title,
       summary: input.summary,
@@ -202,7 +202,7 @@ export class LifeReleaseContentService {
   async adminCreateVariant(input: CreateLifeReleaseVariantInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const variant: LifeReleaseVariantDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       name: input.name,
       summary: input.summary,
       routeSlug: input.routeSlug,
@@ -266,7 +266,7 @@ export class LifeReleaseContentService {
   async adminCreateFaq(input: CreateLifeReleaseFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: LifeReleaseFaqDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       question: input.question,
       answer: input.answer,
       sourceReference: input.sourceReference,

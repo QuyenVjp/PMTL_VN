@@ -14,10 +14,12 @@ import {
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
+import type { AuditContext as AuditCtxType } from "../../platform/audit/audit.service.js";
 import { CalendarService } from "./calendar.service.js";
 import { Bardo49DayService } from "./bardo-49-day.service.js";
 import {
@@ -204,8 +206,9 @@ export class AdminCalendarController {
   async createEvent(
     @Body(ZodValidate(adminCreateEventSchema)) input: AdminCreateEventInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.calendarService.adminCreateEvent(input, user.id);
+    return this.calendarService.adminCreateEvent(input, user.id, auditCtx);
   }
 
   @Patch("events/:publicId")

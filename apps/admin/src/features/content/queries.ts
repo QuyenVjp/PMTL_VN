@@ -16,13 +16,35 @@ export interface PostListItem {
   featured: boolean;
   allowComments: boolean;
   author: { id: string; displayName: string; avatarUrl: string | null };
-  primaryCategory: { id: string; name: string; slug: string } | null;
+  primaryCategory: { id: string; name: string; slug: string; level?: number; path?: string | null } | null;
   tags: { id: string; name: string; slug: string }[];
   featuredImageUrl: string | null;
   publishedAt: string | null;
   firstPublishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PostTopic {
+  id: string;
+  publicId: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  parentId: string | null;
+  parentName: string | null;
+  level: number;
+  path: string | null;
+  sortOrder: number;
+  postCount: number;
+  createdAt: string;
+  updatedAt: string;
+  children: PostTopic[];
+}
+
+export interface PostTopicListResponse {
+  items: PostTopic[];
+  tree: PostTopic[];
 }
 
 export interface PostContentPayload {
@@ -53,6 +75,11 @@ export const postKeys = {
   detail: (publicId: string) => [...postKeys.details(), publicId] as const,
 };
 
+export const postTopicKeys = {
+  all: ["admin-post-topics"] as const,
+  lists: () => [...postTopicKeys.all, "list"] as const,
+};
+
 export function postListOptions(filters: PostListFilters = {}) {
   const params: Record<string, string | number | boolean | undefined> = {
     page: filters.page ?? 1,
@@ -71,5 +98,12 @@ export function postDetailOptions(publicId: string) {
     queryKey: postKeys.detail(publicId),
     queryFn: () => adminClient.get<PostDetail>(`/admin/content/posts/${publicId}`),
     enabled: !!publicId,
+  });
+}
+
+export function postTopicListOptions() {
+  return queryOptions({
+    queryKey: postTopicKeys.lists(),
+    queryFn: () => adminClient.get<PostTopicListResponse>("/admin/content/topics"),
   });
 }

@@ -8,6 +8,7 @@ export type {
   ApiErrorEnvelope,
   ListEnvelope,
   SingleEnvelope,
+  PaginatedList,
   PaginationMeta,
   ListResponse,
   PaginationParams,

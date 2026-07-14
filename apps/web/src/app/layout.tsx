@@ -4,11 +4,13 @@ import { SpeculationRules } from "./speculation-rules";
 
 export const metadata: Metadata = {
   title: {
-    default: "Phạm Minh Tuấn Linh",
-    template: "%s | Phạm Minh Tuấn Linh",
+    default: "Pháp Môn Tâm Linh Việt Nam",
+    template: "%s | PMTL Việt Nam",
   },
-  description: "Trang cá nhân của Phạm Minh Tuấn Linh",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://phamminhtuanlinh.com"),
+  description: "Nền tảng học Phật pháp và thực hành tu học dành cho người Việt.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://phapmontamlinh-quantheambotat.vn",
+  ),
   robots: {
     index: true,
     follow: true,
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#000000",
+  themeColor: "#8b5e3c",
 };
 
 export default function RootLayout({

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { Injectable, Inject } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import {
@@ -115,6 +116,17 @@ export class ConfigService {
   }
   get cookieSecure() {
     return this.security.COOKIE_SECURE;
+  }
+  /**
+   * Salt for one-way hashing of client IPs in audit logs.
+   * Prefer explicit AUDIT_IP_SALT; otherwise derive from CSRF_SECRET so no
+   * committed static fallback string is required.
+   */
+  get auditIpSalt(): string {
+    if (this.security.AUDIT_IP_SALT) return this.security.AUDIT_IP_SALT;
+    // Derive from CSRF_SECRET so no committed static fallback is required.
+    // Rotating CSRF_SECRET intentionally rotates IP hashes.
+    return createHash("sha256").update(`${this.security.CSRF_SECRET}:audit-ip-salt`, "utf8").digest("hex");
   }
 
   // Storage

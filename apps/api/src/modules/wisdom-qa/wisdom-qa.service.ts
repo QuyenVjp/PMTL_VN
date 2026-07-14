@@ -138,7 +138,7 @@ export class WisdomQaService {
     const enabled = await this.featureFlags.isEnabled("wisdom_qa.enabled");
     if (!enabled) throw new ForbiddenError("Tính năng Q&A đang tắt bởi feature flag");
 
-    const publicId = nanoid(12);
+    const publicId = nanoid(21);
 
     const question = await this.prisma.wisdomQuestion.create({
       data: {
@@ -169,7 +169,7 @@ export class WisdomQaService {
 
     if (!question) throw new NotFoundException("Câu hỏi không tồn tại");
 
-    const publicId = nanoid(12);
+    const publicId = nanoid(21);
 
     const [answer] = await this.prisma.$transaction([
       this.prisma.wisdomAnswer.create({
@@ -242,7 +242,7 @@ export class WisdomQaService {
 
     const entry = await this.prisma.wisdomEntry.create({
       data: {
-        publicId: nanoid(12),
+        publicId: nanoid(21),
         title: input.title,
         slug,
         entryType: input.entryType as WisdomEntryType,
@@ -335,7 +335,7 @@ export class WisdomQaService {
   async createAuthorityProfile(input: CreateAuthorityProfileInput, auditContext: AuditContext) {
     const profile = await this.prisma.wisdomAuthorityProfile.create({
       data: {
-        publicId: nanoid(12),
+        publicId: nanoid(21),
         name: input.name,
         title: input.title,
         description: input.description,

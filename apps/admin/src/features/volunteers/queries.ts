@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -53,7 +53,8 @@ export function volunteerListOptions(filters: VolunteerFilters = {}) {
   return queryOptions({
     queryKey: volunteerKeys.list(filters),
     queryFn: () =>
-      adminClient.get<ListEnvelope<VolunteerItem>>("/admin/volunteers", params),
+      // Phase 4.2 batch 3a: after client unwrap, payload is { items, pagination }.
+      adminClient.get<PaginatedList<VolunteerItem>>("/admin/volunteers", params),
   });
 }
 

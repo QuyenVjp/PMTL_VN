@@ -6,6 +6,23 @@ import { ResendEmailProvider } from "./resend-email.provider.js";
 import { SmtpEmailProvider } from "./smtp-email.provider.js";
 import type { EmailProvider } from "./email.provider.js";
 
+export type PasswordResetAudience = "admin" | "member";
+
+export interface PasswordResetEmailParams {
+  email: string;
+  token: string;
+  audience: PasswordResetAudience;
+}
+
+/**
+ * Password-reset link owners (review 2026-07-13):
+ * - ADMIN / SUPER_ADMIN → ADMIN_ORIGIN + /auth/dat-lai-mat-khau?token=...
+ * - MEMBER → WEB_ORIGIN + /dat-lai-mat-khau?token=...
+ *   (canonical design route in AUTH_UX_CONTRACT.md; never accept caller-supplied callback URL)
+ */
+const ADMIN_RESET_PATH = "/auth/dat-lai-mat-khau";
+const MEMBER_RESET_PATH = "/dat-lai-mat-khau";
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
@@ -20,8 +37,8 @@ export class EmailService {
     this.provider = this.resolveProvider();
   }
 
-  async sendPasswordReset(params: { email: string; token: string }): Promise<void> {
-    const resetUrl = this.buildResetPasswordUrl(params.token);
+  async sendPasswordReset(params: PasswordResetEmailParams): Promise<void> {
+    const resetUrl = this.buildResetPasswordUrl(params.token, params.audience);
     await this.provider.send({
       to: params.email,
       subject: "Đặt lại mật khẩu PMTL",
@@ -36,13 +53,16 @@ export class EmailService {
     });
   }
 
-  dispatchPasswordReset(params: { email: string; token: string }): void {
+  dispatchPasswordReset(params: PasswordResetEmailParams): void {
     const eventId = randomUUID();
+    // Never log token, token hash, or full reset URL (contains token).
     this.logger.log({
       msg: "email.outbox.dispatch",
       lane: "auth.password_reset",
       provider: this.configService.emailProvider,
       eventId,
+      audience: params.audience,
+      // email is needed for ops; token is never logged
       to: params.email,
     });
 
@@ -51,9 +71,24 @@ export class EmailService {
         msg: "email.outbox.failed",
         lane: "auth.password_reset",
         eventId,
+        audience: params.audience,
         error: error instanceof Error ? error.message : "unknown_error",
       });
     });
+  }
+
+  /**
+   * Pure URL builder — exported for tests. Does not accept caller-supplied origins/paths.
+   */
+  buildResetPasswordUrl(token: string, audience: PasswordResetAudience): string {
+    const origin =
+      audience === "admin"
+        ? this.configService.adminOrigin
+        : this.configService.webOrigin;
+    const path = audience === "admin" ? ADMIN_RESET_PATH : MEMBER_RESET_PATH;
+    const resetUrl = new URL(path, origin);
+    resetUrl.searchParams.set("token", token);
+    return resetUrl.toString();
   }
 
   private resolveProvider(): EmailProvider {
@@ -64,11 +99,5 @@ export class EmailService {
       return this.resendProvider;
     }
     return this.logProvider;
-  }
-
-  private buildResetPasswordUrl(token: string): string {
-    const resetUrl = new URL("/reset-password", this.configService.webOrigin);
-    resetUrl.searchParams.set("token", token);
-    return resetUrl.toString();
   }
 }

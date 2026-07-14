@@ -87,7 +87,7 @@ export class DailyRecitationService {
   async createSchedule(input: CreateScheduleInput) {
     return this.prisma.practiceSchedule.create({
       data: {
-        publicId: nanoid(12),
+        publicId: nanoid(21),
         name: input.name,
         description: input.description,
         difficulty: input.difficulty as RecitationDifficulty,
@@ -165,7 +165,7 @@ export class DailyRecitationService {
 
     return this.prisma.recitationGuideline.create({
       data: {
-        publicId: nanoid(12),
+        publicId: nanoid(21),
         scheduleId: schedule.id,
         topic: input.topic,
         guidance: input.guidance,
@@ -193,7 +193,7 @@ export class DailyRecitationService {
 
     return this.prisma.dailyRoutine.create({
       data: {
-        publicId: nanoid(12),
+        publicId: nanoid(21),
         scheduleId: schedule.id,
         dayNumber: input.dayNumber,
         scriptureSequence: input.scriptureSequence,

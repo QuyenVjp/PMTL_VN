@@ -5,11 +5,13 @@
  * child component renders, so getCachedUser() always returns a value here.
  */
 import { getCachedUser } from "@/lib/auth";
+import type { UserRole } from "@/lib/roles";
 
 export interface AdminUserDisplay {
   name: string;
   initials: string;
   email: string;
+  /** Localized display label (e.g. "Điều phối vận hành"), not the role code. */
   role: string;
   avatar: string | undefined;
 }
@@ -22,7 +24,7 @@ function makeInitials(displayName: string): string {
     .join("");
 }
 
-function roleLabel(role: string): string {
+function roleLabel(role: UserRole): string {
   if (role === "SUPER_ADMIN") return "Quản trị viên cao cấp";
   if (role === "ADMIN") return "Điều phối vận hành";
   return role;

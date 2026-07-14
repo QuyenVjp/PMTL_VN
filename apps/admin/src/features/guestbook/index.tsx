@@ -131,7 +131,7 @@ function GuestbookRowActions({ row }: { row: GuestbookItem }) {
 
 function GuestbookTable() {
   const { data: envelope, isLoading } = useQuery(guestbookListOptions({ limit: 100 }));
-  const entries = envelope?.data ?? [];
+  const entries = envelope?.items ?? [];
   const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([]);

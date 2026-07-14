@@ -42,15 +42,16 @@ export class ModerationService {
       : [];
     const reporterMap = new Map(reporters.map((u) => [u.id, u]));
 
+    // Phase 4.2 batch 2: canary list shape — rides inside transport `data`.
+    // Shared by moderation-reports + moderation-comments Admin readers.
+    // Do NOT return legacy ListEnvelope { data, meta.pagination } (double-wraps on wire).
     return {
-      data: reports.map((r) => mapReportToListItem(r, reporterMap.get(r.reporterUserId))),
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: reports.map((r) => mapReportToListItem(r, reporterMap.get(r.reporterUserId))),
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }

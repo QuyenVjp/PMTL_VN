@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { BellIcon, ImagePlusIcon, Loader2Icon, MonitorIcon, PaletteIcon, Trash2Icon, UserCogIcon, WrenchIcon } from "lucide-react";
+import { BellIcon, ImagePlusIcon, KeyRoundIcon, Loader2Icon, MonitorIcon, PaletteIcon, Trash2Icon, UserCogIcon, WrenchIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { PreviewableImage } from "@/components/media/image-preview-dialog";
@@ -15,7 +15,7 @@ import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
 import { resolveMediaSrc } from "@/lib/media-src";
-import { useRevokeOtherSessions, useSaveAdminProfile } from "@/features/settings/mutations";
+import { useChangePassword, useRevokeOtherSessions, useSaveAdminProfile } from "@/features/settings/mutations";
 
 const settingsNav = [
   { key: "profile", title: "Hồ sơ", icon: UserCogIcon },
@@ -30,6 +30,7 @@ export function SettingsPage() {
   const adminUser = useCurrentUser();
   const saveProfile = useSaveAdminProfile();
   const revokeOtherSessions = useRevokeOtherSessions();
+  const changePassword = useChangePassword();
   const [section, setSection] = useState("profile");
   const [profile, setProfile] = useState({
     displayName: adminUser.name,
@@ -52,6 +53,11 @@ export function SettingsPage() {
     emailDigest: true,
     moderationAlerts: true,
     securityAlerts: true,
+  });
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [confirmRevokeSessions, setConfirmRevokeSessions] = useState(false);
 
@@ -136,6 +142,29 @@ export function SettingsPage() {
 
   function handleRevokeOtherSessions() {
     revokeOtherSessions.mutate(undefined, { onSuccess: () => setConfirmRevokeSessions(false) });
+  }
+
+  function handleChangePassword() {
+    if (passwordForm.newPassword.length < 8) {
+      toast.error("Mật khẩu mới phải có ít nhất 8 ký tự.");
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error("Mật khẩu xác nhận không khớp.");
+      return;
+    }
+
+    changePassword.mutate(
+      {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      },
+      {
+        onSuccess: () => {
+          setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+        },
+      },
+    );
   }
 
   return (
@@ -338,6 +367,62 @@ export function SettingsPage() {
                       <p className="mt-2 font-medium">{value}</p>
                     </div>
                   ))}
+
+                  <div className="rounded-xl border p-4">
+                    <div className="mb-4 flex items-center gap-2">
+                      <KeyRoundIcon className="size-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Đổi mật khẩu</p>
+                        <p className="text-sm text-muted-foreground">
+                          Phụng sự viên có thể tự đổi mật khẩu đăng nhập khi cần.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid gap-3 md:grid-cols-3">
+                      <label className="grid gap-2">
+                        <span className="text-sm font-medium">Mật khẩu hiện tại</span>
+                        <Input
+                          type="password"
+                          autoComplete="current-password"
+                          value={passwordForm.currentPassword}
+                          onChange={(event) => setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }))}
+                        />
+                      </label>
+                      <label className="grid gap-2">
+                        <span className="text-sm font-medium">Mật khẩu mới</span>
+                        <Input
+                          type="password"
+                          autoComplete="new-password"
+                          value={passwordForm.newPassword}
+                          onChange={(event) => setPasswordForm((current) => ({ ...current, newPassword: event.target.value }))}
+                        />
+                      </label>
+                      <label className="grid gap-2">
+                        <span className="text-sm font-medium">Nhập lại mật khẩu mới</span>
+                        <Input
+                          type="password"
+                          autoComplete="new-password"
+                          value={passwordForm.confirmPassword}
+                          onChange={(event) => setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                        />
+                      </label>
+                    </div>
+                    <div className="mt-4 flex justify-end">
+                      <Button
+                        onClick={handleChangePassword}
+                        disabled={
+                          changePassword.isPending ||
+                          !passwordForm.currentPassword ||
+                          !passwordForm.newPassword ||
+                          !passwordForm.confirmPassword
+                        }
+                      >
+                        {changePassword.isPending && <Loader2Icon className="size-4 animate-spin" />}
+                        Đổi mật khẩu
+                      </Button>
+                    </div>
+                  </div>
+
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
                       variant="destructive"

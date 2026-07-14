@@ -29,6 +29,12 @@ import { FieldError } from "@/components/ui/field-error";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
 import { readRouteParam } from "@/lib/router-utils";
+import { currentUserQueryOptions } from "@/lib/query/use-current-user";
+import {
+  assignableRolesForActor,
+  canManageTargetRole,
+  type UserRole,
+} from "@/lib/roles";
 
 import { userDetailOptions } from "@/features/users/queries";
 import {
@@ -41,7 +47,7 @@ import {
   initials,
   statusBadgeClass,
   statusLabel,
-  roleOptions,
+  roleLabel,
   type ApiUserRole,
 } from "@/features/users/types";
 
@@ -58,6 +64,14 @@ export function UserDetailPage() {
     userDetailOptions(publicId ?? ""),
   );
   const user = envelope?.data;
+
+  // Current actor role — projects the backend changeRole gate into the UI so an
+  // ADMIN never sees/selects a forbidden SUPER_ADMIN transition (Plans 6.5).
+  const { data: currentUser } = useQuery(currentUserQueryOptions);
+  const actorRole: UserRole = currentUser?.role ?? "MEMBER";
+  const targetRole: UserRole = user?.role ?? "MEMBER";
+  const roleManageable = canManageTargetRole(actorRole, targetRole);
+  const assignableRoles = assignableRolesForActor(actorRole, targetRole);
 
   const updateProfile = useUpdateProfile();
   const changeRole = useChangeRole();
@@ -129,7 +143,6 @@ export function UserDetailPage() {
   });
 
   const isSaving = updateProfile.isPending || changeRole.isPending;
-
   const handleBlock = () => {
     if (!user) return;
     blockUser.mutate(
@@ -326,21 +339,30 @@ export function UserDetailPage() {
         {/* ── Vai trò ─────────────────────────────────────────── */}
         <AdminDetailSection title="Vai trò">
           <AdminFormField label="Vai trò người dùng">
-            <Select
-              value={values.role}
-              onValueChange={(v) => form.setValue("role", v as ApiUserRole, { shouldDirty: true })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn vai trò" />
-              </SelectTrigger>
-              <SelectContent>
-                {roleOptions.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {roleManageable ? (
+              <Select
+                value={values.role}
+                onValueChange={(v) => form.setValue("role", v as ApiUserRole, { shouldDirty: true })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn vai trò" />
+                </SelectTrigger>
+                <SelectContent>
+                  {assignableRoles.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {roleLabel(r)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <>
+                <Input value={roleLabel(user.role)} readOnly disabled />
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  Chỉ Super Admin mới có thể thay đổi quyền của tài khoản này.
+                </p>
+              </>
+            )}
           </AdminFormField>
         </AdminDetailSection>
       </AdminDetailPage>

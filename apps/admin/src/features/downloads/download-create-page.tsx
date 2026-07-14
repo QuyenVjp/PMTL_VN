@@ -77,7 +77,7 @@ export function DownloadCreatePage({
   const values = form.watch();
 
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100 }));
-  const assets = mediaEnvelope?.data ?? [];
+  const assets = mediaEnvelope?.items ?? [];
   const selectedFileAsset = assets.find((a) => a.publicId === fileMediaPublicId) ?? null;
 
   useEffect(() => {

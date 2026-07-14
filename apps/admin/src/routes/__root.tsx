@@ -28,6 +28,9 @@ const SignInPage = lazy(() => import("@/features/auth/sign-in").then((mod) => ({
 const ForgotPasswordPage = lazy(() =>
   import("@/features/auth/forgot-password").then((mod) => ({ default: mod.ForgotPasswordPage })),
 );
+const ResetPasswordPage = lazy(() =>
+  import("@/features/auth/reset-password").then((mod) => ({ default: mod.ResetPasswordPage })),
+);
 const DashboardOverview = lazy(() =>
   import("@/features/dashboard").then((mod) => ({ default: mod.DashboardOverview })),
 );
@@ -44,6 +47,9 @@ const SettingsPage = lazy(() =>
   import("@/features/settings").then((mod) => ({ default: mod.SettingsPage })),
 );
 const PostsPage = lazy(() => import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.PostsPage })));
+const PostTopicsPage = lazy(() =>
+  import("@/features/content/post-topics-page").then((mod) => ({ default: mod.PostTopicsPage })),
+);
 const GuidesPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.GuidesPage })),
 );
@@ -408,6 +414,15 @@ const forgotPasswordRoute = createRoute({
   component: withSuspense(ForgotPasswordPage),
 });
 
+const resetPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/auth/dat-lai-mat-khau",
+  validateSearch: (search: Record<string, unknown>): { token?: string } => ({
+    token: typeof search.token === "string" ? search.token : undefined,
+  }),
+  component: withSuspense(ResetPasswordPage),
+});
+
 // ── Protected Routes (children of _authenticated) ────────────────────
 
 // Dashboard
@@ -438,6 +453,11 @@ const postsDetailRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/bai-viet/$publicId",
   component: withSuspense(PostDetailPage),
+});
+const postTopicsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/chu-de",
+  component: withSuspense(PostTopicsPage),
 });
 
 const guidesRoute = createRoute({
@@ -990,6 +1010,7 @@ export const routeTree = rootRoute.addChildren([
   // Public auth routes
   signInRoute,
   forgotPasswordRoute,
+  resetPasswordRoute,
 
   // Protected routes — all under _authenticated layout
   authenticatedRoute.addChildren([
@@ -999,6 +1020,7 @@ export const routeTree = rootRoute.addChildren([
     postsRoute,
     postsCreateRoute,
     postsDetailRoute,
+    postTopicsRoute,
     guidesRoute,
     guidesCreateRoute,
     guidesDetailRoute,

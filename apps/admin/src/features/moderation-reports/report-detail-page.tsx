@@ -23,7 +23,7 @@ import {
   DECISION_LABELS,
   reportStatusLabel,
   type DecisionType,
-  type ModerationReportListItem,
+  type ModerationReportDetail,
 } from "@/features/moderation-reports/types";
 import { useResolveReport } from "@/features/moderation-reports/mutations";
 import { reportDetailOptions } from "@/features/moderation-reports/queries";
@@ -67,7 +67,7 @@ function ResolveDialog({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  report: ModerationReportListItem;
+  report: ModerationReportDetail;
 }) {
   const [decision, setDecision] = useState<DecisionType>("hide");
   const [note, setNote] = useState("");
@@ -187,8 +187,8 @@ export function ReportDetailPage() {
       <AdminDetailField
         label="Xử lý lúc"
         value={
-          (report as ModerationReportListItem & { resolvedAt?: string }).resolvedAt
-            ? new Date((report as ModerationReportListItem & { resolvedAt?: string }).resolvedAt!).toLocaleDateString("vi-VN")
+          report.decisionAt
+            ? new Date(report.decisionAt).toLocaleDateString("vi-VN")
             : undefined
         }
       />

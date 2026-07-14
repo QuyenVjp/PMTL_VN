@@ -19,6 +19,7 @@ import { AuditService } from "../../../platform/audit/audit.service.js";
 interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
+    publicId?: string;
     email?: string;
   };
 }
@@ -123,8 +124,9 @@ export class PredatorySpeciesGuard implements CanActivate {
 
       await this.audit.append(
         {
-          actorId: request.user?.id,
-          actorType: request.user?.id ? "user" : "anonymous",
+          // External identity only — never internal cuid.
+          actorId: request.user?.publicId,
+          actorType: request.user?.publicId ? "user" : "anonymous",
           ipAddress: request.ip,
           userAgent: request.headers["user-agent"],
         },

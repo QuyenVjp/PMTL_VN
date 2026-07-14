@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope, SingleEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList, SingleEnvelope } from "@/lib/api/envelopes.js";
 import type { AdminUserListItem, AdminUserDetail, UserListFilters } from "./types.js";
 import { resolveMediaSrc } from "@/lib/media-src";
 
@@ -15,7 +15,11 @@ export const userAdminKeys = {
   practiceStats: (publicId: string) => [...userAdminKeys.all, "practice", publicId] as const,
 };
 
-/** List users with pagination + filters */
+/**
+ * List users with pagination + filters.
+ * Canary envelope shape (Phase 4.1): after client unwrap, payload is
+ * { items, pagination } — NOT the legacy ListEnvelope { data, meta.pagination }.
+ */
 export function userListOptions(filters: UserListFilters = {}) {
   const params: Record<string, string | number | boolean | undefined> = {
     limit: filters.limit ?? 20,
@@ -28,19 +32,19 @@ export function userListOptions(filters: UserListFilters = {}) {
   return queryOptions({
     queryKey: userAdminKeys.list(filters),
     queryFn: async () => {
-      const envelope = await adminClient.get<ListEnvelope<AdminUserListItem>>("/admin/users", params);
+      const payload = await adminClient.get<PaginatedList<AdminUserListItem>>("/admin/users", params);
       return {
-        ...envelope,
-        data: envelope.data.map((user) => ({
+        items: payload.items.map((user) => ({
           ...user,
           avatarUrl: resolveMediaSrc(user.avatarUrl),
         })),
+        pagination: payload.pagination,
       };
     },
   });
 }
 
-/** Single user detail */
+/** Single user detail — still uses SingleEnvelope until detail canary lands. */
 export function userDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: userAdminKeys.detail(publicId),

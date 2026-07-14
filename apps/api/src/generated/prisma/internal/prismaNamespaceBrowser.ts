@@ -183,14 +183,20 @@ export type FeatureFlagScalarFieldEnum = (typeof FeatureFlagScalarFieldEnum)[key
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
+  publicId: 'publicId',
   actorId: 'actorId',
   actorType: 'actorType',
   action: 'action',
   resource: 'resource',
   resourceId: 'resourceId',
   metadata: 'metadata',
-  ipAddress: 'ipAddress',
+  ipAddressHash: 'ipAddressHash',
   userAgent: 'userAgent',
+  correlationId: 'correlationId',
+  sequenceNumber: 'sequenceNumber',
+  previousHash: 'previousHash',
+  rowHash: 'rowHash',
+  hashVersion: 'hashVersion',
   createdAt: 'createdAt'
 } as const
 
@@ -334,6 +340,10 @@ export const PostCategoryScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   description: 'description',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  level: 'level',
+  path: 'path',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

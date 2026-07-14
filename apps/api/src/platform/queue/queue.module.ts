@@ -11,6 +11,7 @@ import { BullBoardModule } from "@bull-board/nestjs";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { ExpressAdapter } from "@bull-board/express";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { AuditModule } from "../audit/audit.module.js";
 import { QUEUES } from "./queue.constants.js";
 import { QueueService } from "./queue.service.js";
 import { PdpaRetentionWorker } from "./workers/pdpa-retention.worker.js";
@@ -18,6 +19,7 @@ import { ModerationPipelineWorker } from "./workers/moderation-pipeline.worker.j
 
 @Module({
   imports: [
+    AuditModule,
     // Root BullMQ config — Redis DB 1 isolated from cache DB 0
     BullModule.forRootAsync({
       imports: [ConfigModule],

@@ -26,6 +26,9 @@ export const auditActionSchema = z.enum([
   "content.unpublish",
   "content.archive",
   "content.delete",
+  "content.topic.create",
+  "content.topic.update",
+  "content.topic.delete",
   
   // Media actions
   "media.upload",
@@ -34,9 +37,11 @@ export const auditActionSchema = z.enum([
   "media.folder.update",
   "media.folder.delete",
   "media.folder.move_asset",
-  
+  "media.metadata.update",
+
   // Admin actions
   "admin.feature_flag.update",
+  "admin.user.create",
   "admin.user.role_change",
   "admin.user.status_change",
 
@@ -108,6 +113,20 @@ export const auditActionSchema = z.enum([
 
   // Practice support actions
   "admin.practice_support.update",
+
+  // Daily practice admin actions
+  "admin.daily_practice.guide.create",
+  "admin.daily_practice.guide.update",
+  "admin.daily_practice.guide.publish",
+  "admin.daily_practice.guide.unpublish",
+  "admin.daily_practice.guide.delete",
+  "admin.daily_practice.preset.create",
+  "admin.daily_practice.preset.update",
+  "admin.daily_practice.preset.delete",
+  "admin.daily_practice.faq.create",
+  "admin.daily_practice.faq.update",
+  "admin.daily_practice.faq.delete",
+
   "admin.self_cultivation.guide.create",
   "admin.self_cultivation.guide.update",
   "admin.self_cultivation.guide.delete",
@@ -203,6 +222,9 @@ export const auditActionSchema = z.enum([
   "moderation.comment.hidden",
   "moderation.comment.restored",
   "moderation.summary.recomputed",
+  "moderation.flag",
+  "moderation.approve",
+  "moderation.reject",
 
   // Charity lifecycle actions
   "admin.charity.verify",
@@ -218,6 +240,10 @@ export const auditActorTypeSchema = z.enum([
   "anonymous",
 ]);
 
+/**
+ * Create payload for immutable audit rows.
+ * Raw IP is never accepted — only the one-way hash may be stored.
+ */
 export const createAuditLogSchema = z.object({
   actorId: z.string().optional(),
   actorType: auditActorTypeSchema,
@@ -225,8 +251,10 @@ export const createAuditLogSchema = z.object({
   resource: z.string(),
   resourceId: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-  ipAddress: z.string().optional(),
+  /** SHA-256 hex of salted client IP. Never raw IP. */
+  ipAddressHash: z.string().regex(/^[a-f0-9]{64}$/).optional(),
   userAgent: z.string().optional(),
+  correlationId: z.string().optional(),
 });
 
 export type AuditAction = z.infer<typeof auditActionSchema>;

@@ -24,6 +24,8 @@
     "src/**/*.tsx",
     "scripts/**/*.ts",
     "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts",
     ".storybook/**/*.ts",
     "vitest.shims.d.ts"
   ]

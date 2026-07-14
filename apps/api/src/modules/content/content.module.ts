@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import {
   ContentController,
   AdminContentPostsController,
+  AdminContentTopicsController,
   GuideController,
   AdminDownloadController,
   PublicBeginnerGuideController,
@@ -12,7 +13,9 @@ import { ContentService } from "./content.service.js";
 import { ContentRepository } from "./content.repository.js";
 import { AdminMediaLibraryController } from "./admin-media-library.controller.js";
 import { AdminMediaLibraryService } from "./admin-media-library.service.js";
-import { AdminDailyPracticeController } from "./daily-practice.controller.js";
+import { AdminDailyPracticeController } from "./daily-practice/daily-practice.controller.js";
+import { DailyPracticeService } from "./daily-practice/daily-practice.service.js";
+import { DailyPracticeRepository } from "./daily-practice/daily-practice.repository.js";
 import { AdminDailyRecitationController } from "./daily-recitation.controller.js";
 import { DailyRecitationService } from "./daily-recitation.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
@@ -33,6 +36,7 @@ import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
   controllers: [
     ContentController,
     AdminContentPostsController,
+    AdminContentTopicsController,
     GuideController,
     AdminDownloadController,
     PublicBeginnerGuideController,
@@ -46,6 +50,8 @@ import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
     ContentService,
     ContentRepository,
     AdminMediaLibraryService,
+    DailyPracticeService,
+    DailyPracticeRepository,
     DailyRecitationService,
     ConvincingFamilyRitualService,
     NameChangeService,

@@ -81,7 +81,7 @@ function VolunteerRowActions({ row }: { row: VolunteerItem }) {
 export function VolunteersTable() {
   const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(volunteerListOptions({ limit: 100 }));
-  const volunteers = envelope?.data ?? [];
+  const volunteers = envelope?.items ?? [];
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "sortOrder", desc: false }]);
   const [rowSelection, setRowSelection] = useState({});

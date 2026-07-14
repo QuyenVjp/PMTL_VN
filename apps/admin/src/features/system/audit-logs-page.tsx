@@ -18,7 +18,7 @@ import { type AuditLogItem, auditListOptions } from "./audit-queries.js";
 
 export function AuditLogsPage() {
   const { data: envelope, isLoading } = useQuery(auditListOptions());
-  const logs = envelope?.data ?? [];
+  const logs = envelope?.items ?? [];
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "occurredAt", desc: true }]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

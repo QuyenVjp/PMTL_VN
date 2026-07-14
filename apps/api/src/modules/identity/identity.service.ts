@@ -113,7 +113,8 @@ export class IdentityService {
     const accessToken = await this.generateAccessToken(user, session.id);
 
     // Transaction: lastLogin update + audit append — Bug 2 fix
-    const auditContext: AuditContext = { actorId: user.id, actorType: "user", ...metadata };
+    // actorId is external publicId; never internal cuid (admin audit reader exposes it).
+    const auditContext: AuditContext = { actorId: user.publicId, actorType: "user", ...metadata };
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: user.id },
@@ -247,7 +248,7 @@ export class IdentityService {
     const accessToken = await this.generateAccessToken(user, session.id);
 
     await this.audit.append(
-      { actorId: user.id, actorType: "user", ...metadata },
+      { actorId: user.publicId, actorType: "user", ...metadata },
       "auth.login",
       "session",
       session.id,
@@ -284,7 +285,7 @@ export class IdentityService {
     const accessToken = await this.generateAccessToken(user, newSession.id);
 
     await this.audit.append(
-      { actorId: user.id, actorType: "user", ...metadata },
+      { actorId: user.publicId, actorType: "user", ...metadata },
       "auth.refresh",
       "session",
       newSession.id,
@@ -388,11 +389,14 @@ export class IdentityService {
 
     const record = await this.prisma.emailVerificationToken.findUnique({
       where: { tokenHash },
+      include: { user: { select: { publicId: true } } },
     });
 
     if (!record || record.usedAt || record.expiresAt < new Date()) {
       throw new BadRequestException("Token xác minh không hợp lệ hoặc đã hết hạn");
     }
+
+    const actorPublicId = record.user.publicId;
 
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
@@ -407,10 +411,10 @@ export class IdentityService {
 
       await this.audit.appendInTransaction(
         tx,
-        { actorId: record.userId, actorType: "user" },
+        { actorId: actorPublicId, actorType: "user" },
         "auth.email_verification.completed",
         "user",
-        record.userId,
+        actorPublicId,
       );
     });
 
@@ -423,7 +427,7 @@ export class IdentityService {
   async sendEmailVerification(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, emailVerifiedAt: true },
+      select: { id: true, publicId: true, emailVerifiedAt: true },
     });
     if (!user) throw new BadRequestException("Người dùng không tồn tại");
     if (user.emailVerifiedAt) throw new BadRequestException("Email đã được xác minh");
@@ -457,10 +461,10 @@ export class IdentityService {
 
       await this.audit.appendInTransaction(
         tx,
-        { actorId: userId, actorType: "user" },
+        { actorId: user.publicId, actorType: "user" },
         "auth.email_verification.sent",
         "user",
-        userId,
+        user.publicId,
       );
     });
 
@@ -533,13 +537,22 @@ export class IdentityService {
 
   /**
    * Request password reset — always returns success regardless of whether
-   * the email exists (anti-enumeration). Generates a random token, stores
-   * its SHA-256 hash, and logs the plaintext token for dev use.
+   * the email exists (anti-enumeration).
+   *
+   * Concurrency:
+   * - Serialize per-user with pg_advisory_xact_lock so two concurrent forgot
+   *   requests cannot leave two active tokens.
+   * - Invalidate previous unused tokens + create the new token atomically.
+   *
+   * Security:
+   * - Never log plain token / token hash / reset URL.
+   * - Reset link owner is role-based (admin → ADMIN_ORIGIN, member → WEB_ORIGIN).
    */
   async requestPasswordReset(input: ForgotPasswordInput) {
+    const email = input.email.toLowerCase().trim();
     const user = await this.prisma.user.findUnique({
-      where: { email: input.email.toLowerCase() },
-      select: { id: true, publicId: true, email: true },
+      where: { email },
+      select: { id: true, publicId: true, email: true, role: true },
     });
 
     // Anti-enumeration: return silently if user not found
@@ -550,8 +563,12 @@ export class IdentityService {
     const plainToken = randomBytes(RESET_TOKEN_BYTES).toString("hex");
     const tokenHash = createHash("sha256").update(plainToken).digest("hex");
     const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+    const lockKey = `password-reset:${user.id}`;
 
     await this.prisma.$transaction(async (tx) => {
+      // Serialize concurrent forgot requests for this user.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey}))`;
+
       // Invalidate any previous unused tokens for this user
       await tx.passwordResetToken.updateMany({
         where: { userId: user.id, usedAt: null },
@@ -568,58 +585,82 @@ export class IdentityService {
 
       await this.audit.appendInTransaction(
         tx,
-        { actorId: user.id, actorType: "user" },
+        { actorId: user.publicId, actorType: "user" },
         "auth.password_reset_request",
         "user",
         user.publicId,
       );
     });
 
+    const audience =
+      user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? "admin" : "member";
+
     this.emailService.dispatchPasswordReset({
       email: user.email,
       token: plainToken,
+      audience,
     });
 
-    if (this.config.emailProvider === "log") {
-      this.logger.log({
-        msg: "Password reset token generated (log provider)",
-        userId: user.id,
-        token: plainToken,
-      });
-    }
+    // Ops signal only — never include token / URL / hash.
+    this.logger.log({
+      msg: "auth.password_reset_request.accepted",
+      userPublicId: user.publicId,
+      audience,
+    });
 
     return { success: true };
   }
 
   /**
-   * Reset password using a valid token. SHA-256 hashes the incoming token
-   * and looks up by exact match. Updates password, marks token used,
-   * invalidates all sessions, and audit-logs the action.
+   * Reset password using a valid token.
+   *
+   * Consume is conditional inside a transaction:
+   *   usedAt IS NULL AND expiresAt > now
+   * so concurrent / replayed requests cannot claim the same token twice.
+   * Password update + session revoke + sibling invalidation + audit are atomic.
    */
   async resetPassword(input: ResetPasswordInput) {
     const tokenHash = createHash("sha256").update(input.token).digest("hex");
-
-    const resetToken = await this.prisma.passwordResetToken.findUnique({
-      where: { tokenHash },
-    });
-
-    if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
-      throw new BadRequestException("Token không hợp lệ hoặc đã hết hạn");
-    }
-
     const newPasswordHash = await argon2.hash(input.password);
 
     await this.prisma.$transaction(async (tx) => {
-      // Update user password
+      const resetToken = await tx.passwordResetToken.findUnique({
+        where: { tokenHash },
+        include: { user: { select: { publicId: true } } },
+      });
+
+      if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
+        throw new BadRequestException("Token không hợp lệ hoặc đã hết hạn");
+      }
+
+      // Conditional consume — only one concurrent claim succeeds.
+      const claimed = await tx.passwordResetToken.updateMany({
+        where: {
+          id: resetToken.id,
+          tokenHash,
+          usedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        data: { usedAt: new Date() },
+      });
+
+      if (claimed.count !== 1) {
+        throw new BadRequestException("Token không hợp lệ hoặc đã hết hạn");
+      }
+
+      // Invalidate any sibling active reset tokens for this user.
+      await tx.passwordResetToken.updateMany({
+        where: {
+          userId: resetToken.userId,
+          usedAt: null,
+          id: { not: resetToken.id },
+        },
+        data: { usedAt: new Date() },
+      });
+
       await tx.user.update({
         where: { id: resetToken.userId },
         data: { passwordHash: newPasswordHash },
-      });
-
-      // Mark token as used
-      await tx.passwordResetToken.update({
-        where: { id: resetToken.id },
-        data: { usedAt: new Date() },
       });
 
       // Invalidate all user sessions (security: password was compromised)
@@ -630,10 +671,10 @@ export class IdentityService {
 
       await this.audit.appendInTransaction(
         tx,
-        { actorId: resetToken.userId, actorType: "user" },
+        { actorId: resetToken.user.publicId, actorType: "user" },
         "auth.password_reset_complete",
         "user",
-        resetToken.userId,
+        resetToken.user.publicId,
         { field: "password" },
       );
     });

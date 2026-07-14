@@ -151,7 +151,7 @@ export class LittleHouseService {
     this.assertGuideSlugAvailable(overview.guides, slug);
 
     const guide: LittleHouseGuideDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       slug,
       title: input.title,
       summary: input.summary,
@@ -228,7 +228,7 @@ export class LittleHouseService {
   async adminCreateCaseVariant(input: CreateLittleHouseCaseVariantInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const variant: LittleHouseCaseVariantDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       name: input.name,
       summary: input.summary,
       relatedGroup: input.relatedGroup,
@@ -295,7 +295,7 @@ export class LittleHouseService {
   async adminCreateFaq(input: CreateLittleHouseFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: LittleHouseFaqDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       question: input.question,
       answer: input.answer,
       sourceReference: input.sourceReference,

@@ -216,6 +216,7 @@ function Test-BenignStartupLogLine {
 
   return (
     $Line -like '*"typeCheck" will not have any effect when "builder" is not "swc"*' -or
+    $Line -like '*DEP0190*Passing args to a child process with shell option true*' -or
     $Line -like '*Eviction policy is volatile-lru*'
   )
 }
@@ -318,6 +319,34 @@ function Start-PnpmProcess {
     -RedirectStandardError $StderrPath
 }
 
+function Start-ApiDistProcess {
+  param(
+    [string]$StdoutPath,
+    [string]$StderrPath,
+    [string]$Label
+  )
+
+  $nodeCmd = @(Get-Command node -ErrorAction SilentlyContinue)[0]
+  if (-not $nodeCmd) {
+    throw "Không tìm thấy node trong PATH."
+  }
+
+  $apiDir = Join-Path $repoRoot "apps/api"
+  $distMain = Join-Path $apiDir "dist/main.js"
+  if (-not (Test-Path $distMain)) {
+    throw "Không tìm thấy $distMain. Hãy build API trước khi fallback."
+  }
+
+  Write-Step "${Label}: node dist/main.js"
+  return Start-Process -FilePath $nodeCmd.Source `
+    -ArgumentList @("dist/main.js") `
+    -WorkingDirectory $apiDir `
+    -PassThru `
+    -WindowStyle Hidden `
+    -RedirectStandardOutput $StdoutPath `
+    -RedirectStandardError $StderrPath
+}
+
 function Start-ApiWithFallback {
   param([string]$LogDir)
 
@@ -364,8 +393,7 @@ function Start-ApiWithFallback {
     throw "Build API thất bại, không thể fallback.`n[api-dev.err tail]`n$devTail"
   }
 
-  $apiStartProcess = Start-PnpmProcess `
-    -ArgumentList @("--filter", "@pmtl/api", "start") `
+  $apiStartProcess = Start-ApiDistProcess `
     -StdoutPath $startOut `
     -StderrPath $startErr `
     -Label "Khởi động API (fallback dist)"
@@ -373,7 +401,7 @@ function Start-ApiWithFallback {
   if (Wait-ForPortWithProgress `
       -TargetHost "127.0.0.1" `
       -Port 3001 `
-      -TimeoutSec 60 `
+      -TimeoutSec 120 `
       -Process $apiStartProcess `
       -StdoutPath $startOut `
       -StderrPath $startErr `

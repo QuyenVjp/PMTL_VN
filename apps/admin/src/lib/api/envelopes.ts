@@ -6,6 +6,7 @@ export type {
   ApiSuccessEnvelope,
   ApiErrorEnvelope,
   ListEnvelope,
+  PaginatedList,
   SingleEnvelope,
   PaginationMeta,
   ListResponse,

@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 export interface AuditLogItem {
   publicId: string;
@@ -42,6 +42,7 @@ export function auditListOptions(filters: AuditListFilters = {}) {
   return queryOptions({
     queryKey: auditKeys.list(params),
     queryFn: () =>
-      adminClient.get<ListEnvelope<AuditLogItem>>("/admin/audit-logs", params),
+      // Phase 4.2 batch 3a: after client unwrap, payload is { items, pagination }.
+      adminClient.get<PaginatedList<AuditLogItem>>("/admin/audit-logs", params),
   });
 }

@@ -94,8 +94,21 @@ export class SacredFormsService {
     return { data: data.map(mapApplicantToItem), meta: { total, limit: query.limit, offset: query.offset } };
   }
 
+  /**
+   * Admin (unscoped) applicant detail.
+   */
   async getApplicant(publicId: string) {
     const a = await this.repo.findApplicantByPublicId(publicId);
+    if (!a) throw new NotFoundException("Đơn đăng ký không tồn tại");
+    return mapApplicantToDetail(a);
+  }
+
+  /**
+   * Member self-owned applicant detail. Always scopes by current user so
+   * cross-user publicId yields 404 without leaking existence or private fields.
+   */
+  async getMyApplicant(publicId: string, ownerUserId: string) {
+    const a = await this.repo.findApplicantByPublicId(publicId, ownerUserId);
     if (!a) throw new NotFoundException("Đơn đăng ký không tồn tại");
     return mapApplicantToDetail(a);
   }
@@ -189,12 +202,13 @@ export class SacredFormsService {
   async createDisposalPolarity(input: DisposalPolarityInput, adminId: string, auditCtx: AuditContext) {
     const record = await this.prisma.$transaction(async (tx) => {
       const created = await this.repo.createDisposalPolarity(input, tx);
+      // No publicId on disposal polarity — use stable formType as resource key.
       await this.audit.appendInTransaction(
         tx,
         auditCtx,
         "admin.disposal_polarity.create",
         "disposal_polarity_record",
-        created.id,
+        input.formType,
         { formType: input.formType, polarity: input.polarity },
       );
       return created;

@@ -12,16 +12,6 @@ const config: NextConfig = {
     turbopackFileSystemCacheForBuild: true,
   },
 
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.phamminhtuanlinh.com",
-        pathname: "/media/**",
-      },
-    ],
-  },
-
   headers() {
     return [
       {

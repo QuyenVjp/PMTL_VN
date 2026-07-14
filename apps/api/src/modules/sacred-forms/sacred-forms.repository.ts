@@ -65,6 +65,7 @@ export class SacredFormsRepository {
     const where = {
       ...(query.status && { status: query.status as never }),
       ...(query.templateId && { templateId: query.templateId }),
+      ...(query.userId && { userId: query.userId }),
     };
     const [data, total] = await Promise.all([
       this.prisma.formApplicant.findMany({
@@ -82,15 +83,37 @@ export class SacredFormsRepository {
     return { data, total };
   }
 
-  async findApplicantByPublicId(publicId: string) {
+  /**
+   * Lookup applicant by publicId. When `ownerUserId` is provided the query is
+   * scoped to that owner so a member cannot resolve another member's application
+   * (anti-enumeration 404). Admin paths omit `ownerUserId` for unscoped access.
+   * Email is only included for admin (unscoped) lookups.
+   */
+  async findApplicantByPublicId(publicId: string, ownerUserId?: string) {
+    const includeEmail = ownerUserId === undefined;
+    const include = {
+      template: true,
+      user: {
+        select: {
+          publicId: true,
+          displayName: true,
+          ...(includeEmail ? { email: true } : {}),
+        },
+      },
+      prerequisites: true,
+      auditLogs: { orderBy: { createdAt: "desc" as const }, take: 10 },
+    };
+
+    if (ownerUserId !== undefined) {
+      return this.prisma.formApplicant.findFirst({
+        where: { publicId, userId: ownerUserId },
+        include,
+      });
+    }
+
     return this.prisma.formApplicant.findUnique({
       where: { publicId },
-      include: {
-        template: true,
-        user: { select: { publicId: true, displayName: true, email: true } },
-        prerequisites: true,
-        auditLogs: { orderBy: { createdAt: "desc" }, take: 10 },
-      },
+      include,
     });
   }
 

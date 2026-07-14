@@ -145,7 +145,7 @@ function ModerationCommentsTable() {
   const { data: envelope, isLoading } = useQuery(
     moderationCommentListOptions({ limit: 100 }),
   );
-  const reports = envelope?.data ?? [];
+  const reports = envelope?.items ?? [];
   const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);

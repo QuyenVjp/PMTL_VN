@@ -11,12 +11,13 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { adminClient } from "@/lib/api/admin-client";
+import type { UserRole } from "@/lib/roles";
 
 interface MeUser {
   publicId: string;
   emailMasked: string;
   displayName: string;
-  role: string;
+  role: UserRole;
   avatarUrl?: string | null;
 }
 
@@ -46,7 +47,7 @@ function makeInitials(displayName: string): string {
     .join("");
 }
 
-function roleLabel(role: string): string {
+function roleLabel(role: UserRole): string {
   if (role === "SUPER_ADMIN") return "Quản trị viên cao cấp";
   if (role === "ADMIN") return "Điều phối vận hành";
   return role;

@@ -13,6 +13,7 @@ import { PrismaService } from "../../../common/prisma/prisma.service.js";
 import { ConfigService } from "../../../common/config/config.service.js";
 import { CacheService } from "../../../common/cache/cache.service.js";
 import { CircuitBreakerService } from "../../../common/resilience/circuit-breaker.service.js";
+import { AuditService } from "../../../platform/audit/audit.service.js";
 import type { SearchQuery } from "../search.schemas.js";
 
 describe("SearchService", () => {
@@ -91,6 +92,7 @@ describe("SearchService", () => {
         { provide: ConfigService, useValue: configMock },
         { provide: CacheService, useValue: cacheMock },
         { provide: CircuitBreakerService, useValue: circuitBreakerMock },
+        { provide: AuditService, useValue: { append: vi.fn().mockResolvedValue(undefined) } },
       ],
     }).compile();
 

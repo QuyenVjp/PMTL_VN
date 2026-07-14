@@ -33,10 +33,28 @@ export class LifeLiberationService {
     };
   }
 
-  async getRecord(publicId: string) {
-    const record = await this.repo.findByPublicId(publicId);
+  /** Member lane — ALWAYS scoped. Cross-user → 404. */
+  async getMemberRecord(publicId: string, ownerUserId: string) {
+    const record = await this.repo.findMemberByPublicId(publicId, ownerUserId);
     if (!record) throw new NotFoundException("Hồ sơ phóng sinh không tồn tại");
     return mapRecordToDetail(record);
+  }
+
+  /** Admin lane — unscoped. Never call from member controllers. */
+  async getAdminRecord(publicId: string) {
+    const record = await this.repo.findAdminByPublicId(publicId);
+    if (!record) throw new NotFoundException("Hồ sơ phóng sinh không tồn tại");
+    return mapRecordToDetail(record);
+  }
+
+  /**
+   * @deprecated Prefer getMemberRecord / getAdminRecord.
+   */
+  async getRecord(publicId: string, ownerUserId?: string) {
+    if (ownerUserId !== undefined) {
+      return this.getMemberRecord(publicId, ownerUserId);
+    }
+    return this.getAdminRecord(publicId);
   }
 
   async createRecord(input: CreateLifeReleaseInput, userId: string, auditCtx: AuditContext) {
@@ -130,20 +148,22 @@ export class LifeLiberationService {
   }
 
   async addProxyRelease(recordPublicId: string, input: ProxyReleaseInput, sponsorId: string, auditCtx: AuditContext) {
-    const record = await this.repo.findByPublicId(recordPublicId);
+    // Scope to the calling sponsor so A cannot attach a proxy to B's record.
+    const record = await this.repo.findMemberByPublicId(recordPublicId, sponsorId);
     if (!record) throw new NotFoundException("Hồ sơ phóng sinh không tồn tại");
     if (record.recordType !== "PROXY") {
       throw new BadRequestException("Chỉ hồ sơ PROXY mới được thêm người thụ hưởng");
     }
     const proxy = await this.prisma.$transaction(async (tx) => {
       const created = await this.repo.addProxyRelease(record.id, sponsorId, input, tx);
+      // resourceId = parent record publicId (proxy rows have no publicId)
       await this.audit.appendInTransaction(
         tx,
         auditCtx,
         "member.life_release.proxy_add",
         "proxy_life_release",
-        created.id,
-        { beneficiary: input.beneficiary },
+        record.publicId,
+        { beneficiary: input.beneficiary, recordPublicId: record.publicId },
       );
       return created;
     });

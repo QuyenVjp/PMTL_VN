@@ -3,10 +3,12 @@ import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
 import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
+import type { AuditContext as AuditCtxType } from "../../platform/audit/audit.service.js";
 import { CommunityService } from "./community.service.js";
 import {
   createCommunityPostSchema,
@@ -69,8 +71,9 @@ export class CommunityController {
   createPost(
     @Body(ZodValidate(createCommunityPostSchema)) input: CreateCommunityPostInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.createPost(input, user.id);
+    return this.communityService.createPost(input, user.id, auditCtx);
   }
 
   @Post("posts/:publicId/heart")
@@ -81,8 +84,9 @@ export class CommunityController {
   toggleHeart(
     @Param("publicId") publicId: string,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.toggleHeart(publicId, user.id);
+    return this.communityService.toggleHeart(publicId, user.id, auditCtx);
   }
 
   @Get("posts/:publicId/comments")
@@ -106,8 +110,9 @@ export class CommunityController {
     @Param("publicId") publicId: string,
     @Body(ZodValidate(createCommentSchema)) input: CreateCommentInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.createComment(publicId, input, user.id);
+    return this.communityService.createComment(publicId, input, user.id, auditCtx);
   }
 
   @Post("posts/:publicId/report")
@@ -119,8 +124,9 @@ export class CommunityController {
     @Param("publicId") publicId: string,
     @Body(ZodValidate(createReportSchema)) input: CreateReportInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.reportPost(publicId, input, user.id);
+    return this.communityService.reportPost(publicId, input, user.id, auditCtx);
   }
 
   // ── Testimonials ──────────────────────────────────────────────────────────
@@ -141,8 +147,9 @@ export class CommunityController {
   createTestimonial(
     @Body(ZodValidate(createTestimonialSchema)) input: CreateTestimonialInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.createTestimonial(input, user.id);
+    return this.communityService.createTestimonial(input, user.id, auditCtx);
   }
 }
 
@@ -178,9 +185,9 @@ export class AdminCommunityController {
   updatePostStatus(
     @Param("publicId") publicId: string,
     @Body(ZodValidate(adminUpdateCommunityPostSchema)) input: AdminUpdateCommunityPostInput,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.adminUpdatePostStatus(publicId, input, user.id);
+    return this.communityService.adminUpdatePostStatus(publicId, input, auditCtx);
   }
 
   @Delete("posts/:publicId")
@@ -189,9 +196,9 @@ export class AdminCommunityController {
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   async deletePost(
     @Param("publicId") publicId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    await this.communityService.adminDeletePost(publicId, user.id);
+    await this.communityService.adminDeletePost(publicId, auditCtx);
     return { success: true };
   }
 
@@ -199,32 +206,32 @@ export class AdminCommunityController {
   @ApiOperation({ summary: "Ghim bài đăng" })
   @ApiResponse({ status: 200, description: "Ghim thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  pinPost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminPinPost(publicId, user.id);
+  pinPost(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminPinPost(publicId, auditCtx);
   }
 
   @Post("posts/:publicId/unpin")
   @ApiOperation({ summary: "Bỏ ghim bài đăng" })
   @ApiResponse({ status: 200, description: "Bỏ ghim thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  unpinPost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminUnpinPost(publicId, user.id);
+  unpinPost(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminUnpinPost(publicId, auditCtx);
   }
 
   @Post("posts/:publicId/hide")
   @ApiOperation({ summary: "Ẩn bài đăng" })
   @ApiResponse({ status: 200, description: "Ẩn thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  hidePost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminHidePost(publicId, user.id);
+  hidePost(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminHidePost(publicId, auditCtx);
   }
 
   @Post("posts/:publicId/restore")
   @ApiOperation({ summary: "Khôi phục bài đăng" })
   @ApiResponse({ status: 200, description: "Khôi phục thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  restorePost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminRestorePost(publicId, user.id);
+  restorePost(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminRestorePost(publicId, auditCtx);
   }
 
   // ── Guestbook ─────────────────────────────────────────────────────
@@ -251,8 +258,9 @@ export class AdminCommunityController {
   createGuestbookEntry(
     @Body(ZodValidate(createGuestbookEntrySchema)) input: CreateGuestbookEntryInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.adminCreateGuestbookEntry(input, user.id);
+    return this.communityService.adminCreateGuestbookEntry(input, user.id, auditCtx);
   }
 
   @Patch("guestbook/:publicId")
@@ -263,8 +271,9 @@ export class AdminCommunityController {
     @Param("publicId") publicId: string,
     @Body(ZodValidate(adminUpdateGuestbookSchema)) input: AdminUpdateGuestbookInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.adminUpdateGuestbookStatus(publicId, input, user.id);
+    return this.communityService.adminUpdateGuestbookStatus(publicId, input, user.id, auditCtx);
   }
 
   @Delete("guestbook/:publicId")
@@ -273,9 +282,9 @@ export class AdminCommunityController {
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   async deleteGuestbookEntry(
     @Param("publicId") publicId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    await this.communityService.adminDeleteGuestbookEntry(publicId, user.id);
+    await this.communityService.adminDeleteGuestbookEntry(publicId, auditCtx);
     return { success: true };
   }
 
@@ -294,9 +303,9 @@ export class AdminCommunityController {
   @ApiResponse({ status: 201, description: "Tạo thành công" })
   createVolunteer(
     @Body(ZodValidate(createVolunteerSchema)) input: CreateVolunteerInput,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.adminCreateVolunteer(input, user.id);
+    return this.communityService.adminCreateVolunteer(input, auditCtx);
   }
 
   @Get("volunteers/:publicId")
@@ -314,9 +323,9 @@ export class AdminCommunityController {
   updateVolunteer(
     @Param("publicId") publicId: string,
     @Body(ZodValidate(updateVolunteerSchema)) input: UpdateVolunteerInput,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.adminUpdateVolunteer(publicId, input, user.id);
+    return this.communityService.adminUpdateVolunteer(publicId, input, auditCtx);
   }
 
   @Delete("volunteers/:publicId")
@@ -325,9 +334,9 @@ export class AdminCommunityController {
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   async deleteVolunteer(
     @Param("publicId") publicId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    await this.communityService.adminDeleteVolunteer(publicId, user.id);
+    await this.communityService.adminDeleteVolunteer(publicId, auditCtx);
     return { success: true };
   }
 
@@ -335,16 +344,16 @@ export class AdminCommunityController {
   @ApiOperation({ summary: "Kích hoạt tình nguyện viên" })
   @ApiResponse({ status: 200, description: "Kích hoạt thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  activateVolunteer(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminActivateVolunteer(publicId, user.id);
+  activateVolunteer(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminActivateVolunteer(publicId, auditCtx);
   }
 
   @Post("volunteers/:publicId/deactivate")
   @ApiOperation({ summary: "Vô hiệu hoá tình nguyện viên" })
   @ApiResponse({ status: 200, description: "Vô hiệu hoá thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
-  deactivateVolunteer(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.communityService.adminDeactivateVolunteer(publicId, user.id);
+  deactivateVolunteer(@Param("publicId") publicId: string, @AuditContext() auditCtx: AuditCtxType) {
+    return this.communityService.adminDeactivateVolunteer(publicId, auditCtx);
   }
 }
 
@@ -368,7 +377,8 @@ export class GuestbookController {
   createGuestbookEntry(
     @Body(ZodValidate(createGuestbookEntrySchema)) input: CreateGuestbookEntryInput,
     @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.communityService.publicCreateGuestbookEntry(input, user.id);
+    return this.communityService.publicCreateGuestbookEntry(input, user.id, auditCtx);
   }
 }

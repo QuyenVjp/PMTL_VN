@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Prisma, VowType } from "../../generated/prisma/client.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import type { AuditAction } from "../../platform/audit/audit.schemas.js";
-import type { AuditContext } from "../../platform/audit/audit.service.js";
+import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import type {
   AssistedEntryHistoryQuery,
   AssistedEntryInput,
@@ -26,20 +26,10 @@ interface AssistedAuditInput {
 
 @Injectable()
 export class VowsMeritRepository {
-  constructor(private readonly prisma: PrismaService) {}
-
-  private toAuditCreateData(audit: AssistedAuditInput, resourceId: string): Prisma.AuditLogCreateInput {
-    return {
-      actorType: audit.context.actorType,
-      action: audit.action,
-      resource: audit.resource,
-      resourceId,
-      metadata: audit.metadata as Prisma.InputJsonValue,
-      ...(audit.context.actorId ? { actorId: audit.context.actorId } : {}),
-      ...(audit.context.ipAddress ? { ipAddress: audit.context.ipAddress } : {}),
-      ...(audit.context.userAgent ? { userAgent: audit.context.userAgent } : {}),
-    };
-  }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   async findManyVows(query: AssistedEntryHistoryQuery) {
     const [data, total] = await Promise.all([
@@ -92,7 +82,14 @@ export class VowsMeritRepository {
         include: { user: USER_SUMMARY_SELECT },
       });
 
-      await tx.auditLog.create({ data: this.toAuditCreateData(audit, vow.publicId) });
+      await this.audit.appendInTransaction(
+        tx,
+        audit.context,
+        audit.action,
+        audit.resource,
+        vow.publicId,
+        audit.metadata,
+      );
       return vow;
     });
   }
@@ -119,7 +116,14 @@ export class VowsMeritRepository {
         include: { user: USER_SUMMARY_SELECT },
       });
 
-      await tx.auditLog.create({ data: this.toAuditCreateData(audit, journal.publicId) });
+      await this.audit.appendInTransaction(
+        tx,
+        audit.context,
+        audit.action,
+        audit.resource,
+        journal.publicId,
+        audit.metadata,
+      );
       return journal;
     });
   }
@@ -164,12 +168,15 @@ export class VowsMeritRepository {
           })
         : updated;
 
-      await tx.auditLog.create({
-        data: this.toAuditCreateData(
-          buildAudit({ before: vow, after: finalVow, autoCompleted: completed }),
-          finalVow.publicId,
-        ),
-      });
+      const progressAudit = buildAudit({ before: vow, after: finalVow, autoCompleted: completed });
+      await this.audit.appendInTransaction(
+        tx,
+        progressAudit.context,
+        progressAudit.action,
+        progressAudit.resource,
+        finalVow.publicId,
+        progressAudit.metadata,
+      );
 
       return { kind: "updated" as const, before: vow, after: finalVow, autoCompleted: completed };
     });

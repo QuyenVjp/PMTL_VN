@@ -55,26 +55,23 @@ export class StorageService {
     uploaderId: string,
     metadata?: { width?: number; height?: number },
   ) {
-    // Step 1: Validate declared MIME type against allowlist
-    if (!this.isAllowedMimeType(mimeType)) {
-      throw new BadRequestException(`Loại file không được hỗ trợ: ${mimeType}`);
-    }
-
-    // Step 2: Magic bytes sniffing — reject type spoofing
+    // Step 1: Magic bytes sniffing. Prefer detected content type over browser-declared MIME,
+    // because browsers can mislabel copied/downloaded WebP/AVIF files as image/jpeg.
     const detectedType = await fileTypeFromBuffer(buffer);
-    if (detectedType && detectedType.mime !== mimeType) {
-      throw new BadRequestException(
-        `Nội dung file không khớp với loại khai báo. Khai báo: ${mimeType}, thực tế: ${detectedType.mime}`,
-      );
+    const effectiveMimeType = detectedType?.mime ?? mimeType;
+
+    // Step 2: Validate effective MIME type against allowlist
+    if (!this.isAllowedMimeType(effectiveMimeType)) {
+      throw new BadRequestException(`Loại file không được hỗ trợ: ${effectiveMimeType}`);
     }
     // If file-type can't detect (e.g., plain text), trust allowlist for known safe types
-    if (!detectedType && !this.isSafeUndetectableType(mimeType)) {
+    if (!detectedType && !this.isSafeUndetectableType(effectiveMimeType)) {
       throw new BadRequestException("Không thể xác minh loại file");
     }
 
     // Step 3: File size limits
     const sizeMb = buffer.length / (1024 * 1024);
-    const maxSize = this.getMaxSizeForType(mimeType);
+    const maxSize = this.getMaxSizeForType(effectiveMimeType);
     if (sizeMb > maxSize) {
       throw new BadRequestException(`File vượt quá dung lượng cho phép (${maxSize}MB)`);
     }
@@ -84,17 +81,17 @@ export class StorageService {
 
     // Step 5: Secure filename — NEVER trust client filename
     const publicId = nanoid(21);
-    const ext = this.getSafeExtension(mimeType);
-    const storageKey = `${this.getFolder(mimeType)}/${publicId}${ext}`;
+    const ext = this.getSafeExtension(effectiveMimeType);
+    const storageKey = `${this.getFolder(effectiveMimeType)}/${publicId}${ext}`;
 
     // Step 6: Upload to storage adapter
-    const url = await this.adapter.upload(storageKey, buffer, mimeType);
+    const url = await this.adapter.upload(storageKey, buffer, effectiveMimeType);
 
     // Step 7: Create asset record (UPLOADING status)
     const asset = await this.mediaRepo.create({
       publicId,
       filename: this.sanitizeFilename(filename),
-      mimeType,
+      mimeType: effectiveMimeType,
       size: buffer.length,
       storageKey,
       url,

@@ -20,83 +20,141 @@ export type AuditLogModel = runtime.Types.Result.DefaultSelection<Prisma.$AuditL
 
 export type AggregateAuditLog = {
   _count: AuditLogCountAggregateOutputType | null
+  _avg: AuditLogAvgAggregateOutputType | null
+  _sum: AuditLogSumAggregateOutputType | null
   _min: AuditLogMinAggregateOutputType | null
   _max: AuditLogMaxAggregateOutputType | null
 }
 
+export type AuditLogAvgAggregateOutputType = {
+  sequenceNumber: number | null
+  hashVersion: number | null
+}
+
+export type AuditLogSumAggregateOutputType = {
+  sequenceNumber: bigint | null
+  hashVersion: number | null
+}
+
 export type AuditLogMinAggregateOutputType = {
   id: string | null
+  publicId: string | null
   actorId: string | null
   actorType: string | null
   action: string | null
   resource: string | null
   resourceId: string | null
-  ipAddress: string | null
+  ipAddressHash: string | null
   userAgent: string | null
+  correlationId: string | null
+  sequenceNumber: bigint | null
+  previousHash: string | null
+  rowHash: string | null
+  hashVersion: number | null
   createdAt: Date | null
 }
 
 export type AuditLogMaxAggregateOutputType = {
   id: string | null
+  publicId: string | null
   actorId: string | null
   actorType: string | null
   action: string | null
   resource: string | null
   resourceId: string | null
-  ipAddress: string | null
+  ipAddressHash: string | null
   userAgent: string | null
+  correlationId: string | null
+  sequenceNumber: bigint | null
+  previousHash: string | null
+  rowHash: string | null
+  hashVersion: number | null
   createdAt: Date | null
 }
 
 export type AuditLogCountAggregateOutputType = {
   id: number
+  publicId: number
   actorId: number
   actorType: number
   action: number
   resource: number
   resourceId: number
   metadata: number
-  ipAddress: number
+  ipAddressHash: number
   userAgent: number
+  correlationId: number
+  sequenceNumber: number
+  previousHash: number
+  rowHash: number
+  hashVersion: number
   createdAt: number
   _all: number
 }
 
 
+export type AuditLogAvgAggregateInputType = {
+  sequenceNumber?: true | runtime.Types.Skip
+  hashVersion?: true | runtime.Types.Skip
+}
+
+export type AuditLogSumAggregateInputType = {
+  sequenceNumber?: true | runtime.Types.Skip
+  hashVersion?: true | runtime.Types.Skip
+}
+
 export type AuditLogMinAggregateInputType = {
   id?: true | runtime.Types.Skip
+  publicId?: true | runtime.Types.Skip
   actorId?: true | runtime.Types.Skip
   actorType?: true | runtime.Types.Skip
   action?: true | runtime.Types.Skip
   resource?: true | runtime.Types.Skip
   resourceId?: true | runtime.Types.Skip
-  ipAddress?: true | runtime.Types.Skip
+  ipAddressHash?: true | runtime.Types.Skip
   userAgent?: true | runtime.Types.Skip
+  correlationId?: true | runtime.Types.Skip
+  sequenceNumber?: true | runtime.Types.Skip
+  previousHash?: true | runtime.Types.Skip
+  rowHash?: true | runtime.Types.Skip
+  hashVersion?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
 }
 
 export type AuditLogMaxAggregateInputType = {
   id?: true | runtime.Types.Skip
+  publicId?: true | runtime.Types.Skip
   actorId?: true | runtime.Types.Skip
   actorType?: true | runtime.Types.Skip
   action?: true | runtime.Types.Skip
   resource?: true | runtime.Types.Skip
   resourceId?: true | runtime.Types.Skip
-  ipAddress?: true | runtime.Types.Skip
+  ipAddressHash?: true | runtime.Types.Skip
   userAgent?: true | runtime.Types.Skip
+  correlationId?: true | runtime.Types.Skip
+  sequenceNumber?: true | runtime.Types.Skip
+  previousHash?: true | runtime.Types.Skip
+  rowHash?: true | runtime.Types.Skip
+  hashVersion?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
 }
 
 export type AuditLogCountAggregateInputType = {
   id?: true | runtime.Types.Skip
+  publicId?: true | runtime.Types.Skip
   actorId?: true | runtime.Types.Skip
   actorType?: true | runtime.Types.Skip
   action?: true | runtime.Types.Skip
   resource?: true | runtime.Types.Skip
   resourceId?: true | runtime.Types.Skip
   metadata?: true | runtime.Types.Skip
-  ipAddress?: true | runtime.Types.Skip
+  ipAddressHash?: true | runtime.Types.Skip
   userAgent?: true | runtime.Types.Skip
+  correlationId?: true | runtime.Types.Skip
+  sequenceNumber?: true | runtime.Types.Skip
+  previousHash?: true | runtime.Types.Skip
+  rowHash?: true | runtime.Types.Skip
+  hashVersion?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
 }
@@ -139,6 +197,18 @@ export type AuditLogAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AuditLogAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AuditLogSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AuditLogMinAggregateInputType
@@ -169,22 +239,32 @@ export type AuditLogGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   _count?: AuditLogCountAggregateInputType | true
+  _avg?: AuditLogAvgAggregateInputType
+  _sum?: AuditLogSumAggregateInputType
   _min?: AuditLogMinAggregateInputType
   _max?: AuditLogMaxAggregateInputType
 }
 
 export type AuditLogGroupByOutputType = {
   id: string
+  publicId: string
   actorId: string | null
   actorType: string
   action: string
   resource: string
   resourceId: string | null
   metadata: runtime.JsonValue | null
-  ipAddress: string | null
+  ipAddressHash: string | null
   userAgent: string | null
+  correlationId: string | null
+  sequenceNumber: bigint
+  previousHash: string | null
+  rowHash: string
+  hashVersion: number
   createdAt: Date
   _count: AuditLogCountAggregateOutputType | null
+  _avg: AuditLogAvgAggregateOutputType | null
+  _sum: AuditLogSumAggregateOutputType | null
   _min: AuditLogMinAggregateOutputType | null
   _max: AuditLogMaxAggregateOutputType | null
 }
@@ -209,32 +289,46 @@ export type AuditLogWhereInput = {
   OR?: Prisma.AuditLogWhereInput[] | runtime.Types.Skip
   NOT?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[] | runtime.Types.Skip
   id?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
+  publicId?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
   actorId?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
   actorType?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
   action?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
   resource?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
   resourceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
   metadata?: Prisma.JsonNullableFilter<"AuditLog"> | runtime.Types.Skip
-  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
   userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  correlationId?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntFilter<"AuditLog"> | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFilter<"AuditLog"> | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogOrderByWithRelationInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
+  publicId?: Prisma.SortOrder | runtime.Types.Skip
   actorId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   actorType?: Prisma.SortOrder | runtime.Types.Skip
   action?: Prisma.SortOrder | runtime.Types.Skip
   resource?: Prisma.SortOrder | runtime.Types.Skip
   resourceId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
-  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  ipAddressHash?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   userAgent?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  correlationId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  previousHash?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  rowHash?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
   id?: string | runtime.Types.Skip
+  publicId?: string | runtime.Types.Skip
+  sequenceNumber?: bigint | number | runtime.Types.Skip
   AND?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[] | runtime.Types.Skip
   OR?: Prisma.AuditLogWhereInput[] | runtime.Types.Skip
   NOT?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[] | runtime.Types.Skip
@@ -244,25 +338,37 @@ export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
   resource?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
   resourceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
   metadata?: Prisma.JsonNullableFilter<"AuditLog"> | runtime.Types.Skip
-  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
   userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  correlationId?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  previousHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFilter<"AuditLog"> | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFilter<"AuditLog"> | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string | runtime.Types.Skip
-}, "id">
+}, "id" | "publicId" | "sequenceNumber">
 
 export type AuditLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
+  publicId?: Prisma.SortOrder | runtime.Types.Skip
   actorId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   actorType?: Prisma.SortOrder | runtime.Types.Skip
   action?: Prisma.SortOrder | runtime.Types.Skip
   resource?: Prisma.SortOrder | runtime.Types.Skip
   resourceId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
-  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  ipAddressHash?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   userAgent?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  correlationId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  previousHash?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  rowHash?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.AuditLogCountOrderByAggregateInput | runtime.Types.Skip
+  _avg?: Prisma.AuditLogAvgOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.AuditLogMaxOrderByAggregateInput | runtime.Types.Skip
   _min?: Prisma.AuditLogMinOrderByAggregateInput | runtime.Types.Skip
+  _sum?: Prisma.AuditLogSumOrderByAggregateInput | runtime.Types.Skip
 }
 
 export type AuditLogScalarWhereWithAggregatesInput = {
@@ -270,214 +376,348 @@ export type AuditLogScalarWhereWithAggregatesInput = {
   OR?: Prisma.AuditLogScalarWhereWithAggregatesInput[] | runtime.Types.Skip
   NOT?: Prisma.AuditLogScalarWhereWithAggregatesInput | Prisma.AuditLogScalarWhereWithAggregatesInput[] | runtime.Types.Skip
   id?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
+  publicId?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
   actorId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
   actorType?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
   action?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
   resource?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
   resourceId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog"> | runtime.Types.Skip
-  ipAddress?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
   userAgent?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  correlationId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntWithAggregatesFilter<"AuditLog"> | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntWithAggregatesFilter<"AuditLog"> | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogCreateInput = {
   id?: string | runtime.Types.Skip
+  publicId: string
   actorId?: string | null | runtime.Types.Skip
   actorType: string
   action: string
   resource: string
   resourceId?: string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: string | null | runtime.Types.Skip
+  ipAddressHash?: string | null | runtime.Types.Skip
   userAgent?: string | null | runtime.Types.Skip
+  correlationId?: string | null | runtime.Types.Skip
+  sequenceNumber: bigint | number
+  previousHash?: string | null | runtime.Types.Skip
+  rowHash: string
+  hashVersion?: number | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
 }
 
 export type AuditLogUncheckedCreateInput = {
   id?: string | runtime.Types.Skip
+  publicId: string
   actorId?: string | null | runtime.Types.Skip
   actorType: string
   action: string
   resource: string
   resourceId?: string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: string | null | runtime.Types.Skip
+  ipAddressHash?: string | null | runtime.Types.Skip
   userAgent?: string | null | runtime.Types.Skip
+  correlationId?: string | null | runtime.Types.Skip
+  sequenceNumber: bigint | number
+  previousHash?: string | null | runtime.Types.Skip
+  rowHash: string
+  hashVersion?: number | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
 }
 
 export type AuditLogUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   actorType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   action?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resource?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  correlationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   actorType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   action?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resource?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  correlationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogCreateManyInput = {
   id?: string | runtime.Types.Skip
+  publicId: string
   actorId?: string | null | runtime.Types.Skip
   actorType: string
   action: string
   resource: string
   resourceId?: string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: string | null | runtime.Types.Skip
+  ipAddressHash?: string | null | runtime.Types.Skip
   userAgent?: string | null | runtime.Types.Skip
+  correlationId?: string | null | runtime.Types.Skip
+  sequenceNumber: bigint | number
+  previousHash?: string | null | runtime.Types.Skip
+  rowHash: string
+  hashVersion?: number | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
 }
 
 export type AuditLogUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   actorType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   action?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resource?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  correlationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   actorType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   action?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resource?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  ipAddressHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  correlationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sequenceNumber?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number | runtime.Types.Skip
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  rowHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  hashVersion?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuditLogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
+  publicId?: Prisma.SortOrder | runtime.Types.Skip
   actorId?: Prisma.SortOrder | runtime.Types.Skip
   actorType?: Prisma.SortOrder | runtime.Types.Skip
   action?: Prisma.SortOrder | runtime.Types.Skip
   resource?: Prisma.SortOrder | runtime.Types.Skip
   resourceId?: Prisma.SortOrder | runtime.Types.Skip
   metadata?: Prisma.SortOrder | runtime.Types.Skip
-  ipAddress?: Prisma.SortOrder | runtime.Types.Skip
+  ipAddressHash?: Prisma.SortOrder | runtime.Types.Skip
   userAgent?: Prisma.SortOrder | runtime.Types.Skip
+  correlationId?: Prisma.SortOrder | runtime.Types.Skip
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  previousHash?: Prisma.SortOrder | runtime.Types.Skip
+  rowHash?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type AuditLogAvgOrderByAggregateInput = {
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type AuditLogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
+  publicId?: Prisma.SortOrder | runtime.Types.Skip
   actorId?: Prisma.SortOrder | runtime.Types.Skip
   actorType?: Prisma.SortOrder | runtime.Types.Skip
   action?: Prisma.SortOrder | runtime.Types.Skip
   resource?: Prisma.SortOrder | runtime.Types.Skip
   resourceId?: Prisma.SortOrder | runtime.Types.Skip
-  ipAddress?: Prisma.SortOrder | runtime.Types.Skip
+  ipAddressHash?: Prisma.SortOrder | runtime.Types.Skip
   userAgent?: Prisma.SortOrder | runtime.Types.Skip
+  correlationId?: Prisma.SortOrder | runtime.Types.Skip
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  previousHash?: Prisma.SortOrder | runtime.Types.Skip
+  rowHash?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type AuditLogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
+  publicId?: Prisma.SortOrder | runtime.Types.Skip
   actorId?: Prisma.SortOrder | runtime.Types.Skip
   actorType?: Prisma.SortOrder | runtime.Types.Skip
   action?: Prisma.SortOrder | runtime.Types.Skip
   resource?: Prisma.SortOrder | runtime.Types.Skip
   resourceId?: Prisma.SortOrder | runtime.Types.Skip
-  ipAddress?: Prisma.SortOrder | runtime.Types.Skip
+  ipAddressHash?: Prisma.SortOrder | runtime.Types.Skip
   userAgent?: Prisma.SortOrder | runtime.Types.Skip
+  correlationId?: Prisma.SortOrder | runtime.Types.Skip
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  previousHash?: Prisma.SortOrder | runtime.Types.Skip
+  rowHash?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type AuditLogSumOrderByAggregateInput = {
+  sequenceNumber?: Prisma.SortOrder | runtime.Types.Skip
+  hashVersion?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type BigIntFieldUpdateOperationsInput = {
+  set?: bigint | number | runtime.Types.Skip
+  increment?: bigint | number | runtime.Types.Skip
+  decrement?: bigint | number | runtime.Types.Skip
+  multiply?: bigint | number | runtime.Types.Skip
+  divide?: bigint | number | runtime.Types.Skip
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number | runtime.Types.Skip
+  increment?: number | runtime.Types.Skip
+  decrement?: number | runtime.Types.Skip
+  multiply?: number | runtime.Types.Skip
+  divide?: number | runtime.Types.Skip
 }
 
 
 
 export type AuditLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
+  publicId?: boolean | runtime.Types.Skip
   actorId?: boolean | runtime.Types.Skip
   actorType?: boolean | runtime.Types.Skip
   action?: boolean | runtime.Types.Skip
   resource?: boolean | runtime.Types.Skip
   resourceId?: boolean | runtime.Types.Skip
   metadata?: boolean | runtime.Types.Skip
-  ipAddress?: boolean | runtime.Types.Skip
+  ipAddressHash?: boolean | runtime.Types.Skip
   userAgent?: boolean | runtime.Types.Skip
+  correlationId?: boolean | runtime.Types.Skip
+  sequenceNumber?: boolean | runtime.Types.Skip
+  previousHash?: boolean | runtime.Types.Skip
+  rowHash?: boolean | runtime.Types.Skip
+  hashVersion?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
+  publicId?: boolean | runtime.Types.Skip
   actorId?: boolean | runtime.Types.Skip
   actorType?: boolean | runtime.Types.Skip
   action?: boolean | runtime.Types.Skip
   resource?: boolean | runtime.Types.Skip
   resourceId?: boolean | runtime.Types.Skip
   metadata?: boolean | runtime.Types.Skip
-  ipAddress?: boolean | runtime.Types.Skip
+  ipAddressHash?: boolean | runtime.Types.Skip
   userAgent?: boolean | runtime.Types.Skip
+  correlationId?: boolean | runtime.Types.Skip
+  sequenceNumber?: boolean | runtime.Types.Skip
+  previousHash?: boolean | runtime.Types.Skip
+  rowHash?: boolean | runtime.Types.Skip
+  hashVersion?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
+  publicId?: boolean | runtime.Types.Skip
   actorId?: boolean | runtime.Types.Skip
   actorType?: boolean | runtime.Types.Skip
   action?: boolean | runtime.Types.Skip
   resource?: boolean | runtime.Types.Skip
   resourceId?: boolean | runtime.Types.Skip
   metadata?: boolean | runtime.Types.Skip
-  ipAddress?: boolean | runtime.Types.Skip
+  ipAddressHash?: boolean | runtime.Types.Skip
   userAgent?: boolean | runtime.Types.Skip
+  correlationId?: boolean | runtime.Types.Skip
+  sequenceNumber?: boolean | runtime.Types.Skip
+  previousHash?: boolean | runtime.Types.Skip
+  rowHash?: boolean | runtime.Types.Skip
+  hashVersion?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectScalar = {
   id?: boolean | runtime.Types.Skip
+  publicId?: boolean | runtime.Types.Skip
   actorId?: boolean | runtime.Types.Skip
   actorType?: boolean | runtime.Types.Skip
   action?: boolean | runtime.Types.Skip
   resource?: boolean | runtime.Types.Skip
   resourceId?: boolean | runtime.Types.Skip
   metadata?: boolean | runtime.Types.Skip
-  ipAddress?: boolean | runtime.Types.Skip
+  ipAddressHash?: boolean | runtime.Types.Skip
   userAgent?: boolean | runtime.Types.Skip
+  correlationId?: boolean | runtime.Types.Skip
+  sequenceNumber?: boolean | runtime.Types.Skip
+  previousHash?: boolean | runtime.Types.Skip
+  rowHash?: boolean | runtime.Types.Skip
+  hashVersion?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
 }
 
-export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "actorId" | "actorType" | "action" | "resource" | "resourceId" | "metadata" | "ipAddress" | "userAgent" | "createdAt", ExtArgs["result"]["auditLog"], runtime.Types.Skip>
+export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "actorId" | "actorType" | "action" | "resource" | "resourceId" | "metadata" | "ipAddressHash" | "userAgent" | "correlationId" | "sequenceNumber" | "previousHash" | "rowHash" | "hashVersion" | "createdAt", ExtArgs["result"]["auditLog"], runtime.Types.Skip>
 
 export type $AuditLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AuditLog"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    /**
+     * Stable external identity — never expose internal `id` as publicId in APIs.
+     */
+    publicId: string
     actorId: string | null
     actorType: string
     action: string
     resource: string
     resourceId: string | null
     metadata: runtime.JsonValue | null
-    ipAddress: string | null
+    /**
+     * One-way hash of client IP. Raw IP is never stored (AUDIT_POLICY).
+     */
+    ipAddressHash: string | null
     userAgent: string | null
+    correlationId: string | null
+    /**
+     * Monotonic chain position starting at 1.
+     */
+    sequenceNumber: bigint
+    previousHash: string | null
+    rowHash: string
+    /**
+     * 1 = legacy migration serializer; 2 = app recursive key-sort + redaction.
+     */
+    hashVersion: number
     createdAt: Date
   }, ExtArgs["result"]["auditLog"]>
   composites: {}
@@ -903,14 +1143,20 @@ export interface Prisma__AuditLogClient<T, Null = never, ExtArgs extends runtime
  */
 export interface AuditLogFieldRefs {
   readonly id: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly publicId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly actorId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly actorType: Prisma.FieldRef<"AuditLog", 'String'>
   readonly action: Prisma.FieldRef<"AuditLog", 'String'>
   readonly resource: Prisma.FieldRef<"AuditLog", 'String'>
   readonly resourceId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly metadata: Prisma.FieldRef<"AuditLog", 'Json'>
-  readonly ipAddress: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly ipAddressHash: Prisma.FieldRef<"AuditLog", 'String'>
   readonly userAgent: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly correlationId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly sequenceNumber: Prisma.FieldRef<"AuditLog", 'BigInt'>
+  readonly previousHash: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly rowHash: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly hashVersion: Prisma.FieldRef<"AuditLog", 'Int'>
   readonly createdAt: Prisma.FieldRef<"AuditLog", 'DateTime'>
 }
     

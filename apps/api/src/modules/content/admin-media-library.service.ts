@@ -107,11 +107,10 @@ export class AdminMediaLibraryService {
       updatedAt:      c.updatedAt,
     }));
 
+    // Phase 4.2 batch 3a: canary list shape — rides inside transport `data`.
     return {
-      data,
-      meta: {
-        pagination: { total, limit: dto.limit, offset: dto.offset, hasMore: dto.offset + dto.limit < total },
-      },
+      items: data,
+      pagination: { total, limit: dto.limit, offset: dto.offset, hasMore: dto.offset + dto.limit < total },
     };
   }
 

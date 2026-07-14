@@ -147,15 +147,14 @@ export class ContactService {
       this.prisma.volunteer.count({ where }),
     ]);
 
+    // Phase 4.2 batch 3a: canary list shape — rides inside transport `data`.
     return {
-      data,
-      meta: {
-        pagination: {
-          total,
-          limit: query.limit,
-          offset: query.offset,
-          hasMore: query.offset + query.limit < total,
-        },
+      items: data,
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
       },
     };
   }

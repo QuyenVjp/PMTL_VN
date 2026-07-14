@@ -229,7 +229,7 @@ const statusOptions = [
 function CollectionsTable() {
   const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(collectionsListOptions({ limit: 100 }));
-  const collections = envelope?.data ?? [];
+  const collections = envelope?.items ?? [];
 
   const [sorting,          setSorting]          = useState<SortingState>([]);
   const [rowSelection,     setRowSelection]     = useState({});

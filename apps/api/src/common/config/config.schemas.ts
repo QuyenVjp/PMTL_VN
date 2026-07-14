@@ -40,6 +40,8 @@ export const securityConfigSchema = z.object({
     .transform((v) => v === "true")
     .pipe(z.boolean())
     .default(true),
+  /** Optional dedicated salt for audit IP hashing. If omitted, derived from CSRF_SECRET. */
+  AUDIT_IP_SALT: z.string().min(16).optional(),
 });
 
 // Storage config schema

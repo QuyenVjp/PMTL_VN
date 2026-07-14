@@ -5,9 +5,9 @@
 # ═══════════════════════════════════════════════════
 ---
 brain: default
-updated: 2026-05-03T12:24:14
-neurons: 46
-synapses: 117
+updated: 2026-07-07T02:04:49
+neurons: 298
+synapses: 385
 token_budget: 1200
 depth_available: [surface, detail, deep]
 ---
@@ -17,86 +17,72 @@ depth_available: [surface, detail, deep]
 # Agent: scan this section to understand the knowledge landscape.
 # Format: [id] content (type) {p:N} →edge→ [target_id_or_text]
 
-[c5] CharityFirewallInterceptor (concept) {p:5}
-  →co_occurs→ "Vows"
-  →co_occurs→ "Wisdom"
-  →co_occurs→ "QA"
-  →co_occurs→ "Life Liberation"
-  →co_occurs→ "Merit"
+[c5] PMTL_VN boundary: NeuralMemory is advisory memory only. If it conflicts with… (concept) {p:4}
+  →stored_by→ "PMTL_VN boundary: NeuralMemory is advisory memory only. If…"
+  →related_to→ "boundary neuralmemory"
+  →related_to→ "boundary neuralmemory"
+  →related_to→ "pmtl vn boundary"
+  →related_to→ "pmtl vn boundary"
 
-[c6] NeuralMemory (concept) {p:5}
+[c6] NeuralMemory MCP verification on 2026-05-03: nmem_remember_batch returned… (concept) {p:4}
+  →involves→ "nmem_show"
+  →involves→ "Do"
+  →involves→ "fiber_id"
+  →related_to→ [c1] "For PMTL_VN, NeuralMemory is advisory project memory only.…"
+  →involves→ "IDs"
+
+[c7] PMTL practical NeuralMemory use: for project-history questions use nmem_recall… (concept) {p:4}
+  →involves→ "nmem_alerts"
+  →co_occurs→ [c2] "PMTL domain work rule: design/ is rebuild source of truth.…"
+  →involves→ "nmem_health"
+  →co_occurs→ [c3] "PMTL top design gaps from AGENTS: Dharma Compliance…"
+  →stored_by→ "PMTL practical NeuralMemory use: for project-history…"
+
+[c8] NeuralMemory (concept) {p:4}
   →co_occurs→ "When NeuralMemory"
-  →co_occurs→ "AGENTS"
+  →related_to→ "pmtl vn neuralmemory"
+  →related_to→ "neuralmemory advisory"
   →co_occurs→ "GitNexus"
 
-[c7] GitNexus (concept) {p:5}
-  →co_occurs→ "When NeuralMemory"
-  →co_occurs→ "AGENTS"
-
-[c8] Vows (concept) {p:5}
-  →co_occurs→ "Wisdom"
-  →co_occurs→ "QA"
-  →co_occurs→ "Life Liberation"
-  →co_occurs→ "Merit"
-  →co_occurs→ "Content"
-
-[c9] Dharma Compliance CharityFirewallInterceptor (concept) {p:5}
-  →co_occurs→ [c8] "Vows"
-  →co_occurs→ "Wisdom"
-  →co_occurs→ "QA"
-  →co_occurs→ "Life Liberation"
-  →co_occurs→ "Merit"
-
-[c10] When NeuralMemory (concept) {p:5}
-  →co_occurs→ "AGENTS"
-
-[c2] PMTL top design gaps from AGENTS: Dharma Compliance… (concept) {p:6}
-  →involves→ "CharityFirewallInterceptor"
-  →involves→ "Vows"
-  →related_to→ "pmtl top"
-  →involves→ "Wisdom"
-  →co_occurs→ [c1] "For PMTL_VN, NeuralMemory is advisory project memory only.…"
-
-[c1] For PMTL_VN, NeuralMemory is advisory project memory only. When NeuralMemory… (concept) {p:7}
+[c1] For PMTL_VN, NeuralMemory is advisory project memory only. When NeuralMemory… (concept) {p:5}
   →related_to→ "Prisma"
   →involves→ "NeuralMemory"
   →related_to→ "Zod"
   →related_to→ "AGENTS MCP"
   →related_to→ "advisory project"
 
+[c2] PMTL domain work rule: design/ is rebuild source of truth. For any domain,… (concept) {p:5}
+  →related_to→ "domain work"
+  →related_to→ "domain work"
+  →co_occurs→ [c1] "For PMTL_VN, NeuralMemory is advisory project memory only.…"
+  →co_occurs→ [c1] "For PMTL_VN, NeuralMemory is advisory project memory only.…"
+  →related_to→ "pmtl domain"
+
 # ── CLUSTERS ───────────────────────────────────────
 # Auto-detected topic groups from brain.db entity co-occurrence.
 # Agent: use clusters to scope recall queries.
 
-@neuralmemory: [11b0e677-0886-4142-a96a-2b22fda590cb, 3bd38c4e-fac9-4580-9e24-96d784367b35, 493a0fe4-1e67-4dde-a937-e107eef83923, 49dbf0ed-412a-4009-859c-6cbd321128b1, 4f47ee1a-575c-4b35-ba96-339ff369f002] "GitNexus, AGENTS, pmtl vn neuralmemory"
-@top: [0d9f9ccf-fbc7-491c-90ba-736f0ad5779e, 1b7be0d1-9a44-40c1-b0a5-5a9941e85c71, 2fe9cc11-4344-4e8a-91d0-bd1645d02f1c, 3cb080aa-12a1-4236-8601-63715b04a0ab, 5ce450d0-1f0c-49e8-b3f4-c8c7b8e2bbe9] "Content, CharityFirewallInterceptor, Life Liberation"
-@nmem_recap: [4f91e0c8-574e-46e8-ba7f-8748ba92ec0c, 8481acf0-596f-4e4c-b720-9e4b3d9ae716, c660ffe5-2d67-4eee-a707-ece422c109af, ce7af3c0-18c4-40f4-adb4-718a7485f25e, d82f5c0f-0f2e-49c0-9bdd-71a5e6144097] "nmem_recap, nmem_remember, nmem_recall"
-@domain: [3ececc4f-971c-492e-8dba-dc0577741849, 51d7b3e2-99dd-4f55-86e7-e1112567aab8, 593fd1da-7e7a-4f9f-919b-e5dc1b5beb6f, 671339a1-9e71-463e-8a76-de29070e5777, 7dc78e64-4f35-4aab-bf88-7b1b84f02073] "CONTRACTS, domain work, PMTL"
-
-# ── SIGNALS ────────────────────────────────────────
-# Active alerts, unresolved items, pending decisions.
-# Agent: check this FIRST each session for urgent context.
-
-! PMTL practical NeuralMemory use: for project-history questions use nmem_recall with task/domain…
-! [agent:codex-mcp-client, neuralmemory, nmem_alerts, nmem_health, nmem_recall]
-~ PMTL top design gaps from AGENTS: Dharma Compliance CharityFirewallInterceptor, Vows & Merit…
-! [agent:codex-mcp-client, charityfirewallinterceptor, content, design gaps, design-gap]
-~ PMTL domain work rule: design/ is rebuild source of truth. For any domain, cross-check…
-! [agent:codex-mcp-client, compare design intent, contracts, design, domain]
-~ For PMTL_VN, NeuralMemory is advisory project memory only. When NeuralMemory conflicts with…
-~ [advisory project, agent:codex-mcp-client, agents, boundary, domain:pmtl_vn]
+@neuralmemory: [11b0e677-0886-4142-a96a-2b22fda590cb, 493a0fe4-1e67-4dde-a937-e107eef83923, 49dbf0ed-412a-4009-859c-6cbd321128b1, 4f47ee1a-575c-4b35-ba96-339ff369f002, 71020277-9c2f-4bba-b62a-e7e3183924d5] "When NeuralMemory, pmtl vn neuralmemory, For PMTL_VN, NeuralMemory is advisory pr"
+@pmtl: [51d7b3e2-99dd-4f55-86e7-e1112567aab8, 671339a1-9e71-463e-8a76-de29070e5777, 7dc78e64-4f35-4aab-bf88-7b1b84f02073] "pmtl domain, PMTL, PMTL domain work rule: design/ is rebuil"
+@pmtl: [0d9f9ccf-fbc7-491c-90ba-736f0ad5779e, 2fe9cc11-4344-4e8a-91d0-bd1645d02f1c, 8957cc1e-7cb8-49e6-89b0-f7f78a01ad32] "pmtl top, CharityFirewallInterceptor, PMTL top design gaps from AGENTS: Dharma"
+@neuralmemory: [08318f5b-8f47-4a72-b31a-ed267800e2da, 39f86f8b-e729-4809-b34d-beacafce8339, 5035053a-7e17-402e-8c6b-af3fae4cf27a, 7aeed7ce-cde8-476a-bacc-9ce1f09b5c34, 877cc21f-344c-4441-ba60-7d1881ad6c86] "nmem_remember_batch, nmem_show, IDs"
+@pmtl: [c660ffe5-2d67-4eee-a707-ece422c109af, ce7af3c0-18c4-40f4-adb4-718a7485f25e, d82f5c0f-0f2e-49c0-9bdd-71a5e6144097] "PMTL practical NeuralMemory use: for pro, nmem_recap, nmem_recall"
+@slope: [0e110896-26f7-439e-8477-192724eb4e73, 2ea0a42c-0fc5-4c2a-b5ef-69837d666750, 5168383f-1c0c-4b26-bb6b-73d7e456a88d] "SLOPE, annotations, BIAS"
 
 # ── DEPTH MAP ──────────────────────────────────────
 # When surface isn't enough, this tells agent WHERE to dig.
 # Format: [id] → depth_hint (context)
 
 [c1] → NEEDS_DETAIL (15 total synapses, recall "For PMTL_VN, NeuralMemory is advisory…")
-[c2] → NEEDS_DEEP (20 synapses in brain.db, recall "PMTL top design gaps from AGENTS:…")
+[c2] → NEEDS_DEEP (18 synapses in brain.db, recall "PMTL domain work rule: design/ is…")
+[c5] → NEEDS_DEEP (16 synapses in brain.db, recall "PMTL_VN boundary: NeuralMemory is…")
+[c6] → NEEDS_DEEP (18 synapses in brain.db, recall "NeuralMemory MCP verification on…")
+[c7] → NEEDS_DETAIL (14 total synapses, recall "PMTL practical NeuralMemory use: for…")
 
 # ── META ───────────────────────────────────────────
 # Stats for agent to gauge brain richness
 
-coverage: 0.89
-staleness: 0.0
-last_consolidation: 2026-05-03T12:24:14
-top_entities: [For, PMTL, PMTL, PMTL, CharityFirewallInterceptor]
+coverage: 0.1
+staleness: 0.72
+last_consolidation: 2026-07-07T02:04:49
+top_entities: [For, PMTL, PMTL, NeuralMemory, PMTL_VN]

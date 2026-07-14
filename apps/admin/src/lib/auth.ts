@@ -7,12 +7,13 @@
  */
 import { adminClient } from "@/lib/api/admin-client";
 import { HttpError } from "@/lib/api/http-error";
+import { isAdminRole, type UserRole } from "@/lib/roles";
 
 export interface AdminUser {
   publicId: string;
   email: string;
   displayName: string;
-  role: string;
+  role: UserRole;
   avatarUrl?: string | null;
 }
 
@@ -22,7 +23,7 @@ interface AuthResponseUser {
   email?: string;
   emailMasked?: string;
   displayName: string;
-  role: string;
+  role: UserRole;
   avatarUrl?: string | null;
 }
 
@@ -279,9 +280,4 @@ export async function logout(): Promise<void> {
     // Even if API call fails, clear local state
   }
   clearAuthCache();
-}
-
-/** Check if user has admin role */
-export function isAdminRole(role: string): boolean {
-  return role === "ADMIN" || role === "SUPER_ADMIN";
 }

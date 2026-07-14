@@ -21,7 +21,10 @@ import type { Request } from "express";
 export interface SuccessEnvelope<T> {
   data: T;
   meta: {
+    /** @deprecated use generatedAt — kept for backward compatibility during envelope migration. */
     timestamp: string;
+    /** Canonical generation timestamp per API_DTO_SHAPE_PLAN.md DTO envelope rules. */
+    generatedAt: string;
     requestId?: string;
     path: string;
   };
@@ -37,14 +40,19 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, SuccessEnvelop
     const requestId = request.headers["x-request-id"] as string | undefined;
 
     return next.handle().pipe(
-      map((data) => ({
-        data,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId,
-          path: request.url,
-        },
-      })),
+      map((data) => {
+        const generatedAt = new Date().toISOString();
+        return {
+          data,
+          meta: {
+            // timestamp kept during migration; prefer generatedAt (API_DTO_SHAPE_PLAN).
+            timestamp: generatedAt,
+            generatedAt,
+            requestId,
+            path: request.url,
+          },
+        };
+      }),
     );
   }
 }

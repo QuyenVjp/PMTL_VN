@@ -149,7 +149,7 @@ export class SelfCultivationService {
     this.assertGuideSlugAvailable(overview.guides, slug);
 
     const guide: SelfCultivationGuideDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       slug,
       title: input.title,
       summary: input.summary,
@@ -229,7 +229,7 @@ export class SelfCultivationService {
   async adminCreateFaq(input: CreateSelfCultivationFaqInput, auditContext: AuditContext) {
     const overview = await this.loadOverview();
     const faq: SelfCultivationFaqDto = {
-      publicId: nanoid(12),
+      publicId: nanoid(21),
       question: input.question,
       answer: input.answer,
       sourceReference: input.sourceReference,

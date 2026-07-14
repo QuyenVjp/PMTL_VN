@@ -194,8 +194,8 @@ function HistoryTab() {
   };
 
   const { data, isLoading, isError } = useQuery(vowHistoryOptions(filters));
-  const items = useMemo(() => data?.data ?? [], [data]);
-  const total = data?.meta?.pagination?.total ?? 0;
+  const items = useMemo(() => data?.items ?? [], [data]);
+  const total = data?.pagination?.total ?? 0;
 
   const columns = useMemo<ColumnDef<VowHistoryItem>[]>(
     () => [

@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { PaginatedList } from "@/lib/api/envelopes.js";
 
 export interface MediaAssetListItem {
   publicId: string;
@@ -74,7 +74,8 @@ export function mediaListOptions(filters: MediaListFilters = {}) {
 
   return queryOptions({
     queryKey: mediaKeys.list(normalizedFilters),
-    queryFn: () => adminClient.get<ListEnvelope<MediaAssetListItem>>("/admin/media", params),
+    // Phase 4.2 batch 3a: after client unwrap, payload is { items, pagination }.
+    queryFn: () => adminClient.get<PaginatedList<MediaAssetListItem>>("/admin/media", params),
   });
 }
 

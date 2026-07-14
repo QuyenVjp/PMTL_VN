@@ -9,6 +9,7 @@
   encode zstd gzip
   respond /api/metrics/* 404
   respond /api/internal/monitoring/* 404
+  @api path /api/* /media/*
   header {
     X-Content-Type-Options nosniff
     X-Frame-Options SAMEORIGIN
@@ -18,5 +19,32 @@
     output stdout
     format json
   }
-  reverse_proxy web:5173
+  handle @api {
+    reverse_proxy api:3001
+  }
+  handle {
+    reverse_proxy web:5173
+  }
+}
+
+{$PMTL_ADMIN_DOMAIN:admin.localhost} {
+  encode zstd gzip
+  respond /api/metrics/* 404
+  respond /api/internal/monitoring/* 404
+  @api path /api/* /media/*
+  header {
+    X-Content-Type-Options nosniff
+    X-Frame-Options SAMEORIGIN
+    Referrer-Policy strict-origin-when-cross-origin
+  }
+  log {
+    output stdout
+    format json
+  }
+  handle @api {
+    reverse_proxy api:3001
+  }
+  handle {
+    reverse_proxy admin:3002
+  }
 }

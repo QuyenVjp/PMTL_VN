@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,8 @@ import {
 } from "@/components/workspace";
 import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { useCreatePost } from "@/features/content/mutations";
+import { PostTopicSelect } from "@/features/content/post-topic-select";
+import { postTopicListOptions } from "@/features/content/queries";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
@@ -132,6 +135,7 @@ function CreateSidebar({
 export function PostCreatePage() {
   const navigate = useNavigate();
   const createPost = useCreatePost();
+  const { data: topicData, isLoading: topicsLoading } = useQuery(postTopicListOptions());
   const form = useAdminZodForm(postCreateSchema, {
     defaultValues: {
       title: "",
@@ -146,6 +150,7 @@ export function PostCreatePage() {
   const lastSlugRef = useRef(slug);
   const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
+  const [primaryCategoryId, setPrimaryCategoryId] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
 
@@ -171,6 +176,7 @@ export function PostCreatePage() {
         sourceRef: formValues.sourceRef || undefined,
         content: buildPostContent(bodyHtml),
         featuredImageId: featuredImageId.trim() || undefined,
+        primaryCategoryId: primaryCategoryId || undefined,
         featured,
         allowComments,
       },
@@ -247,7 +253,7 @@ export function PostCreatePage() {
               <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
             </AdminFormField>
 
-            <AdminFormField label="Loại bài viết">
+            <AdminFormField label="Dạng nội dung">
               <Select value={values.postType} onValueChange={(value) => form.setValue("postType", value, { shouldDirty: true, shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -262,7 +268,17 @@ export function PostCreatePage() {
               </Select>
             </AdminFormField>
           </div>
-<AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
+
+          <AdminFormField label="Chủ đề" hint="Chọn nhánh chủ đề cha/con để người đọc dễ tìm các bài khai thị liên quan.">
+            <PostTopicSelect
+              topics={topicData?.items ?? []}
+              value={primaryCategoryId}
+              onChange={setPrimaryCategoryId}
+              disabled={topicsLoading}
+            />
+          </AdminFormField>
+
+          <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input
               {...form.register("sourceRef")}
               placeholder="VD: Pháp thoại 2024-08-08..."

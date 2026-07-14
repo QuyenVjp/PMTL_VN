@@ -3,7 +3,21 @@ import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
 import { userAdminKeys } from "./queries.js";
-import type { UpdateProfileInput, ChangeRoleInput, BlockUserInput } from "./types.js";
+import type { CreateUserInput, UpdateProfileInput, ChangeRoleInput, BlockUserInput } from "./types.js";
+
+/** Create volunteer/admin account */
+export function useCreateUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreateUserInput) =>
+      adminClient.post("/admin/users", input),
+    onSuccess: () => {
+      toast.success("Đã tạo tài khoản phụng sự viên.");
+      void qc.invalidateQueries({ queryKey: userAdminKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
 
 /** Update user profile (displayName, email, avatarUrl) */
 export function useUpdateProfile() {

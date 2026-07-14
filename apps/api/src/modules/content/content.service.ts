@@ -14,6 +14,7 @@ import type {
   DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
   BeginnerGuidePublicQuery, DownloadPublicQuery,
   TypedContentPayload, ContentBlockType,
+  CreatePostTopicRequest, UpdatePostTopicRequest, PostTopicResponse,
 } from "./content.schemas.js";
 import { typedContentPayloadSchema } from "./content.schemas.js";
 import { type UserRole, type ContentStatus, type Prisma, type Post, type PostType, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
@@ -83,12 +84,13 @@ export class ContentService {
   async listPosts(query: ListPostsQuery, userRole?: UserRole) {
     // Public access only sees published
     const status = userRole && canCreatePost(userRole) ? query.status : "PUBLISHED";
+    const categoryId = await this.resolvePostCategoryId(query.categoryId);
 
     const { posts, total } = await this.repository.findMany({
       status: status as ContentStatus | undefined,
       postType: query.postType as PostType | undefined,
       authorId: query.authorId,
-      categoryId: query.categoryId,
+      categoryId: categoryId ?? undefined,
       featured: query.featured,
       page: query.page,
       limit: query.limit,
@@ -148,6 +150,7 @@ export class ContentService {
       throw slugConflictException();
     }
     const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
+    const primaryCategoryId = await this.resolvePostCategoryId(input.primaryCategoryId);
 
     // Bug 2 fix: post creation + audit in same transaction
     const post = await this.prisma.$transaction(async (tx) => {
@@ -163,7 +166,7 @@ export class ContentService {
           status: "DRAFT",
           ...(input.sourceRef !== undefined && { sourceRef: input.sourceRef }),
           ...(featuredImageId !== undefined && { featuredImageId }),
-          ...(input.primaryCategoryId !== undefined && { primaryCategoryId: input.primaryCategoryId }),
+          ...(primaryCategoryId !== undefined && { primaryCategoryId }),
           ...(input.featured !== undefined && { featured: input.featured }),
           ...(input.allowComments !== undefined && { allowComments: input.allowComments }),
           ...(input.tagIds?.length && {
@@ -172,7 +175,7 @@ export class ContentService {
         },
         include: {
           author: { select: { publicId: true, displayName: true, avatarUrl: true } },
-          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true, level: true, path: true } },
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
@@ -209,9 +212,11 @@ export class ContentService {
       }
     }
     const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
+    const primaryCategoryId = await this.resolvePostCategoryId(input.primaryCategoryId);
     const auditMetadata = buildPostUpdateAuditMetadata(post, {
       ...input,
       ...(featuredImageId !== undefined ? { featuredImageId } : {}),
+      ...(primaryCategoryId !== undefined ? { primaryCategoryId } : {}),
     });
 
     // Bug 2 fix: post update + audit in same transaction
@@ -230,8 +235,8 @@ export class ContentService {
       if (input.featured !== undefined) postUpdateData.featured = input.featured;
       if (input.allowComments !== undefined) postUpdateData.allowComments = input.allowComments;
       if (input.primaryCategoryId !== undefined) {
-        postUpdateData.primaryCategory = input.primaryCategoryId
-          ? { connect: { id: input.primaryCategoryId } }
+        postUpdateData.primaryCategory = primaryCategoryId
+          ? { connect: { id: primaryCategoryId } }
           : { disconnect: true };
       }
       if (input.tagIds !== undefined) {
@@ -246,7 +251,7 @@ export class ContentService {
         data: postUpdateData,
         include: {
           author: { select: { publicId: true, displayName: true, avatarUrl: true } },
-          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true, level: true, path: true } },
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
@@ -286,7 +291,7 @@ export class ContentService {
         },
         include: {
           author: { select: { publicId: true, displayName: true, avatarUrl: true } },
-          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true, level: true, path: true } },
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
@@ -332,7 +337,7 @@ export class ContentService {
         data: { status: "DRAFT", publishedAt: null },
         include: {
           author: { select: { publicId: true, displayName: true, avatarUrl: true } },
-          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true, level: true, path: true } },
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
@@ -391,6 +396,155 @@ export class ContentService {
     return { available: !existing };
   }
 
+  async listPostTopics(): Promise<{ items: PostTopicResponse[]; tree: PostTopicResponse[] }> {
+    const topics = await this.prisma.postCategory.findMany({
+      include: {
+        parent: { select: { publicId: true, name: true } },
+        _count: { select: { posts: true } },
+      },
+      orderBy: [{ level: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
+    });
+
+    const items = topics.map((topic) => this.mapPostTopic(topic));
+    const byId = new Map(items.map((topic) => [topic.id, topic]));
+    const tree: PostTopicResponse[] = [];
+
+    for (const topic of items) {
+      if (topic.parentId && byId.has(topic.parentId)) {
+        byId.get(topic.parentId)?.children.push(topic);
+      } else {
+        tree.push(topic);
+      }
+    }
+
+    return { items, tree };
+  }
+
+  async createPostTopic(input: CreatePostTopicRequest, userRole: UserRole, auditContext: AuditContext) {
+    if (!canCreatePost(userRole)) {
+      throw new ForbiddenException("Không có quyền tạo chủ đề");
+    }
+
+    const publicId = nanoid(21);
+    const slug = input.slug || this.generateSlug(input.name, publicId);
+    if (await this.postCategorySlugExists(slug)) {
+      throw slugConflictException();
+    }
+
+    const parent = await this.getPostCategoryParent(input.parentId);
+    const level = parent ? parent.level + 1 : 0;
+    const path = parent?.path ? `${parent.path}/${slug}` : slug;
+
+    const created = await this.prisma.$transaction(async (tx) => {
+      const topic = await tx.postCategory.create({
+        data: {
+          id: nanoid(21),
+          publicId,
+          name: input.name,
+          slug,
+          description: input.description ?? null,
+          parentId: parent?.id ?? null,
+          level,
+          path,
+          sortOrder: input.sortOrder,
+        },
+        include: {
+          parent: { select: { publicId: true, name: true } },
+          _count: { select: { posts: true } },
+        },
+      });
+      await this.audit.appendInTransaction(tx, auditContext, "content.topic.create", "post_topic", publicId);
+      return topic;
+    });
+
+    return this.mapPostTopic(created);
+  }
+
+  async updatePostTopic(
+    publicId: string,
+    input: UpdatePostTopicRequest,
+    userRole: UserRole,
+    auditContext: AuditContext,
+  ) {
+    if (!canCreatePost(userRole)) {
+      throw new ForbiddenException("Không có quyền sửa chủ đề");
+    }
+
+    const topic = await this.prisma.postCategory.findUnique({ where: { publicId } });
+    if (!topic) {
+      throw new NotFoundException("Chủ đề không tồn tại");
+    }
+
+    const slug = input.slug ?? topic.slug;
+    if (slug !== topic.slug && await this.postCategorySlugExists(slug, publicId)) {
+      throw slugConflictException();
+    }
+
+    const parent = input.parentId !== undefined ? await this.getPostCategoryParent(input.parentId) : undefined;
+    if (parent?.id === topic.id) {
+      throw new ConflictException("Chủ đề cha không được là chính nó.");
+    }
+    if (parent?.path && topic.path && parent.path.startsWith(`${topic.path}/`)) {
+      throw new ConflictException("Không thể chọn chủ đề con làm chủ đề cha.");
+    }
+
+    const nextParentId = input.parentId === undefined ? topic.parentId : parent?.id ?? null;
+    const nextLevel = input.parentId === undefined ? topic.level : parent ? parent.level + 1 : 0;
+    const parentPath = input.parentId === undefined
+      ? await this.getParentPathById(topic.parentId)
+      : parent?.path ?? null;
+    const nextPath = parentPath ? `${parentPath}/${slug}` : slug;
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.postCategory.update({
+        where: { publicId },
+        data: {
+          ...(input.name !== undefined && { name: input.name }),
+          ...(input.slug !== undefined && { slug }),
+          ...(input.description !== undefined && { description: input.description }),
+          ...(input.parentId !== undefined && { parentId: nextParentId }),
+          ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+          level: nextLevel,
+          path: nextPath,
+        },
+        include: {
+          parent: { select: { publicId: true, name: true } },
+          _count: { select: { posts: true } },
+        },
+      });
+      await this.refreshTopicDescendants(tx, result.id, result.path ?? result.slug, result.level);
+      await this.audit.appendInTransaction(tx, auditContext, "content.topic.update", "post_topic", publicId, input);
+      return result;
+    });
+
+    return this.mapPostTopic(updated);
+  }
+
+  async deletePostTopic(publicId: string, userRole: UserRole, auditContext: AuditContext) {
+    if (!canDeletePost(userRole)) {
+      throw new ForbiddenException("Không có quyền xoá chủ đề");
+    }
+
+    const topic = await this.prisma.postCategory.findUnique({
+      where: { publicId },
+      include: { _count: { select: { posts: true, children: true } } },
+    });
+    if (!topic) throw new NotFoundException("Chủ đề không tồn tại");
+    if (topic._count.posts > 0 || topic._count.children > 0) {
+      throw new ConflictException("Chủ đề đang có bài viết hoặc chủ đề con, không thể xoá.");
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.postCategory.delete({ where: { publicId } });
+      await this.audit.appendInTransaction(tx, auditContext, "content.topic.delete", "post_topic", publicId, {
+        name: topic.name,
+        slug: topic.slug,
+      });
+    });
+
+    return { success: true };
+  }
+
   private generateSlug(title: string, publicId: string): string {
     const base = title
       .toLowerCase()
@@ -414,6 +568,106 @@ export class ContentService {
     }
     // posts.featured_image_id references MediaAsset.id (internal id), not publicId.
     return asset.id;
+  }
+
+  private async resolvePostCategoryId(value: string | null | undefined): Promise<string | null | undefined> {
+    if (value === undefined) return undefined;
+    if (value === null || value.trim().length === 0) return null;
+    const category = await this.prisma.postCategory.findFirst({
+      where: {
+        OR: [
+          { publicId: value },
+          { id: value },
+          { slug: value },
+        ],
+      },
+      select: { id: true },
+    });
+    if (!category) throw new NotFoundException("Chủ đề không tồn tại");
+    return category.id;
+  }
+
+  private async getPostCategoryParent(publicId: string | null | undefined) {
+    if (!publicId) return null;
+    const parent = await this.prisma.postCategory.findUnique({
+      where: { publicId },
+      select: { id: true, publicId: true, name: true, slug: true, path: true, level: true },
+    });
+    if (!parent) throw new NotFoundException("Chủ đề cha không tồn tại");
+    return parent;
+  }
+
+  private async getParentPathById(parentId: string | null) {
+    if (!parentId) return null;
+    const parent = await this.prisma.postCategory.findUnique({
+      where: { id: parentId },
+      select: { path: true, slug: true },
+    });
+    return parent?.path ?? parent?.slug ?? null;
+  }
+
+  private async postCategorySlugExists(slug: string, excludePublicId?: string) {
+    const topic = await this.prisma.postCategory.findFirst({
+      where: {
+        slug,
+        ...(excludePublicId && { publicId: { not: excludePublicId } }),
+      },
+    });
+    return !!topic;
+  }
+
+  private mapPostTopic(topic: {
+    publicId: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    level: number;
+    path: string | null;
+    sortOrder: number;
+    createdAt: Date;
+    updatedAt: Date;
+    parent: { publicId: string; name: string } | null;
+    _count: { posts: number };
+  }): PostTopicResponse {
+    return {
+      id: topic.publicId,
+      publicId: topic.publicId,
+      name: topic.name,
+      slug: topic.slug,
+      description: topic.description,
+      parentId: topic.parent?.publicId ?? null,
+      parentName: topic.parent?.name ?? null,
+      level: topic.level,
+      path: topic.path,
+      sortOrder: topic.sortOrder,
+      postCount: topic._count.posts,
+      createdAt: topic.createdAt.toISOString(),
+      updatedAt: topic.updatedAt.toISOString(),
+      children: [],
+    };
+  }
+
+  private async refreshTopicDescendants(
+    tx: Prisma.TransactionClient,
+    parentId: string,
+    parentPath: string,
+    parentLevel: number,
+  ) {
+    const children = await tx.postCategory.findMany({
+      where: { parentId },
+      select: { id: true, slug: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    });
+
+    for (const child of children) {
+      const path = `${parentPath}/${child.slug}`;
+      const level = parentLevel + 1;
+      await tx.postCategory.update({
+        where: { id: child.id },
+        data: { path, level },
+      });
+      await this.refreshTopicDescendants(tx, child.id, path, level);
+    }
   }
 
   // ======================== Guide methods ========================
@@ -452,9 +706,16 @@ export class ContentService {
       })),
     );
 
+    // Phase 4.2 batch 1: canary list shape — rides inside transport `data`.
+    // Do NOT return legacy ListEnvelope { data, meta.pagination } (double-wraps on wire).
     return {
-      data: mapped,
-      meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
+      items: mapped,
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
+      },
     };
   }
 
@@ -631,9 +892,16 @@ export class ContentService {
       })),
     );
 
+    // Phase 4.2 batch 1: canary list shape — rides inside transport `data`.
+    // Do NOT return legacy ListEnvelope { data, meta.pagination } (double-wraps on wire).
     return {
-      data: mapped,
-      meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
+      items: mapped,
+      pagination: {
+        total,
+        limit: query.limit,
+        offset: query.offset,
+        hasMore: query.offset + query.limit < total,
+      },
     };
   }
 

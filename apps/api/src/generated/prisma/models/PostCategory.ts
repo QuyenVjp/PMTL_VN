@@ -20,8 +20,20 @@ export type PostCategoryModel = runtime.Types.Result.DefaultSelection<Prisma.$Po
 
 export type AggregatePostCategory = {
   _count: PostCategoryCountAggregateOutputType | null
+  _avg: PostCategoryAvgAggregateOutputType | null
+  _sum: PostCategorySumAggregateOutputType | null
   _min: PostCategoryMinAggregateOutputType | null
   _max: PostCategoryMaxAggregateOutputType | null
+}
+
+export type PostCategoryAvgAggregateOutputType = {
+  sortOrder: number | null
+  level: number | null
+}
+
+export type PostCategorySumAggregateOutputType = {
+  sortOrder: number | null
+  level: number | null
 }
 
 export type PostCategoryMinAggregateOutputType = {
@@ -30,6 +42,10 @@ export type PostCategoryMinAggregateOutputType = {
   name: string | null
   slug: string | null
   description: string | null
+  parentId: string | null
+  sortOrder: number | null
+  level: number | null
+  path: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +56,10 @@ export type PostCategoryMaxAggregateOutputType = {
   name: string | null
   slug: string | null
   description: string | null
+  parentId: string | null
+  sortOrder: number | null
+  level: number | null
+  path: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,11 +70,25 @@ export type PostCategoryCountAggregateOutputType = {
   name: number
   slug: number
   description: number
+  parentId: number
+  sortOrder: number
+  level: number
+  path: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type PostCategoryAvgAggregateInputType = {
+  sortOrder?: true | runtime.Types.Skip
+  level?: true | runtime.Types.Skip
+}
+
+export type PostCategorySumAggregateInputType = {
+  sortOrder?: true | runtime.Types.Skip
+  level?: true | runtime.Types.Skip
+}
 
 export type PostCategoryMinAggregateInputType = {
   id?: true | runtime.Types.Skip
@@ -62,6 +96,10 @@ export type PostCategoryMinAggregateInputType = {
   name?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  parentId?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  level?: true | runtime.Types.Skip
+  path?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -72,6 +110,10 @@ export type PostCategoryMaxAggregateInputType = {
   name?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  parentId?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  level?: true | runtime.Types.Skip
+  path?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -82,6 +124,10 @@ export type PostCategoryCountAggregateInputType = {
   name?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  parentId?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  level?: true | runtime.Types.Skip
+  path?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -125,6 +171,18 @@ export type PostCategoryAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PostCategoryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PostCategorySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PostCategoryMinAggregateInputType
@@ -155,6 +213,8 @@ export type PostCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   _count?: PostCategoryCountAggregateInputType | true
+  _avg?: PostCategoryAvgAggregateInputType
+  _sum?: PostCategorySumAggregateInputType
   _min?: PostCategoryMinAggregateInputType
   _max?: PostCategoryMaxAggregateInputType
 }
@@ -165,9 +225,15 @@ export type PostCategoryGroupByOutputType = {
   name: string
   slug: string
   description: string | null
+  parentId: string | null
+  sortOrder: number
+  level: number
+  path: string | null
   createdAt: Date
   updatedAt: Date
   _count: PostCategoryCountAggregateOutputType | null
+  _avg: PostCategoryAvgAggregateOutputType | null
+  _sum: PostCategorySumAggregateOutputType | null
   _min: PostCategoryMinAggregateOutputType | null
   _max: PostCategoryMaxAggregateOutputType | null
 }
@@ -196,8 +262,14 @@ export type PostCategoryWhereInput = {
   name?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
   slug?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  parentId?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  level?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  path?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
+  parent?: Prisma.XOR<Prisma.PostCategoryNullableScalarRelationFilter, Prisma.PostCategoryWhereInput> | null | runtime.Types.Skip
+  children?: Prisma.PostCategoryListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
 }
 
@@ -207,8 +279,14 @@ export type PostCategoryOrderByWithRelationInput = {
   name?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+  path?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+  parent?: Prisma.PostCategoryOrderByWithRelationInput | runtime.Types.Skip
+  children?: Prisma.PostCategoryOrderByRelationAggregateInput | runtime.Types.Skip
   posts?: Prisma.PostOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
@@ -221,8 +299,14 @@ export type PostCategoryWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PostCategoryWhereInput | Prisma.PostCategoryWhereInput[] | runtime.Types.Skip
   name?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  parentId?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  level?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  path?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
+  parent?: Prisma.XOR<Prisma.PostCategoryNullableScalarRelationFilter, Prisma.PostCategoryWhereInput> | null | runtime.Types.Skip
+  children?: Prisma.PostCategoryListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId" | "slug">
 
@@ -232,11 +316,17 @@ export type PostCategoryOrderByWithAggregationInput = {
   name?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+  path?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.PostCategoryCountOrderByAggregateInput | runtime.Types.Skip
+  _avg?: Prisma.PostCategoryAvgOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.PostCategoryMaxOrderByAggregateInput | runtime.Types.Skip
   _min?: Prisma.PostCategoryMinOrderByAggregateInput | runtime.Types.Skip
+  _sum?: Prisma.PostCategorySumOrderByAggregateInput | runtime.Types.Skip
 }
 
 export type PostCategoryScalarWhereWithAggregatesInput = {
@@ -248,6 +338,10 @@ export type PostCategoryScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"PostCategory"> | string | runtime.Types.Skip
   slug?: Prisma.StringWithAggregatesFilter<"PostCategory"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableWithAggregatesFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  parentId?: Prisma.StringNullableWithAggregatesFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntWithAggregatesFilter<"PostCategory"> | number | runtime.Types.Skip
+  level?: Prisma.IntWithAggregatesFilter<"PostCategory"> | number | runtime.Types.Skip
+  path?: Prisma.StringNullableWithAggregatesFilter<"PostCategory"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PostCategory"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PostCategory"> | Date | string | runtime.Types.Skip
 }
@@ -258,8 +352,13 @@ export type PostCategoryCreateInput = {
   name: string
   slug: string
   description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryCreateNestedOneWithoutChildrenInput | runtime.Types.Skip
+  children?: Prisma.PostCategoryCreateNestedManyWithoutParentInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
 }
 
@@ -269,8 +368,13 @@ export type PostCategoryUncheckedCreateInput = {
   name: string
   slug: string
   description?: string | null | runtime.Types.Skip
+  parentId?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedCreateNestedManyWithoutParentInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
 }
 
@@ -280,8 +384,13 @@ export type PostCategoryUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryUpdateOneWithoutChildrenNestedInput | runtime.Types.Skip
+  children?: Prisma.PostCategoryUpdateManyWithoutParentNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
 }
 
@@ -291,8 +400,13 @@ export type PostCategoryUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedUpdateManyWithoutParentNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
 }
 
@@ -302,6 +416,10 @@ export type PostCategoryCreateManyInput = {
   name: string
   slug: string
   description?: string | null | runtime.Types.Skip
+  parentId?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -312,6 +430,9 @@ export type PostCategoryUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -322,8 +443,27 @@ export type PostCategoryUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type PostCategoryNullableScalarRelationFilter = {
+  is?: Prisma.PostCategoryWhereInput | null | runtime.Types.Skip
+  isNot?: Prisma.PostCategoryWhereInput | null | runtime.Types.Skip
+}
+
+export type PostCategoryListRelationFilter = {
+  every?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+  some?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+  none?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+}
+
+export type PostCategoryOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type PostCategoryCountOrderByAggregateInput = {
@@ -332,8 +472,17 @@ export type PostCategoryCountOrderByAggregateInput = {
   name?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  parentId?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+  path?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type PostCategoryAvgOrderByAggregateInput = {
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type PostCategoryMaxOrderByAggregateInput = {
@@ -342,6 +491,10 @@ export type PostCategoryMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  parentId?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+  path?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -352,13 +505,75 @@ export type PostCategoryMinOrderByAggregateInput = {
   name?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  parentId?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+  path?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
 
-export type PostCategoryNullableScalarRelationFilter = {
-  is?: Prisma.PostCategoryWhereInput | null | runtime.Types.Skip
-  isNot?: Prisma.PostCategoryWhereInput | null | runtime.Types.Skip
+export type PostCategorySumOrderByAggregateInput = {
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  level?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type PostCategoryCreateNestedOneWithoutChildrenInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutChildrenInput, Prisma.PostCategoryUncheckedCreateWithoutChildrenInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutChildrenInput | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | runtime.Types.Skip
+}
+
+export type PostCategoryCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput> | Prisma.PostCategoryCreateWithoutParentInput[] | Prisma.PostCategoryUncheckedCreateWithoutParentInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutParentInput | Prisma.PostCategoryCreateOrConnectWithoutParentInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCategoryCreateManyParentInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput> | Prisma.PostCategoryCreateWithoutParentInput[] | Prisma.PostCategoryUncheckedCreateWithoutParentInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutParentInput | Prisma.PostCategoryCreateOrConnectWithoutParentInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCategoryCreateManyParentInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PostCategoryUpdateOneWithoutChildrenNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutChildrenInput, Prisma.PostCategoryUncheckedCreateWithoutChildrenInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutChildrenInput | runtime.Types.Skip
+  upsert?: Prisma.PostCategoryUpsertWithoutChildrenInput | runtime.Types.Skip
+  disconnect?: Prisma.PostCategoryWhereInput | boolean | runtime.Types.Skip
+  delete?: Prisma.PostCategoryWhereInput | boolean | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostCategoryUpdateToOneWithWhereWithoutChildrenInput, Prisma.PostCategoryUpdateWithoutChildrenInput>, Prisma.PostCategoryUncheckedUpdateWithoutChildrenInput> | runtime.Types.Skip
+}
+
+export type PostCategoryUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput> | Prisma.PostCategoryCreateWithoutParentInput[] | Prisma.PostCategoryUncheckedCreateWithoutParentInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutParentInput | Prisma.PostCategoryCreateOrConnectWithoutParentInput[] | runtime.Types.Skip
+  upsert?: Prisma.PostCategoryUpsertWithWhereUniqueWithoutParentInput | Prisma.PostCategoryUpsertWithWhereUniqueWithoutParentInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCategoryCreateManyParentInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PostCategoryUpdateWithWhereUniqueWithoutParentInput | Prisma.PostCategoryUpdateWithWhereUniqueWithoutParentInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PostCategoryUpdateManyWithWhereWithoutParentInput | Prisma.PostCategoryUpdateManyWithWhereWithoutParentInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PostCategoryScalarWhereInput | Prisma.PostCategoryScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput> | Prisma.PostCategoryCreateWithoutParentInput[] | Prisma.PostCategoryUncheckedCreateWithoutParentInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCategoryCreateOrConnectWithoutParentInput | Prisma.PostCategoryCreateOrConnectWithoutParentInput[] | runtime.Types.Skip
+  upsert?: Prisma.PostCategoryUpsertWithWhereUniqueWithoutParentInput | Prisma.PostCategoryUpsertWithWhereUniqueWithoutParentInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCategoryCreateManyParentInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PostCategoryWhereUniqueInput | Prisma.PostCategoryWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PostCategoryUpdateWithWhereUniqueWithoutParentInput | Prisma.PostCategoryUpdateWithWhereUniqueWithoutParentInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PostCategoryUpdateManyWithWhereWithoutParentInput | Prisma.PostCategoryUpdateManyWithWhereWithoutParentInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PostCategoryScalarWhereInput | Prisma.PostCategoryScalarWhereInput[] | runtime.Types.Skip
 }
 
 export type PostCategoryCreateNestedOneWithoutPostsInput = {
@@ -377,14 +592,168 @@ export type PostCategoryUpdateOneWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PostCategoryUpdateToOneWithWhereWithoutPostsInput, Prisma.PostCategoryUpdateWithoutPostsInput>, Prisma.PostCategoryUncheckedUpdateWithoutPostsInput> | runtime.Types.Skip
 }
 
+export type PostCategoryCreateWithoutChildrenInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  name: string
+  slug: string
+  description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryCreateNestedOneWithoutChildrenInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedCreateWithoutChildrenInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  name: string
+  slug: string
+  description?: string | null | runtime.Types.Skip
+  parentId?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
+}
+
+export type PostCategoryCreateOrConnectWithoutChildrenInput = {
+  where: Prisma.PostCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCategoryCreateWithoutChildrenInput, Prisma.PostCategoryUncheckedCreateWithoutChildrenInput>
+}
+
+export type PostCategoryCreateWithoutParentInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  name: string
+  slug: string
+  description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryCreateNestedManyWithoutParentInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedCreateWithoutParentInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  name: string
+  slug: string
+  description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedCreateNestedManyWithoutParentInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutPrimaryCategoryInput | runtime.Types.Skip
+}
+
+export type PostCategoryCreateOrConnectWithoutParentInput = {
+  where: Prisma.PostCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput>
+}
+
+export type PostCategoryCreateManyParentInputEnvelope = {
+  data: Prisma.PostCategoryCreateManyParentInput | Prisma.PostCategoryCreateManyParentInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type PostCategoryUpsertWithoutChildrenInput = {
+  update: Prisma.XOR<Prisma.PostCategoryUpdateWithoutChildrenInput, Prisma.PostCategoryUncheckedUpdateWithoutChildrenInput>
+  create: Prisma.XOR<Prisma.PostCategoryCreateWithoutChildrenInput, Prisma.PostCategoryUncheckedCreateWithoutChildrenInput>
+  where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+}
+
+export type PostCategoryUpdateToOneWithWhereWithoutChildrenInput = {
+  where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.PostCategoryUpdateWithoutChildrenInput, Prisma.PostCategoryUncheckedUpdateWithoutChildrenInput>
+}
+
+export type PostCategoryUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryUpdateOneWithoutChildrenNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
+}
+
+export type PostCategoryUpsertWithWhereUniqueWithoutParentInput = {
+  where: Prisma.PostCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostCategoryUpdateWithoutParentInput, Prisma.PostCategoryUncheckedUpdateWithoutParentInput>
+  create: Prisma.XOR<Prisma.PostCategoryCreateWithoutParentInput, Prisma.PostCategoryUncheckedCreateWithoutParentInput>
+}
+
+export type PostCategoryUpdateWithWhereUniqueWithoutParentInput = {
+  where: Prisma.PostCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostCategoryUpdateWithoutParentInput, Prisma.PostCategoryUncheckedUpdateWithoutParentInput>
+}
+
+export type PostCategoryUpdateManyWithWhereWithoutParentInput = {
+  where: Prisma.PostCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.PostCategoryUpdateManyMutationInput, Prisma.PostCategoryUncheckedUpdateManyWithoutParentInput>
+}
+
+export type PostCategoryScalarWhereInput = {
+  AND?: Prisma.PostCategoryScalarWhereInput | Prisma.PostCategoryScalarWhereInput[] | runtime.Types.Skip
+  OR?: Prisma.PostCategoryScalarWhereInput[] | runtime.Types.Skip
+  NOT?: Prisma.PostCategoryScalarWhereInput | Prisma.PostCategoryScalarWhereInput[] | runtime.Types.Skip
+  id?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
+  publicId?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
+  name?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
+  slug?: Prisma.StringFilter<"PostCategory"> | string | runtime.Types.Skip
+  description?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  parentId?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  level?: Prisma.IntFilter<"PostCategory"> | number | runtime.Types.Skip
+  path?: Prisma.StringNullableFilter<"PostCategory"> | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFilter<"PostCategory"> | Date | string | runtime.Types.Skip
+}
+
 export type PostCategoryCreateWithoutPostsInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   name: string
   slug: string
   description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryCreateNestedOneWithoutChildrenInput | runtime.Types.Skip
+  children?: Prisma.PostCategoryCreateNestedManyWithoutParentInput | runtime.Types.Skip
 }
 
 export type PostCategoryUncheckedCreateWithoutPostsInput = {
@@ -393,8 +762,13 @@ export type PostCategoryUncheckedCreateWithoutPostsInput = {
   name: string
   slug: string
   description?: string | null | runtime.Types.Skip
+  parentId?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedCreateNestedManyWithoutParentInput | runtime.Types.Skip
 }
 
 export type PostCategoryCreateOrConnectWithoutPostsInput = {
@@ -419,8 +793,13 @@ export type PostCategoryUpdateWithoutPostsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  parent?: Prisma.PostCategoryUpdateOneWithoutChildrenNestedInput | runtime.Types.Skip
+  children?: Prisma.PostCategoryUpdateManyWithoutParentNestedInput | runtime.Types.Skip
 }
 
 export type PostCategoryUncheckedUpdateWithoutPostsInput = {
@@ -429,6 +808,67 @@ export type PostCategoryUncheckedUpdateWithoutPostsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedUpdateManyWithoutParentNestedInput | runtime.Types.Skip
+}
+
+export type PostCategoryCreateManyParentInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  name: string
+  slug: string
+  description?: string | null | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  level?: number | runtime.Types.Skip
+  path?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type PostCategoryUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUpdateManyWithoutParentNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  children?: Prisma.PostCategoryUncheckedUpdateManyWithoutParentNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutPrimaryCategoryNestedInput | runtime.Types.Skip
+}
+
+export type PostCategoryUncheckedUpdateManyWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  level?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  path?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -439,10 +879,12 @@ export type PostCategoryUncheckedUpdateWithoutPostsInput = {
  */
 
 export type PostCategoryCountOutputType = {
+  children: number
   posts: number
 }
 
 export type PostCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  children?: boolean | PostCategoryCountOutputTypeCountChildrenArgs
   posts?: boolean | PostCategoryCountOutputTypeCountPostsArgs
 }
 
@@ -459,6 +901,13 @@ export type PostCategoryCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
 /**
  * PostCategoryCountOutputType without action
  */
+export type PostCategoryCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+}
+
+/**
+ * PostCategoryCountOutputType without action
+ */
 export type PostCategoryCountOutputTypeCountPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PostWhereInput | runtime.Types.Skip
 }
@@ -470,8 +919,14 @@ export type PostCategorySelect<ExtArgs extends runtime.Types.Extensions.Internal
   name?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  parentId?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  level?: boolean | runtime.Types.Skip
+  path?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
+  children?: boolean | Prisma.PostCategory$childrenArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.PostCategory$postsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.PostCategoryCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["postCategory"]>
@@ -482,8 +937,13 @@ export type PostCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  parentId?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  level?: boolean | runtime.Types.Skip
+  path?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["postCategory"]>
 
 export type PostCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -492,8 +952,13 @@ export type PostCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  parentId?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  level?: boolean | runtime.Types.Skip
+  path?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["postCategory"]>
 
 export type PostCategorySelectScalar = {
@@ -502,21 +967,33 @@ export type PostCategorySelectScalar = {
   name?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  parentId?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  level?: boolean | runtime.Types.Skip
+  path?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type PostCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "name" | "slug" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["postCategory"], runtime.Types.Skip>
+export type PostCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "name" | "slug" | "description" | "parentId" | "sortOrder" | "level" | "path" | "createdAt" | "updatedAt", ExtArgs["result"]["postCategory"], runtime.Types.Skip>
 export type PostCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
+  children?: boolean | Prisma.PostCategory$childrenArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.PostCategory$postsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.PostCategoryCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
-export type PostCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type PostCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type PostCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
+}
+export type PostCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.PostCategory$parentArgs<ExtArgs> | runtime.Types.Skip
+}
 
 export type $PostCategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PostCategory"
   objects: {
+    parent: Prisma.$PostCategoryPayload<ExtArgs> | null
+    children: Prisma.$PostCategoryPayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -525,6 +1002,10 @@ export type $PostCategoryPayload<ExtArgs extends runtime.Types.Extensions.Intern
     name: string
     slug: string
     description: string | null
+    parentId: string | null
+    sortOrder: number
+    level: number
+    path: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["postCategory"]>
@@ -921,6 +1402,8 @@ readonly fields: PostCategoryFieldRefs;
  */
 export interface Prisma__PostCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  parent<T extends Prisma.PostCategory$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostCategory$parentArgs<ExtArgs>>): Prisma.Prisma__PostCategoryClient<runtime.Types.Result.GetResult<Prisma.$PostCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  children<T extends Prisma.PostCategory$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostCategory$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.PostCategory$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostCategory$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -956,6 +1439,10 @@ export interface PostCategoryFieldRefs {
   readonly name: Prisma.FieldRef<"PostCategory", 'String'>
   readonly slug: Prisma.FieldRef<"PostCategory", 'String'>
   readonly description: Prisma.FieldRef<"PostCategory", 'String'>
+  readonly parentId: Prisma.FieldRef<"PostCategory", 'String'>
+  readonly sortOrder: Prisma.FieldRef<"PostCategory", 'Int'>
+  readonly level: Prisma.FieldRef<"PostCategory", 'Int'>
+  readonly path: Prisma.FieldRef<"PostCategory", 'String'>
   readonly createdAt: Prisma.FieldRef<"PostCategory", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PostCategory", 'DateTime'>
 }
@@ -1212,6 +1699,10 @@ export type PostCategoryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.PostCategoryCreateManyInput | Prisma.PostCategoryCreateManyInput[]
   skipDuplicates?: boolean | runtime.Types.Skip
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostCategoryIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1282,6 +1773,10 @@ export type PostCategoryUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many PostCategories to update.
    */
   limit?: number | runtime.Types.Skip
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1348,6 +1843,49 @@ export type PostCategoryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many PostCategories to delete.
    */
   limit?: number | runtime.Types.Skip
+}
+
+/**
+ * PostCategory.parent
+ */
+export type PostCategory$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PostCategory
+   */
+  select?: Prisma.PostCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PostCategory
+   */
+  omit?: Prisma.PostCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostCategoryInclude<ExtArgs> | null
+  where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+}
+
+/**
+ * PostCategory.children
+ */
+export type PostCategory$childrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PostCategory
+   */
+  select?: Prisma.PostCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PostCategory
+   */
+  omit?: Prisma.PostCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostCategoryInclude<ExtArgs> | null
+  where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.PostCategoryOrderByWithRelationInput | Prisma.PostCategoryOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.PostCategoryWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.PostCategoryScalarFieldEnum | Prisma.PostCategoryScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**
